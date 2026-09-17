@@ -54,14 +54,14 @@ export async function POST(req: NextRequest) {
 "مهمتك: قراءة ملف الـ PDF وتحويله إلى خريطة محتوى مقسمة بدقة متناهية، **وابتكار ملابس كاجوال أنيقة للمعلمة، وشخصية كرتونية تناسب موضوع الملف**.\n" +
 "التعليمات:\n" +
 "1. قسّم المحتوى إلى فقرات مفصلة جداً وكثيرة. كل فقرة ستكون عبارة عن فيديو مدته 10 ثوانٍ فقط.\n" +
-"2. ابتكر ملابس (teacherOutfit) يومية وعادية وأنيقة للمعلمة (مثل: لون مختلف للسترة Blazer، بلوزة حريرية بلون مختلف، أو ملابس شتوية أنيقة)، **بحيث لا ترتدي ملابس تنكرية أو ملابس مهن**، فقط ملابس معلمة أنيقة بألوان وتفاصيل متغيرة عن المعتاد. حافظ على أساس الشخصية: (A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing [Random Stylish Normal Outfit]).\n" +
+"2. صف فقط ملابس المعلمة (teacherOutfit) بحيث تكون يومية وعادية وأنيقة (مثل: a sleek navy blue blazer over a light pink silk blouse). **لا تكتب أي وصف لملامحها أو شعرها أبداً**، اكتب فقط الملابس! يجب أن ترتدي ملابس معلمة أنيقة بألوان وتفاصيل متغيرة عن المعتاد، وممنوع الملابس التنكرية.\n" +
 "3. ابتكر شخصية كرتونية (cartoonCharacter) تناسب الموضوع (مثلاً إنسان آلي، نبتة تتحدث، كائن فضائي). **يجب أن يكون الوصف دقيقاً ومفصلاً جداً رياضياً** (مثلاً: A tiny cute 3D Pixar-style [creature] with exactly two big green eyes, wearing [specific clothes], and holding [prop]).\n\n" +
 "قواعد هامة جدا:\n" +
 modeInstructions + "\n" +
 "- الشمولية والتفصيل هما الأولوية المطلقة! لا تتجاهل أي تفاصيل هامة، قم بعمل تقسيمات كثيرة جداً لكل صفحة بحيث لا يتم اختصار الدرس أبداً.\n\n" +
 "يجب أن ترجع النتيجة كـ JSON كالتالي بالضبط:\n" +
 "{\n" +
-"  'teacherOutfit': 'A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing a white scientist coat over a purple shirt, holding a tiny magnifying glass',\n" +
+"  'teacherOutfit': 'a sleek red blazer over a white silk blouse',\n" +
 "  'cartoonCharacter': 'A tiny cute round 3D Pixar-style green talking cactus with exactly three orange flowers on its head, wearing oversized yellow steampunk goggles, and a small red scarf',\n" +
 "  'map': [\n" +
 "    {\n" +
