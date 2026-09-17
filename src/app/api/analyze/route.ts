@@ -50,10 +50,10 @@ export async function POST(req: NextRequest) {
 
     const prompt = 
 "أنت خبير في تحليل المحتوى التعليمي للأطفال.\n" +
-"مهمتك: قراءة ملف الـ PDF وتلخيصه إلى أجزاء صغيرة، **وابتكار ملابس للمعلمة وشخصية كرتونية تناسب موضوع الملف**.\n" +
+"مهمتك: قراءة ملف الـ PDF وتلخيصه إلى أجزاء صغيرة، **وابتكار ملابس كاجوال أنيقة للمعلمة، وشخصية كرتونية تناسب موضوع الملف**.\n" +
 "التعليمات:\n" +
 "1. قسّم المحتوى إلى أجزاء (صفحات/مقاطع).\n" +
-"2. ابتكر ملابس للمعلمة (teacherOutfit) تناسب الموضوع (مثلاً لو الملف عن الفضاء، تجعلها ترتدي بدلة فضاء، لو عن النباتات ترتدي ملابس مزارع أو عالمة نبات... الخ). حافظ على أساس الشخصية: (A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing [Theme Outfit]).\n" +
+"2. ابتكر ملابس (teacherOutfit) يومية وعادية وأنيقة للمعلمة (مثل: لون مختلف للسترة Blazer، بلوزة حريرية بلون مختلف، أو ملابس شتوية أنيقة)، **بحيث لا ترتدي ملابس تنكرية أو ملابس مهن**، فقط ملابس معلمة أنيقة بألوان وتفاصيل متغيرة عن المعتاد. حافظ على أساس الشخصية: (A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing [Random Stylish Normal Outfit]).\n" +
 "3. ابتكر شخصية كرتونية (cartoonCharacter) تناسب الموضوع (مثلاً إنسان آلي، نبتة تتحدث، كائن فضائي). **يجب أن يكون الوصف دقيقاً ومفصلاً جداً رياضياً** (مثلاً: A tiny cute 3D Pixar-style [creature] with exactly two big green eyes, wearing [specific clothes], and holding [prop]).\n\n" +
 "يجب أن ترجع النتيجة كـ JSON كالتالي بالضبط:\n" +
 "{\n" +
