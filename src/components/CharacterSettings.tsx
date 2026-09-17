@@ -9,6 +9,8 @@ export interface CharacterConfig {
   continuityLock: boolean;
   isFinalScene: boolean;
   previousStoryContext: string;
+  teacherOutfit?: string;
+  cartoonCharacter?: string;
 }
 
 interface CharacterSettingsProps {

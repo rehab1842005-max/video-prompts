@@ -113,6 +113,15 @@ export default function Home() {
       
       const data = await res.json();
       setContentMap(data.map);
+      
+      // Update character config with dynamically invented characters for this specific document
+      if (data.teacherOutfit || data.cartoonCharacter) {
+        setCharacterConfig(prev => ({
+          ...prev,
+          teacherOutfit: data.teacherOutfit || prev.teacherOutfit,
+          cartoonCharacter: data.cartoonCharacter || prev.cartoonCharacter
+        }));
+      }
     } catch (error) {
       console.error(error);
       alert("حدث خطأ أثناء تحليل الملف. تأكدي من إعداد مفتاح Gemini API، أو جربي تحديد عدد صفحات أقل لتجنب الضغط.");

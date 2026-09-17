@@ -48,27 +48,26 @@ export async function POST(req: NextRequest) {
 "- **لا تختصر أبداً:** الحوار المتبادل يجب أن يغطي كل تفاصيل النص دون استثناء أي حرف.\n";
     }
 
-    modeInstructions += "\n- **العدد حسب الحاجة:** قم بتقسيم الصفحة إلى عدد مشاهد يكفي لشرح القصة كاملة دون اختصار (مشهد، أو 5 أو 10 مشاهد). يُمنع زيادة المشاهد إذا كانت المعلومات قليلة لمنع التكرار.\n- تخطي الصفحات: ممنوع تخطي أي صفحة من الصفحات المحددة. يجب أن تمر على كل الصفحات.";
-
     const prompt = 
 "أنت خبير في تحليل المحتوى التعليمي للأطفال.\n" +
-"مهمتك: قراءة ملف الـ PDF وتحليله إلى خريطة محتوى ممتازة.\n" +
-"المطلوب:\n" +
-"1. تقسيم المحتوى إلى أجزاء.\n" +
-"2. كل جزء سيكون عبارة عن فيديو مدته 10 ثوان فقط.\n\n" +
-"قواعد هامة جدا:\n" +
-modeInstructions + "\n" +
-"- الأولوية هي الشمولية ولكن بذكاء واختصار مفيد لا يخل بالمعنى، لضمان استكمال الملف كله في رد واحد.\n" +
-"- صيغة الإخراج يجب أن يكون ردك عبارة عن مصفوفة JSON مسطحة فقط لا غير.\n\n" +
-"أرجع النتيجة بصيغة JSON فقط بهذا الهيكل المبسط جدا لتوفير المساحة:\n" +
-"[\n" +
-"  {\n" +
-"    'pageNumber': 1,\n" +
-"    'id': 'p1',\n" +
-"    'title': 'عنوان الصفحة',\n" +
-"    'contentSummary': 'ملخص الفكرة'\n" +
-"  }\n" +
-"]".replace(/'/g, '"');
+"مهمتك: قراءة ملف الـ PDF وتلخيصه إلى أجزاء صغيرة، **وابتكار ملابس للمعلمة وشخصية كرتونية تناسب موضوع الملف**.\n" +
+"التعليمات:\n" +
+"1. قسّم المحتوى إلى أجزاء (صفحات/مقاطع).\n" +
+"2. ابتكر ملابس للمعلمة (teacherOutfit) تناسب الموضوع (مثلاً لو الملف عن الفضاء، تجعلها ترتدي بدلة فضاء، لو عن النباتات ترتدي ملابس مزارع أو عالمة نبات... الخ). حافظ على أساس الشخصية: (A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing [Theme Outfit]).\n" +
+"3. ابتكر شخصية كرتونية (cartoonCharacter) تناسب الموضوع (مثلاً إنسان آلي، نبتة تتحدث، كائن فضائي). **يجب أن يكون الوصف دقيقاً ومفصلاً جداً رياضياً** (مثلاً: A tiny cute 3D Pixar-style [creature] with exactly two big green eyes, wearing [specific clothes], and holding [prop]).\n\n" +
+"يجب أن ترجع النتيجة كـ JSON كالتالي بالضبط:\n" +
+"{\n" +
+"  'teacherOutfit': 'A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing a white scientist coat over a purple shirt, holding a tiny magnifying glass',\n" +
+"  'cartoonCharacter': 'A tiny cute round 3D Pixar-style green talking cactus with exactly three orange flowers on its head, wearing oversized yellow steampunk goggles, and a small red scarf',\n" +
+"  'map': [\n" +
+"    {\n" +
+"      'pageNumber': 1,\n" +
+"      'id': 'p1',\n" +
+"      'title': 'عنوان الصفحة',\n" +
+"      'contentSummary': 'ملخص الفكرة'\n" +
+"    }\n" +
+"  ]\n" +
+"}".replace(/'/g, '"');
 
     let result;
     let retries = 6;
@@ -101,15 +100,15 @@ modeInstructions + "\n" +
     }
 
     const text = result!.response.text();
-    const jsonMatch = text.match(/`json\n([\s\S]*?)\n`/) || text.match(/\[[\s\S]*\]/);
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/);
     
     if (jsonMatch) {
       const jsonStr = jsonMatch[1] || jsonMatch[0];
       const parsed = JSON.parse(jsonStr);
-      return NextResponse.json({ map: parsed });
+      return NextResponse.json(parsed); // Returns { teacherOutfit, cartoonCharacter, map }
     } else {
       const parsed = JSON.parse(text);
-      return NextResponse.json({ map: parsed });
+      return NextResponse.json(parsed);
     }
 
   } catch (error: any) {
