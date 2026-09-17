@@ -1,0 +1,178 @@
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    const contentMapStr = formData.get("contentMap") as string;
+    let characterConfigStr = formData.get("characterConfig") as string;
+    const configObj = JSON.parse(characterConfigStr);
+    
+    const videoMode = formData.get("mode") as string || "cartoon";
+    
+    characterConfigStr += "- **جمل كاملة ومغلقة (ممنوع قطع الكلام):** كل مشهد (فيديو) مدته 10 ثوانٍ يجب أن يحتوي على فكرة كاملة وجملة مغلقة تماماً! يُمنع منعاً باتاً قطع جملة في منتصفها لتكملتها في الفيديو التالي. يجب أن ينتهي كلام الشخصية بنهاية المشهد.\n";
+    characterConfigStr += "- **حوار متبادل وليس تكملة كلام:** هذا حوار تفاعلي (سؤال وجواب أو شرح وتعقيب) بين المعلمة والكرتون. المعلمة تقول جملتها كاملة في مشهدها، والكرتون يرد بجملته كاملة في مشهده. لا تجعلهما يكملان كلام بعضهما أبداً!\n";
+    characterConfigStr += "- **التطابق البصري المطلق (قاعدة صارمة جداً):** أنت الآن تكتب مشاهد لفيديو واحد متصل. لذلك يجب أن تختار ملابس محددة بدقة للمعلمة (مثلاً: purple blazer over a white shirt) وأن تختار شخصية كرتونية واحدة محددة (مثلاً: a cute tiny blue robot) وتستخدم نفس الوصف بالحرف الواحد في خانة الـ Character والـ Scene في **جميع المشاهد** بلا استثناء. يُمنع منعاً باتاً تغيير ملابس المعلمة أو تغيير الكائن الكرتوني بين الفيديوهات!\n";
+    characterConfigStr += "- **طول الحوار (لضبط الـ 10 ثواني بدون أن يُقطع):** لضمان اكتمال الكلام تماماً قبل نهاية الفيديو الـ 10 ثواني، اجعل الحوار من **20 إلى 22 كلمة فقط** في المشهد الواحد! يُمنع منعاً باتاً أن تتخطى 22 كلمة لكي لا تُقطع الكلمة الأخيرة.\n";
+    characterConfigStr += "- **النهاية الديناميكية والانتقال المباشر (ممنوع السكوت نهائياً):** في خانة الـ END والـ ACTION، يُمنع منعاً باتاً أن تجعل الشخصية تنهي كلامها وتقف ساكتة تنتظر! لكي نتجنب أي ثانية سكوت في آخر الفيديو، يجب أن تجعل الشخصية في حركة مستمرة وانتقال درامي. اكتب صراحة بالإنجليزية: (The character speaks continuously until the very last frame without pausing. In the final second, gestures dynamically to the other character to pass the turn seamlessly, creating a perfect cut to the next scene without any silence or standing still).\n" + 
+                          "  2. إذا كان المشهد يحتوي على شخصيتين (المعلمة والكرتون)، والشخصية (أ) تتحدث، فيجب أن تكتب صراحة بالإنجليزية في الـ ACTION أن الشخصية (ب) فمها مغلق تماماً وصامتة: (The other character is completely silent, mouth is firmly closed, just listening).\n";
+    characterConfigStr += "- **الصوت بدون موسيقى في البداية (AUDIO):** في خانة الـ AUDIO، اكتب بوضوح: (Voice starts immediately at 0:00. NO intro music at all. Just clean voice and very low background music).\n";
+    characterConfigStr += "- **سلاسة اللغة وسرعتها للأطفال (مهم جداً):** الحوار يجب أن يكون سريعاً، حيوياً جداً، وفي غاية السهولة والانسيابية ليناسب الأطفال. تحدث بأسلوب دافئ ومترابط (مثل: أهلاً بيكم يا أبطالي.. تفتكروا النبات بيعمل إيه عشان يعيش في البرد؟). لا تستخدم مصطلحات معقدة (مثل: لضمان استمرار حياته) بل استخدم كلمات سهلة جداً (عشان يعيش). إياك أن تكتب كلاماً غير مفهوم أو ملصوقاً ببعضه بشكل غريب! السرعة والحيوية والسهولة هم الأساس.\n";
+    characterConfigStr += "- **التطابق البصري المطلق (إجباري لمنع ظهور شخصيات عشوائية كالأطفال):** لكي لا ينسى برنامج الفيديو شكل الشخصيات ويخترع أشخاصاً عشوائيين، **يجب عليك دمج وصف المعلمة رحاب ووصف الكرتون الفضائي الأزرق معاً ولصقهما بالكامل داخل خانة الـ (character) في كل المشاهد بلا استثناء!** (سواء كان المشهد يركز على المعلمة أو الكرتون). استخدم دائماً هذا الوصف الموحد والثابت للكرتون: (A tiny round blue alien with exactly three green spots on its forehead, wearing oversized yellow steampunk goggles, large black eyes, and a small red scarf). واكتب في النهاية: (Same exact character designs and proportions as the previous scene).\n";
+    characterConfigStr += "- **السر السحري لتطابق الشفاه (قاعدة إجبارية):** في خانة الـ Action لأي شخصية تتحدث، يجب أن تكتب دائماً وبنص العبارة: (Speaking clearly, mouth is moving naturally in perfect sync). هذا ما يضمن نجاح الفيديو!\n";
+    characterConfigStr += "- **الشاشات التعليمية والإظهار البصري (إجباري جداً):** أي شيء تقوله المعلمة أو الكرتون يجب أن يظهر أمامهما فوراً على شاشة ذكية مضيئة (Glowing smart screen) أو كمجسم 3D. يجب أن تصف في الـ Action ما يظهر على الشاشة، ويجب أن يكون متطابقاً 100% مع الكلام الذي يقولونه! ممنوع أن يتحدثوا بدون وسيلة إيضاح بصرية تظهر ما يقولونه بالضبط.\n";
+
+    if (videoMode === "cartoon") {
+      characterConfigStr += "\n- **أسلوب فيلم كرتوني (ابتكار شخصيات مجنونة):** يُمنع استخدام الشخصيات التقليدية. ابتكر في كل مرة شخصيات خيالية، مضحكة، وجديدة تماماً (مثلاً: ديناصور يرتدي بالطو مختبر، قلم يتكلم...). عدد الشخصيات متروك لإبداعك.\n" +
+      "- **أسلوب يوتيوب الكوميدي والحماسي:** إيقاع مجنون وسريع. استخدم المقاطعات الكوميدية والمفاجآت. اجعل المشاهد يضحك ويندهش!\n" +
+      "- **اللهجة (عامية مصرية كوميدية):** عامية مصرية قحة مليئة بالإيفيهات والمصطلحات الدارجة للأطفال.\n" +
+      "- **منع تداخل الأصوات (فصل الحوار):** اكتب حوار كل شخصية في سطر منفصل يبدأ باسمها هكذا (Leo: ) بدون أقواس داخل الحوار.\n" +
+      "- **حركة الكاميرا (Wide Shot):** في خانة (camera) يجب أن تكتب دائماً: (Wide shot showing all characters together. They take turns speaking and moving their mouths).\n";
+    } else if (videoMode === "teacher") {
+      characterConfigStr += "\n- **أسلوب المعلمة الاحترافية:** المتحدثة في كل الفيديوهات هي 'المعلمة رحاب'. تتحدث بلغة واضحة، لذيذة جداً، ومحببة للأطفال.\n" +
+      "- **مصطلحات ثابتة إجبارية:** عندما ترحب المعلمة بالأطفال أو تخاطبهم يجب أن تقول (يا أبطالي) ويُمنع منعاً باتاً استخدام كلمة (أصحابي).\n" +
+      "- **وصف المشهد والشخصية (ثابت لا يتغير أبداً):** \n" +
+      "  - **المكان (Scene):** A beautiful modern podcast studio. Neon purple and pink lighting. A glowing neon sign on the wall says 'Sci.Rehab Elsibai' with an atom symbol. Bookshelves with trailing plants. A wooden desk with a professional microphone, a laptop with an atom logo. There is a glowing smartboard next to the teacher.\n" +
+      "  - **الشخصية (Character):** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing a purple headband, a white silk blouse, and a sleek purple blazer. (Maintain exact same character design and proportions as the previous scene).\n" +
+      "- **اللهجة والمصطلحات (عامية مصرية قحة للأطفال):** يُمنع تماماً استخدام أي كلمات من الفصحى في الحوار! استخدم كلمات عامية مصرية يومية خفيفة جداً يفهمها الأطفال. مثلاً لا تقل (الجو بارد) بل قل (الجو ساقعة أو تلج).\n" +
+      "- **الإظهار البصري:** يجب أن تذكر في الـ Action أن المعلمة تشرح على السبورة الذكية، وأن أي معلومة تقولها تظهر على السبورة بجانبها بوضوح.\n" +
+      "- **حركة الكاميرا والإخراج:** (Medium close-up on the teacher. IMPORTANT: The teacher is facing the camera directly in a full frontal view so her lips are clearly visible to ensure perfect lip-sync. She is explaining engagingly while interacting with the smartboard).\n" +
+      "- **خلو الحوار من الأقواس:** اكتب (المعلمة: ) متبوعاً بكلامها الصافي بدون أي وصف داخل الحوار.\n";
+    } else if (videoMode === "review") {
+      characterConfigStr += "\n- **أسلوب المراجعة الممتعة:** التركيز على استرجاع المعلومات. اطرح أسئلة ذكية ثم أجب عليها مع الشرح الوافي. أسلوب تفاعلي ولذيذ يربط المعلومات القديمة.\n" +
+      "- **اللهجة:** عامية مصرية تفاعلية ومشوقة.\n" +
+      "- **حركة الكاميرا والإخراج:** (Dynamic camera focusing on the presenter and glowing floating UI elements showing the review points).\n" +
+      "- **منع الأقواس في الحوار:** لكتابة اسم المتحدث استخدم اسمه فقط دون تفاصيل داخلية لتسهيل تحويل النص لصوت.\n";
+    } else if (videoMode === "studio") {
+      characterConfigStr += "\n- **وضع الاستوديو المتبادل (الاحترافي):** يعتمد على تبادل المشاهد بين 'المعلمة رحاب' و 'شخصية كرتونية مرحة'. الكرتون يسأل بفضول والمعلمة تجاوب، أو العكس، بحوار ممتع جداً للأطفال.\n" +
+      "- **مصطلحات ثابتة إجبارية:** عندما تخاطب المعلمة الكرتون أو الأطفال تقول (يا أبطالي) وممنوع قول (أصحابي). وعندما تتحدث الشخصية الكرتونية مع المعلمة أو تناديها يجب أن تقول دائماً (يا مس رحاب).\n" +
+      "- **وصف الاستوديو الثابت للمعلمة والكرتون (صورة ثابتة وجميلة جداً):** \n" +
+      "  - **المكان:** A beautiful modern podcast studio. Neon purple lighting. A glowing neon sign says 'Sci.Rehab Elsibai'. Bookshelves with trailing plants. A wooden desk with a professional microphone and a laptop. **A tiny cute cartoon character is standing/sitting ON the desk next to the laptop, looking at the teacher.**\n" +
+      "  - **الشخصية:** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, wearing a purple headband, a white silk blouse, and a sleek purple blazer. (Maintain exact same character design and proportions as the previous scene).\n" +
+      "- **الشخصية الكرتونية (الصغنوتة ودور الطالب المصدوم):** ابتكر شخصية كرتونية خيالية صغيرة الحجم تقف على المكتب. هذه الشخصية يجب دائماً أن تلعب دور الطالب المتفاجئ أو الذي لا يفهم بسهولة! يجب أن تسأل المعلمة بفضول شديد أو صدمة، وتستخدم صراحة عبارات مثل (أنا مش فاهم يا مس رحاب!) أو (إزاي ده بيحصل؟)، لكي تشرح له المعلمة بتبسيط شديد.\n" +
+      "- **توزيع المشاهد (متحدث واحد فقط في كل فيديو) ونظرات الكاميرا والشاشة:** \n" +
+      "  - المشهد الفردي (1, 3, 5): هذا الفيديو مخصص **للمعلمة فقط**. الكاميرا: (Medium shot of the teacher. IMPORTANT for lip-sync: The teacher is facing the camera directly in a full frontal view. Her face and lips must be clearly visible from the front to ensure perfect lip-sync. A HUGE glowing smart screen is clearly visible beside her, completely unobstructed. The screen is displaying exactly what she is saying right now, e.g. if she says trees fall, the screen shows trees falling). **ولحل مشكلة سرقة الشفاه في برامج الفيديو، اكتب صراحة في وصف هذا المشهد أن الكرتون يعطي ظهره للكاميرا تماماً لكي لا يظهر فمه: (The cartoon character is facing completely away from the camera in a 100% back view. Only the back of its head is visible, and its mouth cannot be seen at all).** في هذا المشهد اكتب حواراً للمعلمة فقط لا غير.\n" +
+      "  - المشهد الزوجي (2, 4, 6): هذا الفيديو مخصص **للكرتون فقط**. الكاميرا: (Medium shot focusing on the tiny animated cartoon character on the desk. The teacher is seen from behind in an Over-The-Shoulder shot. The back of the teacher's head and her hair are visible, but her face is completely hidden from the camera, so she is just listening. A HUGE glowing smart screen is clearly visible in the background displaying exactly what he is saying right now). في هذا المشهد اكتب حواراً للكرتون فقط لا غير. يُمنع كتابة أي حوار للمعلمة هنا.\n" +
+      "- استمر في هذا التبادل الصارم (فيديو للمعلمة -> فيديو للكرتون -> فيديو للمعلمة -> فيديو للكرتون).\n" +
+      "- **اللهجة والمصطلحات (عامية مصرية قحة للأطفال):** يُمنع تماماً استخدام أي كلمات من الفصحى في الحوار! استخدم كلمات عامية مصرية يومية خفيفة جداً يفهمها الأطفال. مثلاً لا تقل (الجو بارد أو شديد البرودة) بل قل (الجو ساقعة أو تلج)، ولا تقل (ماذا يحدث) بل قل (إيه اللي بيحصل). تحدثوا كأنهم أطفال مصريين في الشارع أو المدرسة.\n" +
+      "- **قاعدة الحوار الثابتة وممنوع الترحيب المتكرر:** الحوار يُكتب لمتحدث واحد فقط في المشهد الواحد. اكتب اسم المتحدث نقطتين ثم كلامه. يُمنع دمج شخصيتين في حوار واحد. وملاحظة هامة جداً: **يُمنع الترحيب (أهلاً بيكم يا أبطالي) إلا في المشهد الأول فقط من الدرس، وفي باقي المشاهد ادخلوا في صلب الشرح فوراً.**\n";
+    }
+
+    characterConfigStr += "\n- **ممنوع الوداع نهائياً في الحوار:** يُمنع منعاً باتاً توديع المشاهدين (مثل: مع السلامة) في أي مشهد. نحن سنقوم بإضافة الوداع برمجياً في النهاية.";
+    
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return NextResponse.json({ error: "No API key" }, { status: 500 });
+
+    const contentMap = JSON.parse(contentMapStr);
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
+
+    const chunk = contentMap;
+    const startIndex = parseInt(formData.get("startIndex") as string || "1");
+    const lastContext = formData.get("lastContext") as string || "";
+    let videoCounter = startIndex;
+
+    const prompt = 
+"أنت مخرج ذكي يكتب Prompts للفيديوهات التعليمية باستخدام الذكاء الاصطناعي.\n" +
+"الرجاء استخراج مشاهد للفيديوهات بناءً على الخريطة التالية:\n" +
+JSON.stringify(chunk, null, 2) + "\n\n" +
+"إعدادات الشخصية والأسلوب:\n" +
+characterConfigStr + "\n\n" +
+(lastContext ? "معلومات هامة جداً عن نهاية المشهد السابق لكي يكتمل عليه المشهد الحالي:\n" + lastContext + "\n\n" : "") +
+"المطلوب:\n" +
+"بناء Prompts إبداعية للذكاء الاصطناعي لتوليد الفيديو.\n" +
+"كل مشهد فيديو يجب أن يكون ممتعاً. **قم بتوليد أقل عدد ممكن من المشاهد يكفي لشرح المعلومات المتوفرة فقط دون اختصار ودون تكرار.** إذا كانت المعلومات في النص قليلة، فيكفي مشهد واحد أو مشهدين. يُمنع منعاً باتاً زيادة عدد المشاهد أو تكرار الكلام لمجرد الإطالة! اشرح الموجود فقط.\n" +
+"الترقيم يبدأ من " + videoCounter + ".\n" +
+"- مدة كل فيديو: 10 ثوانٍ بالضبط.\n" +
+"تعليمات هامة جداً لنجاح الفيديو واحترافيته:\n" +
+"1. لمنع (القطعة أو القفزة) بين المشاهد: يجب أن يكون وصف الكاميرا والمكان متصلاً تماماً وبسلاسة بالمشهد السابق (Seamless transition). يجب أن يبدأ المشهد الجديد من نفس الزاوية التي انتهى بها السابق بدون أي انتقال مفاجئ.\n" +
+"2. لمنع حركة الفك العشوائية (Lip-sync bleeding): في خانة الـ action، يجب أن توضح بدقة صارمة من يتحدث ومن يستمع. مثال: (الشخصية 'أ' تتحدث وتحرك فمها، بينما الشخصية 'ب' تقف ثابتة في مكانها تستمع وفمها مغلق تماماً بدون أي حركة). يجب التأكيد على إغلاق فم الشخصية المستمعة وعدم تداخل الشخصيات.\n" +
+"3. لمنع كلام شخصيتين في نفس الوقت: في خانة الـ camera، عندما تتحدث شخصية معينة، اجعل الكاميرا تقترب منها (Close-up on speaker) لكي تظهر هي فقط بوضوح وهي تتحدث، مما يمنع البرنامج من تحريك فم شخصية أخرى بالخطأ.\n" +
+"4. **لغة الإخراج وأسلوب الرسم (مهم جداً جداً):** برامج توليد الفيديو أجنبية ولا تفهم الأسلوب الفني إلا بالإنجليزية. لذلك يجب كتابة الوصف في خانات (scene, character, action, camera) باللغة الإنجليزية! ويجب أن تبدأ وصف الشخصية والمكان دائماً بهذه الكلمات: (3D Animation Pixar/Disney Style, cute stylized cartoon character, NOT real humans) لكي لا يولد صوراً لأشخاص حقيقيين أبداً.\n" +
+"يجب أن تكون المخرجات بصيغة JSON صالح (Valid JSON) فقط وبدون أي نصوص إضافية خارج المصفوفة:\n" +
+"تحذير صارم جداً: تأكد من إغلاق جميع الأقواس } و ] بشكل صحيح، ولا تترك أي فواصل زائدة (Trailing commas) في نهاية المصفوفة أو الكائنات لكي لا يتعطل النظام.\n" +
+"[\n" +
+"  {\n" +
+"    \"id\": \"unique-id\",\n" +
+"    \"videoNumber\": " + videoCounter + ",\n" +
+"    \"pageNumber\": 1,\n" +
+"    \"partName\": \"عنوان\",\n" +
+"    \"duration\": \"10 seconds\",\n" +
+"    \"startContinuity\": \"كيف بدأ\",\n" +
+"    \"scene\": \"المشهد\",\n" +
+"    \"character\": \"الشخصيات\",\n" +
+"    \"action\": \"الحركة\",\n" +
+"    \"camera\": \"الكاميرا\",\n" +
+"    \"dialogue\": \"[اسم الشخصية الأولى]: كلامها\\n[اسم الشخصية الثانية]: كلامها\\n[اسم الشخصية الثالثة]: كلامها (يجب فصل كلام كل شخصية بـ \\\\n)\",\n" +
+"    \"audio\": \"الصوت\",\n" +
+"    \"endContinuity\": \"كيف انتهى\",\n" +
+"    \"continuityToNext\": \"لربط المشهد القادم\"\n" +
+"  }\n" +
+"]";
+
+    let result;
+    let retries = 6;
+    while (retries > 0) {
+      try {
+        result = await model.generateContent({
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: 8192,
+            temperature: 0.2,
+            responseMimeType: "application/json"
+          }
+        });
+        break;
+      } catch (err: any) {
+        retries--;
+        if (retries === 0) throw err;
+        const status = err.status || 500;
+        if (status === 429) {
+          console.log("Generate: 429 Rate Limit hit, waiting 30s... " + retries + " attempts left.");
+          await new Promise(resolve => setTimeout(resolve, 30000));
+        } else {
+          console.log("Generate: " + status + " error caught, waiting 15s... " + retries + " attempts left.");
+          await new Promise(resolve => setTimeout(resolve, 15000));
+        }
+      }
+    }
+
+    const text = result.response.text();
+    let parsed = [];
+    const jsonMatch = text.match(/`json\n([\s\S]*?)\n`/);
+    if (jsonMatch) {
+      parsed = JSON.parse(jsonMatch[1]);
+    } else {
+      parsed = JSON.parse(text);
+    }
+    
+    if (!Array.isArray(parsed)) parsed = [];
+
+    const enhancedPrompts = parsed.map((p: any, index: number) => {
+      if (configObj.movieMode && configObj.isFinalScene && index === parsed.length - 1) {
+        p.dialogue += "\n[الشخصيات بصوت واحد]: وبكده خلصنا درس النهاردة، مع السلامة يا أصحابي!";
+      }
+
+      const fullText = 
+        "VIDEO " + String(p.videoNumber).padStart(2, "0") + " - PAGE " + p.pageNumber + " - " + p.partName + "\n" +
+        "Duration: " + p.duration + "\n\n" +
+        "START:\n" + p.startContinuity + "\n\n" +
+        "SCENE:\n" + p.scene + "\n\n" +
+        "CHARACTER:\n" + p.character + "\n\n" +
+        "ACTION:\n" + p.action + "\n\n" +
+        "CAMERA:\n" + p.camera + "\n\n" +
+        "DIALOGUE:\n" + p.dialogue + "\n\n" +
+        "AUDIO:\n" + p.audio + "\n\n" +
+        "END:\n" + p.endContinuity + "\n\n" +
+        p.continuityToNext;
+
+      return { ...p, fullText };
+    });
+
+    return NextResponse.json({ prompts: enhancedPrompts });
+
+  } catch (error: any) {
+    console.error("Error generating prompts:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
