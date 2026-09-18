@@ -110,11 +110,12 @@ characterConfigStr + "\n\n" +
 "  }\n" +
 "]";
 
-    let result;
+    let parsed: any[] = [];
     let retries = 3;
+    
     while (retries > 0) {
       try {
-        result = await model.generateContent({
+        const result = await model.generateContent({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
             maxOutputTokens: 8192,
@@ -122,59 +123,64 @@ characterConfigStr + "\n\n" +
             responseMimeType: "application/json"
           }
         });
+        
+        let text = result.response.text();
+        if (!text || text.trim() === "") {
+          throw new Error("AI returned empty text");
+        }
+
+        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/) || text.match(/\[[\s\S]*\]/);
+        let rawJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
+
+        try {
+          parsed = JSON.parse(rawJson);
+        } catch (e: any) {
+          console.log("Generate JSON truncated or invalid. Attempting recovery...");
+          let recoveredStr = rawJson.trim();
+          
+          if (recoveredStr.endsWith('"')) {
+            recoveredStr += '}';
+          } else if (!recoveredStr.endsWith('}') && !recoveredStr.endsWith(']')) {
+            recoveredStr = recoveredStr.replace(/,[^,]*$/, ''); 
+            const openBrackets = (recoveredStr.match(/\[/g) || []).length;
+            const closeBrackets = (recoveredStr.match(/\]/g) || []).length;
+            const openBraces = (recoveredStr.match(/\{/g) || []).length;
+            const closeBraces = (recoveredStr.match(/\}/g) || []).length;
+            
+            for (let i = 0; i < (openBraces - closeBraces); i++) recoveredStr += '}';
+            for (let i = 0; i < (openBrackets - closeBrackets); i++) recoveredStr += ']';
+            
+            if (!recoveredStr.endsWith('}')) {
+               recoveredStr += '}';
+            }
+          }
+          parsed = JSON.parse(recoveredStr);
+        }
+        
+        if (!Array.isArray(parsed)) {
+            parsed = [parsed];
+        }
+        
+        // Successfully parsed
         break; 
+
       } catch (e: any) {
         retries--;
-        const status = e.status || e.response?.status;
+        if (retries === 0) {
+            console.error("Failed to generate/parse JSON after all retries. Last error:", e);
+            throw e;
+        }
+        const status = e.status || e.response?.status || 500;
         if (status === 429) {
           console.log("Generate: 429 Rate Limit hit, waiting 30s... " + retries + " attempts left.");
           await new Promise(resolve => setTimeout(resolve, 30000));
         } else {
-          console.log("Generate: " + status + " error caught, waiting 15s... " + retries + " attempts left.");
+          console.log("Generate: " + status + " or parse error caught, waiting 15s... " + retries + " attempts left. Error:", e.message);
           await new Promise(resolve => setTimeout(resolve, 15000));
         }
       }
     }
 
-    let text = result.response.text();
-    let parsed = [];
-    
-    // Auto-fix truncated JSON if it ends abruptly
-    if (!text.trim().endsWith("]") && !text.trim().endsWith("}")) {
-      console.log("JSON appears truncated, attempting auto-fix...");
-      text = text.trim();
-      if (text.lastIndexOf("}") > text.lastIndexOf("{")) {
-        text += "\n]"; // Close array if object was closed
-      } else {
-        text += "\n}\n]"; // Close object and array
-      }
-    }
-
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/`json\n([\s\S]*?)\n`/);
-    try {
-      if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[1]);
-      } else {
-        parsed = JSON.parse(text);
-      }
-    } catch (parseError) {
-      console.error("Failed to parse JSON. Raw text:", text);
-      // Attempt aggressive sanitization
-      let sanitized = text.replace(/```json/g, "").replace(/```/g, "").trim();
-      const firstBracket = sanitized.indexOf("[");
-      const lastBracket = sanitized.lastIndexOf("]");
-      if (firstBracket !== -1 && lastBracket !== -1) {
-        sanitized = sanitized.substring(firstBracket, lastBracket + 1);
-        try {
-          parsed = JSON.parse(sanitized);
-        } catch (e) {
-          throw new Error("Aggressive JSON recovery failed.");
-        }
-      } else {
-         throw parseError;
-      }
-    }
-    
     if (!Array.isArray(parsed)) parsed = [];
 
     const enhancedPrompts = parsed.map((p: any, index: number) => {

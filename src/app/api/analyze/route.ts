@@ -73,11 +73,11 @@ modeInstructions + "\n" +
 "  ]\n" +
 "}".replace(/'/g, '"');
 
-    let result;
+    let parsed: any;
     let retries = 6;
     while (retries > 0) {
       try {
-        result = await model.generateContent({
+        const result = await model.generateContent({
           contents: [{ role: "user", parts: [
             { text: prompt },
             { inlineData: { data: base64Data, mimeType: "application/pdf" } }
@@ -88,34 +88,20 @@ modeInstructions + "\n" +
             responseMimeType: "application/json"
           }
         });
-        break;
-      } catch (err: any) {
-        retries--;
-        if (retries === 0) throw err;
-        const status = err.status || 500;
-        if (status === 429) {
-          console.log("Analyze: 429 Rate Limit hit, waiting 60s... " + retries + " attempts left.");
-          await new Promise(resolve => setTimeout(resolve, 60000));
-        } else {
-          console.log("Analyze: " + status + " error caught, waiting 15s... " + retries + " attempts left.");
-          await new Promise(resolve => setTimeout(resolve, 15000));
+        
+        const text = result.response.text();
+        if (!text || text.trim() === "") {
+            throw new Error("AI returned empty text");
         }
-      }
-    }
 
-    const text = result!.response.text();
-    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/);
-    
-    let rawJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
+        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/);
+        let rawJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
 
-    // Aggressive JSON recovery if truncated
-    const parseWithRecovery = (str: string) => {
-      try {
-        return JSON.parse(str);
-      } catch (e: any) {
-        if (e.message.includes('Expected') || e.message.includes('Unexpected') || e.message.includes('JSON')) {
+        try {
+          parsed = JSON.parse(rawJson);
+        } catch (e: any) {
           console.log("Analyze JSON truncated. Attempting aggressive recovery...");
-          let recoveredStr = str.trim();
+          let recoveredStr = rawJson.trim();
           
           if (recoveredStr.endsWith('"')) {
             recoveredStr += '}';
@@ -133,18 +119,24 @@ modeInstructions + "\n" +
                recoveredStr += '}';
             }
           }
-          try {
-            return JSON.parse(recoveredStr);
-          } catch (recoveryErr) {
-            console.error("Recovery failed, string was:", recoveredStr);
-            throw e; 
-          }
+          parsed = JSON.parse(recoveredStr);
         }
-        throw e;
-      }
-    };
 
-    const parsed = parseWithRecovery(rawJson);
+        break;
+      } catch (err: any) {
+        retries--;
+        if (retries === 0) throw err;
+        const status = err.status || 500;
+        if (status === 429) {
+          console.log("Analyze: 429 Rate Limit hit, waiting 60s... " + retries + " attempts left.");
+          await new Promise(resolve => setTimeout(resolve, 60000));
+        } else {
+          console.log("Analyze: " + status + " or parse error caught, waiting 15s... " + retries + " attempts left.");
+          await new Promise(resolve => setTimeout(resolve, 15000));
+        }
+      }
+    }
+
     return NextResponse.json(parsed);
 
   } catch (error: any) {
