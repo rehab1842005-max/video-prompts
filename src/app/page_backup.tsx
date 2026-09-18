@@ -29,7 +29,6 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [contentMap, setContentMap] = useState<ContentPage[] | null>(null);
   const [prompts, setPrompts] = useState<VideoPrompt[] | null>(null);
-  const [isContinuing, setIsContinuing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
   const continueFileInputRef = React.useRef<HTMLInputElement>(null);
@@ -129,7 +128,6 @@ export default function Home() {
 
       setSelectedFile(fileToProcess);
       setContentMap(null);
-      setIsContinuing(isContinuing);
       if (!isContinuing) {
         setPrompts(null);
       }
@@ -188,12 +186,11 @@ export default function Home() {
     if (!selectedFile || !contentMap) return;
     
     setIsGenerating(true);
-    const startingPrompts = isContinuing && prompts ? [...prompts] : [];
-    if (!isContinuing) setPrompts([]); 
+    setPrompts([]); // Clear previous prompts
     
     try {
       const allNewPrompts: VideoPrompt[] = [];
-      let currentVideoCounter = startingPrompts.length + 1;
+      let currentVideoCounter = 1;
       let lastContext = characterConfig.previousStoryContext || "";
       const chunkSize = 1; // Process 1 page at a time to prevent hitting Google AI's 8192 token output limit and causing JSON truncation
       
@@ -226,7 +223,7 @@ export default function Home() {
         
         const data = await res.json();
         allNewPrompts.push(...data.prompts);
-        setPrompts([...startingPrompts, ...allNewPrompts]); // Progressive UI update!
+        setPrompts([...allNewPrompts]); // Progressive UI update!
         
         currentVideoCounter += data.prompts.length;
         if (data.prompts.length > 0) {
