@@ -24,8 +24,18 @@ export default function FileUpload({ onFileSelect, isAnalyzing }: FileUploadProp
 
   const handleAnalyzeClick = () => {
     if (selectedFile) {
-      const start = startPage ? parseInt(startPage) : undefined;
-      const end = endPage ? parseInt(endPage) : undefined;
+      if (!startPage || !endPage) {
+        alert("يرجى تحديد أرقام الصفحات (من وإلى) حتى لو كانت صفحة واحدة (مثلاً من 41 إلى 41) لتجنب الأعطال.");
+        return;
+      }
+      const start = parseInt(startPage);
+      const end = parseInt(endPage);
+      
+      if (isNaN(start) || isNaN(end) || start < 1 || end < start) {
+        alert("أرقام الصفحات غير صحيحة.");
+        return;
+      }
+      
       onFileSelect(selectedFile, start, end);
     }
   };

@@ -106,14 +106,46 @@ modeInstructions + "\n" +
     const text = result!.response.text();
     const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/);
     
-    if (jsonMatch) {
-      const jsonStr = jsonMatch[1] || jsonMatch[0];
-      const parsed = JSON.parse(jsonStr);
-      return NextResponse.json(parsed); // Returns { teacherOutfit, cartoonCharacter, map }
-    } else {
-      const parsed = JSON.parse(text);
-      return NextResponse.json(parsed);
-    }
+    let rawJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
+
+    // Aggressive JSON recovery if truncated
+    const parseWithRecovery = (str: string) => {
+      try {
+        return JSON.parse(str);
+      } catch (e: any) {
+        if (e.message.includes('Expected') || e.message.includes('Unexpected') || e.message.includes('JSON')) {
+          console.log("Analyze JSON truncated. Attempting aggressive recovery...");
+          let recoveredStr = str.trim();
+          
+          if (recoveredStr.endsWith('"')) {
+            recoveredStr += '}';
+          } else if (!recoveredStr.endsWith('}') && !recoveredStr.endsWith(']')) {
+            recoveredStr = recoveredStr.replace(/,[^,]*$/, ''); 
+            const openBrackets = (recoveredStr.match(/\[/g) || []).length;
+            const closeBrackets = (recoveredStr.match(/\]/g) || []).length;
+            const openBraces = (recoveredStr.match(/\{/g) || []).length;
+            const closeBraces = (recoveredStr.match(/\}/g) || []).length;
+            
+            for (let i = 0; i < (openBraces - closeBraces); i++) recoveredStr += '}';
+            for (let i = 0; i < (openBrackets - closeBrackets); i++) recoveredStr += ']';
+            
+            if (!recoveredStr.endsWith('}')) {
+               recoveredStr += '}';
+            }
+          }
+          try {
+            return JSON.parse(recoveredStr);
+          } catch (recoveryErr) {
+            console.error("Recovery failed, string was:", recoveredStr);
+            throw e; 
+          }
+        }
+        throw e;
+      }
+    };
+
+    const parsed = parseWithRecovery(rawJson);
+    return NextResponse.json(parsed);
 
   } catch (error: any) {
     console.error("Error analyzing PDF:", error);
