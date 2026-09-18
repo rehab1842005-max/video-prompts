@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     if (videoMode === "cartoon") {
       characterConfigStr += "\n- **أسلوب فيلم كرتوني (حوار تفاعلي):** المشهد عبارة عن حوار تفاعلي متبادل بين الشخصيتين الكرتونيتين فقط. يفهمون بعضهم البعض، أحدهما يشرح والآخر يسأل أو يندهش.\n" +
-      "- **المكان (Scene):** A magical, vibrant, and highly detailed 3D Pixar-style animated world suitable for the topic. No human elements, just pure cartoon fantasy.\n" +
+      "- **المكان (Scene):** A magical, vibrant, and highly detailed 3D Pixar-style animated world suitable for the topic. In the background, there is a glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The words \"Sci.Rehab Elsibai\" must be spelled perfectly. No human elements, just pure cartoon fantasy.\n" +
       "- **أسلوب يوتيوب الكوميدي والحماسي:** إيقاع مجنون وسريع. استخدم المقاطعات الكوميدية والمفاجآت. اجعل المشاهد يضحك ويندهش!\n" +
       "- **اللهجة (عامية مصرية كوميدية):** عامية مصرية قحة مليئة بالإيفيهات والمصطلحات الدارجة للأطفال.\n" +
       "- **منع تداخل الأصوات (فصل الحوار):** اكتب حوار متحدث واحد فقط في المشهد الواحد. لا تدمج شخصيتين في نفس المشهد. اجعلهما يتبادلان المشاهد (مشهد للأول ثم مشهد للثاني).\n" +
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       characterConfigStr += "\n- **أسلوب المعلمة الاحترافية:** المتحدثة في كل الفيديوهات هي 'المعلمة رحاب'. تتحدث بلغة واضحة، لذيذة جداً، ومحببة للأطفال.\n" +
       "- **مصطلحات ثابتة إجبارية:** عندما ترحب المعلمة بالأطفال أو تخاطبهم يجب أن تقول (يا أبطالي) ويُمنع منعاً باتاً استخدام كلمة (أصحابي).\n" +
       "- **وصف المشهد والشخصية (ثابت لا يتغير أبداً):** \n" +
-      "  - **المكان (Scene):** A futuristic, bright, and engaging smart classroom with holographic educational displays, neon lights, and a huge interactive glowing smartboard.\n" +
+      "  - **المكان (Scene):** A futuristic, bright, and engaging smart classroom with holographic educational displays, neon lights, and a huge interactive glowing smartboard. On the wall, there is a glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The words \"Sci.Rehab Elsibai\" must be spelled perfectly.\n" +
       "  - **الشخصية (Character):** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, sitting on her chair behind the wooden desk, wearing " + (configObj.teacherOutfit || "a purple headband, a white silk blouse, and a sleek purple blazer") + ". (Maintain exact same character design and proportions as the previous scene).\n" +
       "- **اللهجة والمصطلحات (عامية مصرية قحة للأطفال):** يُمنع تماماً استخدام أي كلمات من الفصحى في الحوار! استخدم كلمات عامية مصرية يومية خفيفة جداً يفهمها الأطفال. مثلاً لا تقل (الجو بارد) بل قل (الجو ساقعة أو تلج).\n" +
       "- **الإظهار البصري:** يجب أن تذكر في الـ Action أن المعلمة تشرح على السبورة الذكية، وأن أي معلومة تقولها تظهر على السبورة بجانبها بوضوح.\n" +
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
     } else if (videoMode === "review") {
       characterConfigStr += "\n- **أسلوب المراجعة الممتعة:** التركيز على استرجاع المعلومات. اطرح أسئلة ذكية ثم أجب عليها مع الشرح الوافي. أسلوب تفاعلي ولذيذ يربط المعلومات القديمة.\n" +
       "- **اللهجة:** عامية مصرية تفاعلية ومشوقة.\n" +
+      "- **المكان (Scene):** A dynamic abstract educational studio. In the background, there is a glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The words \"Sci.Rehab Elsibai\" must be spelled perfectly.\n" +
       "- **حركة الكاميرا والإخراج:** (Dynamic camera focusing on the presenter and glowing floating UI elements showing the review points).\n" +
       "- **منع الأقواس في الحوار:** لكتابة اسم المتحدث استخدم اسمه فقط دون تفاصيل داخلية لتسهيل تحويل النص لصوت.\n";
     } else if (videoMode === "studio") {
