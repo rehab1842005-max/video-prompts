@@ -41,14 +41,13 @@ export default function FileUpload({ onFileSelect, isAnalyzing }: FileUploadProp
           ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
-          id="pdf-upload"
         />
-        <label
-          htmlFor="pdf-upload"
+        <button
+          onClick={() => fileInputRef.current?.click()}
           className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition-colors"
         >
-          اختيار ملف PDF
-        </label>
+          إرفاق ملف PDF
+        </button>
         
         {selectedFile && (
           <div className="mt-4 text-center">
