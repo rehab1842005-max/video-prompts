@@ -33,17 +33,23 @@ export default function Home() {
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
   const continueFileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // تحميل المشاريع المحفوظة عند فتح الصفحة
+  // تحميل المشاريع المحفوظة من الهارد ديسك عند فتح الصفحة
   useEffect(() => {
-    const saved = localStorage.getItem("pdf-video-prompts-saved");
-    if (saved) {
+    const fetchProjects = async () => {
       try {
-        setSavedProjects(JSON.parse(saved));
-      } catch (e) {}
-    }
+        const res = await fetch("/api/projects");
+        if (res.ok) {
+          const data = await res.json();
+          setSavedProjects(data.projects);
+        }
+      } catch (e) {
+        console.error("Failed to load projects", e);
+      }
+    };
+    fetchProjects();
   }, []);
 
-  const saveCurrentProject = () => {
+  const saveCurrentProject = async () => {
     if (!prompts || prompts.length === 0) return;
     const projectName = selectedFile ? selectedFile.name : `مشروع ${new Date().toLocaleTimeString()}`;
     const newProject: SavedProject = {
@@ -54,10 +60,19 @@ export default function Home() {
       config: { ...characterConfig },
     };
     
-    const updatedProjects = [newProject, ...savedProjects];
-    setSavedProjects(updatedProjects);
-    localStorage.setItem("pdf-video-prompts-saved", JSON.stringify(updatedProjects));
-    alert("تم حفظ النتائج بنجاح في متصفحك! يمكنك العودة إليها في أي وقت من قائمة 'مشاريعي السابقة'.");
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newProject)
+      });
+      if (res.ok) {
+        setSavedProjects([newProject, ...savedProjects]);
+        alert("تم حفظ النتائج بنجاح وإلى الأبد على الكمبيوتر! يمكنك العودة إليها في أي وقت من قائمة 'مشاريعي السابقة'.");
+      }
+    } catch (e) {
+      alert("حدث خطأ أثناء الحفظ على الجهاز.");
+    }
   };
 
   const loadProject = (project: SavedProject) => {
@@ -69,11 +84,16 @@ export default function Home() {
     alert(`تم تحميل ${project.name}`);
   };
 
-  const deleteProject = (id: string, e: React.MouseEvent) => {
+  const deleteProject = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const updated = savedProjects.filter(p => p.id !== id);
-    setSavedProjects(updated);
-    localStorage.setItem("pdf-video-prompts-saved", JSON.stringify(updated));
+    try {
+      const res = await fetch(`/api/projects?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setSavedProjects(savedProjects.filter(p => p.id !== id));
+      }
+    } catch (e) {
+      console.error("Failed to delete project", e);
+    }
   };
 
   const handleContinueLesson = (e: React.ChangeEvent<HTMLInputElement>) => {
