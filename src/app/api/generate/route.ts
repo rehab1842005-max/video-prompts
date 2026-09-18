@@ -200,6 +200,9 @@ characterConfigStr + "\n\n" +
     if (!Array.isArray(parsed)) parsed = [];
 
     const enhancedPrompts = parsed.map((p: any, index: number) => {
+      // Override LLM ID with a guaranteed unique ID
+      p.id = `prompt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}_${index}`;
+
       if (configObj.movieMode && configObj.isFinalScene && index === parsed.length - 1) {
         p.dialogue += "\n[الشخصيات بصوت واحد]: وبكده خلصنا درس النهاردة، مع السلامة يا أصحابي!";
       }
