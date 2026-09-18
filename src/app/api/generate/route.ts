@@ -129,8 +129,15 @@ characterConfigStr + "\n\n" +
           throw new Error("AI returned empty text");
         }
 
-        const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/\{[\s\S]*\}/) || text.match(/\[[\s\S]*\]/);
-        let rawJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
+        let rawJson = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+
+        // If the AI outputted something before the JSON array, like "Here are your prompts: [...]"
+        if (!rawJson.startsWith("[") && rawJson.includes("[")) {
+            rawJson = rawJson.substring(rawJson.indexOf("["));
+        }
+        if (!rawJson.endsWith("]") && rawJson.lastIndexOf("]") !== -1) {
+            rawJson = rawJson.substring(0, rawJson.lastIndexOf("]") + 1);
+        }
 
         try {
           parsed = JSON.parse(rawJson);
