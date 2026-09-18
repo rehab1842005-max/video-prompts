@@ -76,8 +76,24 @@ export default function PromptResultList({ prompts, onRegenerate }: PromptResult
               </div>
             </div>
             
-            <div className="p-4 bg-white whitespace-pre-wrap font-mono text-sm text-gray-800" dir="auto">
-              {prompt.fullText}
+            <div className="p-4 bg-white font-mono text-sm text-gray-800 text-left" dir="ltr">
+              <p className="font-bold text-blue-800">SCENE:</p>
+              <p className="whitespace-pre-wrap mb-4">{prompt.scene}</p>
+
+              <p className="font-bold text-blue-800">CHARACTER:</p>
+              <p className="whitespace-pre-wrap mb-4">{prompt.character}</p>
+
+              <p className="font-bold text-blue-800">ACTION:</p>
+              <p className="whitespace-pre-wrap mb-4">{prompt.action}</p>
+
+              <p className="font-bold text-blue-800">CAMERA:</p>
+              <p className="whitespace-pre-wrap mb-4">{prompt.camera}</p>
+
+              <p className="font-bold text-green-700">DIALOGUE:</p>
+              <p className="whitespace-pre-wrap mb-4 text-right text-lg font-sans" dir="rtl">{prompt.dialogue}</p>
+
+              <p className="font-bold text-blue-800">AUDIO:</p>
+              <p className="whitespace-pre-wrap mb-4">{prompt.audio}</p>
             </div>
           </div>
         ))}
