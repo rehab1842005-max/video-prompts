@@ -12,6 +12,7 @@ interface SavedProject {
   name: string;
   date: string;
   prompts: VideoPrompt[];
+  config?: CharacterConfig;
 }
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
   const [prompts, setPrompts] = useState<VideoPrompt[] | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
+  const continueFileInputRef = React.useRef<HTMLInputElement>(null);
 
   // تحميل المشاريع المحفوظة عند فتح الصفحة
   useEffect(() => {
@@ -49,17 +51,21 @@ export default function Home() {
       name: projectName,
       date: new Date().toLocaleString("ar-EG"),
       prompts: prompts,
+      config: { ...characterConfig },
     };
     
     const updatedProjects = [newProject, ...savedProjects];
     setSavedProjects(updatedProjects);
     localStorage.setItem("pdf-video-prompts-saved", JSON.stringify(updatedProjects));
-    alert("تم حفظ النتيجة بنجاح في متصفحك! يمكنك العودة إليها في أي وقت من قائمة 'مشاريعي السابقة'.");
+    alert("تم حفظ النتائج بنجاح في متصفحك! يمكنك العودة إليها في أي وقت من قائمة 'مشاريعي السابقة'.");
   };
 
   const loadProject = (project: SavedProject) => {
     setPrompts(project.prompts);
-    setContentMap(null); // نخفي الـ Map لأننا حملنا النتيجة النهائية
+    if (project.config) {
+      setCharacterConfig(project.config);
+    }
+    setContentMap(null); // نخفي الـ Map لأننا نحمل النتائج النهائية
     alert(`تم تحميل ${project.name}`);
   };
 
@@ -70,7 +76,13 @@ export default function Home() {
     localStorage.setItem("pdf-video-prompts-saved", JSON.stringify(updated));
   };
 
-  const handleFileSelect = async (originalFile: File, startPage?: number, endPage?: number) => {
+  const handleContinueLesson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileSelect(e.target.files[0], undefined, undefined, true);
+    }
+  };
+
+  const handleFileSelect = async (originalFile: File, startPage?: number, endPage?: number, isContinuing: boolean = false) => {
     let fileToProcess = originalFile;
     
     setIsAnalyzing(true);
@@ -96,7 +108,9 @@ export default function Home() {
 
       setSelectedFile(fileToProcess);
       setContentMap(null);
-      setPrompts(null);
+      if (!isContinuing) {
+        setPrompts(null);
+      }
 
       const formData = new FormData();
       formData.append("file", fileToProcess);
@@ -114,13 +128,27 @@ export default function Home() {
       const data = await res.json();
       setContentMap(data.map);
       
-      // Update character config with dynamically invented characters for this specific document
-      if (data.teacherOutfit || data.cartoonCharacter) {
-        setCharacterConfig(prev => ({
-          ...prev,
-          teacherOutfit: data.teacherOutfit || prev.teacherOutfit,
-          cartoonCharacter: data.cartoonCharacter || prev.cartoonCharacter
-        }));
+      // Update character config
+      if (isContinuing) {
+        // Keep existing characters! Just link the story context.
+        if (prompts && prompts.length > 0) {
+          const lastPrompt = prompts[prompts.length - 1];
+          setCharacterConfig(prev => ({
+            ...prev,
+            previousStoryContext: `The last video ended with: ${lastPrompt.endContinuity}. Character state: ${lastPrompt.character}`
+          }));
+        }
+        alert("تم رفع الصفحة الجديدة! سيتم إكمال الدرس بنفس الشخصية والملابس والكرتون.");
+      } else {
+        // New project, use newly invented characters
+        if (data.teacherOutfit || data.cartoonCharacter) {
+          setCharacterConfig(prev => ({
+            ...prev,
+            teacherOutfit: data.teacherOutfit || prev.teacherOutfit,
+            cartoonCharacter: data.cartoonCharacter || prev.cartoonCharacter,
+            previousStoryContext: "" // Reset context for new project
+          }));
+        }
       }
     } catch (error) {
       console.error(error);
@@ -265,12 +293,25 @@ export default function Home() {
           )}
 
           {prompts && (
-            <div className="mt-8 flex justify-end">
+            <div className="mt-8 flex flex-wrap justify-end gap-4">
+              <input 
+                type="file" 
+                className="hidden" 
+                ref={continueFileInputRef} 
+                onChange={handleContinueLesson} 
+                accept="application/pdf" 
+              />
+              <button
+                onClick={() => continueFileInputRef.current?.click()}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2"
+              >
+                <span className="text-xl">➕</span> إكمال الدرس (رفع صفحة جديدة بنفس الستايل)
+              </button>
               <button
                 onClick={saveCurrentProject}
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center gap-2"
               >
-                <span className="text-xl">💾</span> حفظ النتيجة في مشاريعي
+                <span className="text-xl">💾</span> حفظ النتائج في مشاريعي
               </button>
             </div>
           )}
