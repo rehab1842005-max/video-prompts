@@ -144,7 +144,7 @@ export default function Home() {
       const allNewPrompts: VideoPrompt[] = [];
       let currentVideoCounter = 1;
       let lastContext = characterConfig.previousStoryContext || "";
-      const chunkSize = 2;
+      const chunkSize = 1; // Process 1 page at a time to prevent hitting Google AI's 8192 token output limit and causing JSON truncation
       
       for (let i = 0; i < contentMap.length; i += chunkSize) {
         const chunk = contentMap.slice(i, i + chunkSize);

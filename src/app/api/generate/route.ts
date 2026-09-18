@@ -111,7 +111,7 @@ characterConfigStr + "\n\n" +
 "]";
 
     let result;
-    let retries = 6;
+    let retries = 3;
     while (retries > 0) {
       try {
         result = await model.generateContent({
@@ -122,11 +122,10 @@ characterConfigStr + "\n\n" +
             responseMimeType: "application/json"
           }
         });
-        break;
-      } catch (err: any) {
+        break; 
+      } catch (e: any) {
         retries--;
-        if (retries === 0) throw err;
-        const status = err.status || 500;
+        const status = e.status || e.response?.status;
         if (status === 429) {
           console.log("Generate: 429 Rate Limit hit, waiting 30s... " + retries + " attempts left.");
           await new Promise(resolve => setTimeout(resolve, 30000));
@@ -137,13 +136,43 @@ characterConfigStr + "\n\n" +
       }
     }
 
-    const text = result.response.text();
+    let text = result.response.text();
     let parsed = [];
-    const jsonMatch = text.match(/`json\n([\s\S]*?)\n`/);
-    if (jsonMatch) {
-      parsed = JSON.parse(jsonMatch[1]);
-    } else {
-      parsed = JSON.parse(text);
+    
+    // Auto-fix truncated JSON if it ends abruptly
+    if (!text.trim().endsWith("]") && !text.trim().endsWith("}")) {
+      console.log("JSON appears truncated, attempting auto-fix...");
+      text = text.trim();
+      if (text.lastIndexOf("}") > text.lastIndexOf("{")) {
+        text += "\n]"; // Close array if object was closed
+      } else {
+        text += "\n}\n]"; // Close object and array
+      }
+    }
+
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/`json\n([\s\S]*?)\n`/);
+    try {
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[1]);
+      } else {
+        parsed = JSON.parse(text);
+      }
+    } catch (parseError) {
+      console.error("Failed to parse JSON. Raw text:", text);
+      // Attempt aggressive sanitization
+      let sanitized = text.replace(/```json/g, "").replace(/```/g, "").trim();
+      const firstBracket = sanitized.indexOf("[");
+      const lastBracket = sanitized.lastIndexOf("]");
+      if (firstBracket !== -1 && lastBracket !== -1) {
+        sanitized = sanitized.substring(firstBracket, lastBracket + 1);
+        try {
+          parsed = JSON.parse(sanitized);
+        } catch (e) {
+          throw new Error("Aggressive JSON recovery failed.");
+        }
+      } else {
+         throw parseError;
+      }
     }
     
     if (!Array.isArray(parsed)) parsed = [];
