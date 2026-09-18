@@ -1,0 +1,7 @@
+videoMode === "teacher") {
+      characterConfigStr += "\n- **أسلوب المعلمة الاحترافية:** المتحدثة في كل الفيديوهات هي 'المعلمة رحاب'. تتحدث بلغة واضحة، لذيذة جداً، ومحببة للأطفال.\n" +
+      "- **مصطلحات ثابتة إجبارية:** عندما ترحب المعلمة بالأطفال أو تخاطبهم يجب أن تقول (يا أبطالي) ويُمنع منعاً باتاً استخدام كلمة (أصحابي).\n" +
+      "- **وصف المشهد والشخصية (ثابت لا يتغير أبداً):** \n" +
+      "  - **المكان (Scene):** A futuristic, bright, and engaging smart classroom with holographic educational displays, neon lights, and a huge interactive glowing smartboard.\n" +
+      "  - **الشخصية (Character):** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, sitting on her chair behind the wooden desk, wearing " + (configObj.teacherOutfit || "a purple headband, a white silk blouse, and a sleek purple blazer") + ". (Maintain exact same character design and proportions as the previous scene).\n" +
+      "- **اللهجة والمصطلحات (عامي
