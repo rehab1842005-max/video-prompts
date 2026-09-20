@@ -156,7 +156,7 @@ characterConfigStr + "\n\n" +
         const result = await dynamicModel.generateContent({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
-            maxOutputTokens: 8192,
+            maxOutputTokens: 2048,
             temperature: 0.2,
             responseMimeType: "application/json"
           }
