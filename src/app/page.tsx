@@ -296,6 +296,7 @@ export default function Home() {
               onChange={(e) => setVideoMode(e.target.value as any)}
               className="border-2 border-blue-400 text-blue-900 font-bold rounded-lg p-3 w-full sm:w-auto bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all cursor-pointer"
             >
+              <option value="story">🦊 وضع القصة السينمائية (حيوانات المزرعة)</option>
               <option value="cartoon">🎭 الفيلم الكرتوني (شخصيات مبتكرة وكوميديا)</option>
               <option value="teacher">👩‍🏫 وضع المعلمة (شرح احترافي بشاشات ذكية)</option>
               <option value="review">🔄 المراجعة الممتعة (مراجعة تفاعلية للوحدة)</option>
