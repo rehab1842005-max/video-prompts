@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     const contentMap = JSON.parse(contentMapStr);
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
 
     const chunk = contentMap;
     const startIndex = parseInt(formData.get("startIndex") as string || "1");
@@ -137,7 +137,7 @@ characterConfigStr + "\n\n" +
 "]";
 
     let parsed: any[] = [];
-    let retries = 3;
+    let retries = 5;
     
     while (retries > 0) {
       try {
