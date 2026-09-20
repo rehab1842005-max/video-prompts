@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     const contentMap = JSON.parse(contentMapStr);
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.7-flash" });
+
 
     const chunk = contentMap;
     const startIndex = parseInt(formData.get("startIndex") as string || "1");
@@ -136,12 +136,24 @@ characterConfigStr + "\n\n" +
 "  }\n" +
 "]";
 
-    let parsed: any[] = [];
     let retries = 5;
+    let parsed: any = null;
     
+    // Fallback array of models to bypass 503 Overloaded errors on a single model
+    const fallbackModels = [
+      "gemini-flash-lite-latest",
+      "gemini-3.5-flash",
+      "gemini-3.6-flash",
+      "gemini-3.7-flash",
+      "gemini-3.8-flash"
+    ];
+
     while (retries > 0) {
       try {
-        const result = await model.generateContent({
+        const currentModelName = fallbackModels[5 - retries] || fallbackModels[0];
+        const dynamicModel = genAI.getGenerativeModel({ model: currentModelName });
+        
+        const result = await dynamicModel.generateContent({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           generationConfig: {
             maxOutputTokens: 8192,
