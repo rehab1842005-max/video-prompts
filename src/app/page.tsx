@@ -221,7 +221,9 @@ export default function Home() {
         });
         
         if (!res.ok) {
-          throw new Error("فشل في التوليد");
+          const errorData = await res.json().catch(() => ({}));
+          const apiErrorMsg = errorData.error || "فشل في التوليد";
+          throw new Error(apiErrorMsg);
         }
         
         const data = await res.json();
@@ -234,9 +236,9 @@ export default function Home() {
            lastContext = `The last video ended with: ${lastPrompt.endContinuity}. Character state: ${lastPrompt.character}`;
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("حدث خطأ أثناء إنشاء الفيديوهات. سيرفرات جوجل مزدحمة حالياً (503)، لكن ما تم إنشاؤه سيظل محفوظاً.");
+      alert("رسالة الخطأ من سيرفرات جوجل:\n" + error.message + "\n\n(لكن ما تم إنشاؤه سيظل محفوظاً في الصفحة).");
     } finally {
       setIsGenerating(false);
     }

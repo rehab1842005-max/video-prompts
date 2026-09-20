@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     const contentMap = JSON.parse(contentMapStr);
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.7-flash" });
 
     const chunk = contentMap;
     const startIndex = parseInt(formData.get("startIndex") as string || "1");
