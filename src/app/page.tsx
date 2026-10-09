@@ -237,7 +237,7 @@ export default function Home() {
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({}));
           const apiErrorMsg = errorData.error || "فشل في التوليد";
-          if (apiErrorMsg.includes(503) || apiErrorMsg.includes(demand)) { alert(السيرفر مضغوط دلوقتي من جوجل. البرومبتات اللي اتعملت لحد دلوقتي اتحفظت تماماً! استني دقيقة بس ودوسي (استكمال) تاني وهيكمل من مكان ما وقف بالضبط.); } else { alert(رسالة الخطأ من سيرفرات جوجل:\n + apiErrorMsg); } break;
+          if (apiErrorMsg.includes("503") || apiErrorMsg.includes("demand") || apiErrorMsg.includes("Unavailable")) { alert("السيرفر مضغوط دلوقتي من جوجل. البرومبتات اللي اتعملت لحد دلوقتي اتحفظت تماماً! استني دقيقة بس ودوسي استكمال تاني وهيكمل من مكان ما وقف بالضبط."); } else { alert("رسالة الخطأ من سيرفرات جوجل:\n" + apiErrorMsg); } break;
         }
         
         const data = await res.json();
