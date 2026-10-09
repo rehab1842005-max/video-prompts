@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import FileUpload from "@/components/FileUpload";
 import CharacterSettings, { CharacterConfig } from "@/components/CharacterSettings";
-import ContentMapViewer, { ContentPage } from "@/components/ContentMapViewer";
+import ContentMapViewer, { ContentPart } from "@/components/ContentMapViewer";
 import PromptResultList, { VideoPrompt } from "@/components/PromptResultList";
 
 interface SavedProject {
@@ -27,7 +27,7 @@ export default function Home() {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [contentMap, setContentMap] = useState<ContentPage[] | null>(null);
+  const [contentMap, setContentMap] = useState<ContentPart[] | null>(null);
   const [nextProcessingIndex, setNextProcessingIndex] = useState(0);
   const [prompts, setPrompts] = useState<VideoPrompt[] | null>(null);
   const [isContinuing, setIsContinuing] = useState(false);
@@ -118,20 +118,22 @@ export default function Home() {
         copiedPages.forEach((page) => newPdf.addPage(page));
         
         const pdfBytes = await newPdf.save();
-        fileToProcess = new File([pdfBytes], `sliced_${start}_to_${end}_${originalFile.name}`, { type: "application/pdf" });
+        fileToProcess = new File([pdfBytes as any], `sliced_${start}_to_${end}_${originalFile.name}`, { type: "application/pdf" });
       }
 
       setSelectedFile(fileToProcess);
       setContentMap(null);
       setIsContinuing(isContinuing);
       if (!isContinuing) {
+        const randomOutfits = ['a bright yellow sweater', 'a navy blue blazer', 'a green turtleneck', 'a red jacket', 'a purple blazer', 'a denim jacket'];
+        const randomCartoons = ['a cute blue robot', 'a fluffy orange fox', 'a green dinosaur', 'a smart owl', 'a tiny monkey', 'a penguin with a bowtie'];
         setPrompts(null);
         setNextProcessingIndex(0);
         setCharacterConfig(prev => ({
           ...prev,
-          teacherOutfit: "",
-          cartoonCharacter: "",
-          previousStoryContext: "",
+          teacherOutfit: randomOutfits[Math.floor(Math.random() * randomOutfits.length)],
+          cartoonCharacter: randomCartoons[Math.floor(Math.random() * randomCartoons.length)],
+          previousStoryContext: ''
         }));
       }
 
