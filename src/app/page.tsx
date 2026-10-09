@@ -258,9 +258,9 @@ export default function Home() {
            const lastPrompt = data.prompts[data.prompts.length - 1];
            lastContext = `The last video ended with: ${lastPrompt.endContinuity}. Character state: ${lastPrompt.character}`;
         }
+        setNextProcessingIndex(i + chunkSize);
+        setIsContinuing(true);
       }
-      setNextProcessingIndex(endIdx);
-      setIsContinuing(true);
     } catch (error: any) {
       console.error(error);
       alert("رسالة الخطأ من سيرفرات جوجل:\n" + error.message + "\n\n(لكن ما تم إنشاؤه سيظل محفوظاً في الصفحة).");
