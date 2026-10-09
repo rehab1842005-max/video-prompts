@@ -341,6 +341,7 @@ export default function Home() {
               map={contentMap} 
               onGeneratePrompts={handleGeneratePrompts}
               isGenerating={isGenerating}
+              nextProcessingIndex={nextProcessingIndex}
             />
           )}
 
