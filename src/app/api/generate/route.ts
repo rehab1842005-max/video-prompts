@@ -176,12 +176,24 @@ characterConfigStr + "\n\n" +
 
         let rawJson = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-        // If the AI outputted something before the JSON array, like "Here are your prompts: [...]"
-        if (!rawJson.startsWith("[") && rawJson.includes("[")) {
-            rawJson = rawJson.substring(rawJson.indexOf("["));
-        }
-        if (!rawJson.endsWith("]") && rawJson.lastIndexOf("]") !== -1) {
-            rawJson = rawJson.substring(0, rawJson.lastIndexOf("]") + 1);
+        // Find the first [ or { and the last ] or } to cleanly extract the JSON
+        const firstBracket = rawJson.indexOf("[");
+        const firstBrace = rawJson.indexOf("{");
+        const lastBracket = rawJson.lastIndexOf("]");
+        const lastBrace = rawJson.lastIndexOf("}");
+        
+        let startIdx = 0;
+        if (firstBracket !== -1 && firstBrace !== -1) startIdx = Math.min(firstBracket, firstBrace);
+        else if (firstBracket !== -1) startIdx = firstBracket;
+        else if (firstBrace !== -1) startIdx = firstBrace;
+        
+        let endIdx = rawJson.length - 1;
+        if (lastBracket !== -1 && lastBrace !== -1) endIdx = Math.max(lastBracket, lastBrace);
+        else if (lastBracket !== -1) endIdx = lastBracket;
+        else if (lastBrace !== -1) endIdx = lastBrace;
+        
+        if (startIdx !== -1 && endIdx !== -1 && endIdx >= startIdx) {
+            rawJson = rawJson.substring(startIdx, endIdx + 1);
         }
 
         try {
