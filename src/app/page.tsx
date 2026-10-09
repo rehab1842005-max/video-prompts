@@ -28,6 +28,7 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [contentMap, setContentMap] = useState<ContentPage[] | null>(null);
+  const [nextProcessingIndex, setNextProcessingIndex] = useState(0);
   const [prompts, setPrompts] = useState<VideoPrompt[] | null>(null);
   const [isContinuing, setIsContinuing] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -125,6 +126,13 @@ export default function Home() {
       setIsContinuing(isContinuing);
       if (!isContinuing) {
         setPrompts(null);
+        setNextProcessingIndex(0);
+        setCharacterConfig(prev => ({
+          ...prev,
+          teacherOutfit: "",
+          cartoonCharacter: "",
+          previousStoryContext: "",
+        }));
       }
 
       const formData = new FormData();
@@ -197,7 +205,11 @@ export default function Home() {
       let lastContext = characterConfig.previousStoryContext || "";
       const chunkSize = 1; // Process 1 page at a time to prevent hitting Google AI's 8192 token output limit and causing JSON truncation
       
-      for (let i = 0; i < contentMap.length; i += chunkSize) {
+      const batchSize = 2;
+      const startIdx = nextProcessingIndex;
+      const endIdx = Math.min(startIdx + batchSize, contentMap.length);
+      if (startIdx >= contentMap.length) return;
+      for (let i = startIdx; i < endIdx; i += chunkSize) {
         const chunk = contentMap.slice(i, i + chunkSize);
         const isLastChunk = i + chunkSize >= contentMap.length;
         
@@ -231,11 +243,22 @@ export default function Home() {
         setPrompts([...startingPrompts, ...allNewPrompts]); // Progressive UI update!
         
         currentVideoCounter += data.prompts.length;
+
+        if (data.teacherOutfit || data.cartoonCharacter) {
+          setCharacterConfig(prev => ({
+            ...prev,
+            teacherOutfit: data.teacherOutfit || prev.teacherOutfit,
+            cartoonCharacter: data.cartoonCharacter || prev.cartoonCharacter,
+          }));
+        }
+
         if (data.prompts.length > 0) {
            const lastPrompt = data.prompts[data.prompts.length - 1];
            lastContext = `The last video ended with: ${lastPrompt.endContinuity}. Character state: ${lastPrompt.character}`;
         }
       }
+      setNextProcessingIndex(endIdx);
+      setIsContinuing(true);
     } catch (error: any) {
       console.error(error);
       alert("رسالة الخطأ من سيرفرات جوجل:\n" + error.message + "\n\n(لكن ما تم إنشاؤه سيظل محفوظاً في الصفحة).");
