@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     const configObj = JSON.parse(characterConfigStr);
     
     const videoMode = formData.get("mode") as string || "cartoon";
+    const startIndex = parseInt(formData.get("startIndex") as string || "1");
+    let videoCounter = startIndex;
     
     characterConfigStr += "- **ممنوع تكرار الترحيب والمقدمات:** يُمنع منعاً باتاً أن تبدأ المعلمة كل فيديو بترحيب (مثل: أهلاً بكم يا أبطالي). الترحيب مسموح به في أول فيديو فقط في الدرس بأكمله. في الفيديوهات التالية، يجب أن تبدأ المعلمة في استكمال الشرح والتفاعل فوراً بدون أي مقدمات تضيّع وقت الفيديو الـ 10 ثواني.\n";
     characterConfigStr += "- **جمل كاملة ومغلقة (ممنوع قطع الكلام):** كل مشهد (فيديو) مدته 10 ثوانٍ يجب أن يحتوي على فكرة كاملة وجملة مغلقة تماماً! يُمنع منعاً باتاً قطع جملة في منتصفها لتكملتها في الفيديو التالي. يجب أن ينتهي كلام الشخصية بنهاية المشهد.\n";
@@ -104,9 +106,7 @@ export async function POST(req: NextRequest) {
 
 
     const chunk = contentMap;
-    const startIndex = parseInt(formData.get("startIndex") as string || "1");
     const lastContext = formData.get("lastContext") as string || "";
-    let videoCounter = startIndex;
 
     const prompt = 
 (videoMode === "story" 
