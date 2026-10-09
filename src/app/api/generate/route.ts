@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     characterConfigStr += "- **الصوت والموسيقى التصويرية (AUDIO):** في خانة الـ AUDIO، اكتب وصفاً يركز على (السرعة الفائقة في الكلام والمشاعر الجياشة كالحزن، القلق، أو التوتر) بالإنجليزية! وأضف وصفاً للموسيقى التصويرية التي تناسب الحدث ليكون فيلماً حقيقياً (مثلاً: Fast-paced emotional voice with sad dramatic cinematic background music). يجب أن يكون الصوت مختلفاً جذرياً لكل شخصية! واكتب دائماً: (Voice starts immediately at 0:00. Clear voice mixed with cinematic background music).\\n";
     characterConfigStr += "- **سلاسة اللغة، الكوميديا، والمعلومات الصريحة (مهم جداً جداً):**\n" + 
                           "  1. الحوار يجب أن يكون سريعاً، حيوياً جداً، وفي غاية السهولة والانسيابية ليناسب الأطفال.\n" +
-                          (videoMode !== "story" ? "  2. **ممنوع الترحيب المتكرر:** قل (أهلاً بيكم يا أبطالي) في **المشهد الأول فقط لا غير!** يُمنع منعاً باتاً تكرار الترحيب في باقي المشاهد، ادخل في صلب الشرح فوراً.\n" : "") +
+                          (videoMode !== "story" ? "" : "") +
                           (videoMode !== "story" ? "  3. **الموازنة بين الكوميديا والعلم:** استخدم تشبيهات مضحكة جداً، ولكن **يجب ذكر المعلومة العلمية بشكل صريح ومباشر وواضح** لتصل للأطفال دون لبس. لا تجعل الكوميديا تطغى على وضوح المعلومة العلمية.\n" : "") +
                           "  4. **تطابق المتحدث مع الكاميرا (لمنع تبادل الأدوار):** الشخصية التي تتحدث في خانة (DIALOGUE) يجب أن تكون هي نفسها الشخصية التي تركز عليها (CAMERA) وهي نفسها المذكورة كمتحدث في (ACTION). لا تجعل الكاميرا تركز على شخصية بينما شخصية أخرى هي من تتحدث!\n" +
                           "  5. **تبادل الأدوار الإجباري بين الفيديوهات (مهم جداً للاحترافية):** يُمنع منعاً باتاً أن تتحدث شخصية واحدة فقط في كل الفيديوهات وتظل البقية صامتة طوال القصة! يجب أن يتناوبوا الحديث عبر الفيديوهات (مثلاً: الفيديو الأول تتحدث الشخصية 'أ'، الفيديو الثاني ترد عليها الشخصية 'ب'، الفيديو الثالث تتدخل الشخصية 'ج'). يجب توزيع مساحة الكلام بالعدل التام بين كل الشخصيات.\n" +
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       "- **حركة الكاميرا والإخراج:** في خانة (camera) يجب أن تكتب: (Medium close-up focusing on the speaking character on the RIGHT side. The HUGE background smart screen on the LEFT side is completely visible and unobstructed). وفي المشاهد الزوجية قم بالتركيز على الشخصية الثانية بنفس الطريقة.\n";
     } else if (videoMode === "teacher") {
       characterConfigStr += "\n- **أسلوب المعلمة الاحترافية:** المتحدثة في كل الفيديوهات هي 'المعلمة رحاب'. تتحدث بلغة واضحة، لذيذة جداً، ومحببة للأطفال.\n" +
-      "- **مصطلحات ثابتة إجبارية:** عندما ترحب المعلمة بالأطفال أو تخاطبهم يجب أن تقول (يا أبطالي) ويُمنع منعاً باتاً استخدام كلمة (أصحابي).\n" +
+      "" +
       "- **وصف المشهد والشخصية (ثابت لا يتغير أبداً):** \n" +
       "  - **المكان (Scene):** A futuristic, bright, and engaging smart classroom with holographic educational displays, neon lights, and a huge interactive glowing smartboard. On the wall, there is a HUGE glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The FULL text \"Sci.Rehab Elsibai\" must be perfectly spelled and COMPLETELY VISIBLE without any missing words.\n" +
       "  - **الشخصية (Character):** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, sitting on her chair behind the wooden desk, wearing " + (configObj.teacherOutfit || "a purple headband, a white silk blouse, and a sleek purple blazer") + ". (Maintain exact same character design and proportions as the previous scene).\n" +
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     } else if (videoMode === "studio") {
       characterConfigStr += "\n- **وضع الاستوديو المتبادل (الاحترافي):** يعتمد على تبادل المشاهد بين 'المعلمة رحاب' و 'شخصية كرتونية مرحة'.\n" +
       "- **قاعدة صارمة لأدوار الشخصيات:** يُمنع منعاً باتاً أن تقوم الشخصية الكرتونية بشرح أي معلومة علمية من الدرس! المعلمة هي المعلمة الوحيدة وهي من تشرح كل التفاصيل. الكرتون يمثل دور الطالب الفضولي: يسأل، يحل الأسئلة، يستنتج، أو يقول (أنا مش فاهم) لكي تقوم المعلمة بإعادة الشرح بتبسيط له وللمشاهدين.\n" +
-      "- **مصطلحات ثابتة إجبارية:** عندما تخاطب المعلمة الكرتون أو الأطفال تقول (يا أبطالي) وممنوع قول (أصحابي). وعندما تتحدث الشخصية الكرتونية مع المعلمة أو تناديها يجب أن تقول دائماً (يا مس رحاب).\n" +
+      "- **مصطلحات ثابتة إجبارية:** عندما تتحدث الشخصية الكرتونية مع المعلمة أو تناديها يجب أن تقول دائماً (يا مس رحاب).\n" +
       "- **وصف الاستوديو الثابت للمعلمة والكرتون (صورة ثابتة وجميلة جداً):** \n" +
       "  - **المكان:** A beautiful modern podcast studio. Neon purple lighting. A glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The words \"Sci.Rehab Elsibai\" must be spelled perfectly. Bookshelves with trailing plants. A wooden desk in the foreground clearly displaying a professional podcast microphone and an open laptop. **A tiny cute cartoon character is standing ON the desk next to the laptop, looking at the teacher.**\n" +
       "  - **الشخصية:** A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, big brown eyes, sitting on her chair behind the wooden desk, wearing " + (configObj.teacherOutfit || "a purple headband, a white silk blouse, and a sleek purple blazer") + ". (Maintain exact same character design and proportions as the previous scene).\n" +
@@ -253,8 +253,8 @@ characterConfigStr + "\n\n" +
       // Override LLM ID with a guaranteed unique ID
       p.id = `prompt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}_${index}`;
 
-      if (configObj.movieMode && configObj.isFinalScene && index === parsed.length - 1) {
-        p.dialogue += "\n[الشخصيات بصوت واحد]: وبكده خلصنا درس النهاردة، مع السلامة يا أصحابي!";
+      if (configObj.isFinalScene && index === parsed.length - 1) {
+        p.dialogue += "\n[المعلمة]: استنوني في الفيديو القادم مع درس جديد!";
       }
 
       const fullText = 
