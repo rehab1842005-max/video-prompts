@@ -16,7 +16,7 @@ interface SavedProject {
 }
 
 export default function Home() {
-  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow">("cartoon");
+  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow">("studio");
   const [characterConfig, setCharacterConfig] = useState<CharacterConfig>({
     description: "",
     characterLock: true,
