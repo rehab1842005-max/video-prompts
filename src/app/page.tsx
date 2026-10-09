@@ -16,7 +16,7 @@ interface SavedProject {
 }
 
 export default function Home() {
-  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio">("cartoon");
+  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow">("cartoon");
   const [characterConfig, setCharacterConfig] = useState<CharacterConfig>({
     description: "",
     characterLock: true,
@@ -303,6 +303,7 @@ export default function Home() {
               <option value="teacher">👩‍🏫 وضع المعلمة (شرح احترافي بشاشات ذكية)</option>
               <option value="review">🔄 المراجعة الممتعة (مراجعة تفاعلية للوحدة)</option>
               <option value="studio">🎬 استوديو الاحتراف (تبادل بين المعلمة والكرتون)</option>
+              <option value="gameshow">🏆 برنامج المسابقات (مراجعة سريعة وحل أسئلة)</option>
             </select>
           </div>
 

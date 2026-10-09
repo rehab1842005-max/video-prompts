@@ -68,6 +68,13 @@ export async function POST(req: NextRequest) {
       "- **المكان (Scene):** A dynamic abstract educational studio. In the background, there is a HUGE glowing neon sign displaying the exact typographic text \"Sci.Rehab Elsibai\". The FULL text \"Sci.Rehab Elsibai\" must be perfectly spelled and COMPLETELY VISIBLE without any missing words.\n" +
       "- **حركة الكاميرا والإخراج:** (Dynamic camera focusing on the presenter and glowing floating UI elements showing the review points).\n" +
       "- **منع الأقواس في الحوار:** لكتابة اسم المتحدث استخدم اسمه فقط دون تفاصيل داخلية لتسهيل تحويل النص لصوت.\n";
+    } else if (videoMode === "gameshow") {
+      characterConfigStr += "\n- **أسلوب التقديم (مسابقات الأبطال - Game Show):** هذا فيديو مراجعة وحل أسئلة للوحدة على شكل برنامج مسابقات تلفزيوني حماسي جداً! المعلمة هي مقدمة البرنامج، وهناك شخصية كرتونية هو المتسابق. المعلمة تطرح ملخصاً سريعاً أو سؤالاً، والمتسابق يجيب أو يفكر بصوت عالٍ.\n" +
+      "- **المكان (Scene):** A spectacular, dazzling neon TV game show studio. Flashing colorful lights, a large glowing podium with a buzzer button. A giant LED screen in the background showing the exact typographic text \"Sci.Rehab Elsibai\". Confetti in the air. Extremely vibrant and energetic atmosphere.\n" +
+      "- **الشخصيات:**\n  - مقدمة البرنامج (المعلمة): A beautiful 20-25 years old 3D Pixar-style young female teacher with long wavy dark brown hair, holding a shiny microphone, smiling enthusiastically, wearing a sparkly blazer.\n  - المتسابق (الكرتون): A hilarious, expressive tiny 3D animated character (like a cute robot or animal) standing behind the glowing podium, ready to hit the buzzer.\n" +
+      "- **حركة الكاميرا (Camera):** Dynamic TV show angles! Fast zooms on the buzzer, panning across the dazzling studio, dramatic close-ups on the contestant's face when they are thinking.\n" +
+      "- **الصوت والحوار (Dialogue):** تفاعل حماسي جداً! سرعة في الإيقاع، مؤثرات صوتية (Ding ding! Buzzer!). المعلمة تشجع المتسابق، وتقوم بمراجعة المعلومة بسرعة ثم تسأل. المتسابق يجيب بطريقة كوميدية ممتعة.\n" +
+      "- **المحتوى:** قم بتلخيص المعلومات من النص كفقرات مراجعة سريعة جداً وقم بصياغتها كأسئلة مسابقات (صح وخطأ، اختيارات، أو سؤال مباشر) ليقوم المتسابق بحلها في المشهد.\n";
     } else if (videoMode === "studio") {
       characterConfigStr += "\n- **وضع الاستوديو المتبادل (الاحترافي):** يعتمد على تبادل المشاهد بين 'المعلمة رحاب' و 'شخصية كرتونية مرحة'. الكرتون يسأل بفضول والمعلمة تجاوب، أو العكس، بحوار ممتع جداً للأطفال.\n" +
       "- **مصطلحات ثابتة إجبارية:** عندما تخاطب المعلمة الكرتون أو الأطفال تقول (يا أبطالي) وممنوع قول (أصحابي). وعندما تتحدث الشخصية الكرتونية مع المعلمة أو تناديها يجب أن تقول دائماً (يا مس رحاب).\n" +
