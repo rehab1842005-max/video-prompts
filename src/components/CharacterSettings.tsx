@@ -52,6 +52,27 @@ export default function CharacterSettings({ onSettingsChange }: CharacterSetting
         <p className="text-xs text-gray-500 mt-1">يجب أن تُستخدم نفس الشخصية في جميع الفيديوهات.</p>
       </div>
 
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2" htmlFor="char-outfit">
+          👗 مظهر وبدلة المعلمة (Teacher Outfit):
+        </label>
+        <select
+          id="char-outfit"
+          value={config.teacherOutfit || "a stunning sparkly silver glitter blazer over a crisp white blouse and sleek dark trousers"}
+          onChange={(e) => handleChange("teacherOutfit", e.target.value)}
+          className="w-full border border-gray-300 rounded-md p-3 bg-white font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="a stunning sparkly silver glitter blazer over a crisp white blouse and sleek dark trousers">✨ بدلة فضية لامعة (Sparkly Silver Blazer - مثل صور الاستوديو)</option>
+          <option value="an elegant royal navy blue blazer with satin lapels over a cream silk blouse and dark pants">💎 بدلة كحلي ملكي فخمة (Royal Navy Blue Blazer)</option>
+          <option value="a chic emerald green blazer with gold buttons over a crisp white top">🌿 بدلة زمردية خضراء أنيقة (Emerald Green Blazer)</option>
+          <option value="a glamorous rose gold blazer with subtle sparkles over a white blouse">🌸 بدلة روز جولد لامعة (Rose Gold Glitter Blazer)</option>
+          <option value="a stylish pastel lavender blazer over a white lace top and tailored trousers">💜 بدلة لافندر ناعمة (Pastel Lavender Blazer)</option>
+          <option value="a vibrant crimson red blazer over a white silk blouse with tailored trousers">❤️ بدلة حمراء كلاسيكية ساطعة (Crimson Red Blazer)</option>
+          <option value="a modern sapphire blue blazer over a crisp white top and dark pants">💙 بدلة ياقوتية زرقاء مبهجة (Sapphire Blue Blazer)</option>
+        </select>
+        <p className="text-xs text-gray-500 mt-1">تظل هذه البدلة ثابتة طوال كل مشاهد الدرس، وتتغير تلقائياً عند بدء درس جديد.</p>
+      </div>
+
       <div className="mb-4 bg-blue-50 p-4 rounded-md border border-blue-200">
         <label className="block text-blue-900 font-bold mb-2" htmlFor="char-prev">
           ربط القصة السابقة (اختياري)
