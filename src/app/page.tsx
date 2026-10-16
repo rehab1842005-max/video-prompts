@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PDFDocument } from "pdf-lib";
 import FileUpload from "@/components/FileUpload";
 import CharacterSettings, { CharacterConfig } from "@/components/CharacterSettings";
@@ -18,7 +18,7 @@ interface SavedProject {
   type?: "video" | "presentation";
 }
 
-// Preset Kidney Model ready out-of-the-box
+// Preset Kidney Model ready out-of-the-box with written points and clear waste
 const PRESET_KIDNEY_PRESENTATION: InteractivePresentation = {
   id: "kidney_model_preset",
   title: "رحلة الكليتين وتنقية الدم في جسم الإنسان",
@@ -30,77 +30,108 @@ const PRESET_KIDNEY_PRESENTATION: InteractivePresentation = {
       title: "1. موضع الكليتين واستقبال الدم",
       category: "نظرة عامة على الجهاز الإخراجي",
       teacherScript: "أهلاً بكم يا أبطالي! شايفين الكليتين الجميلتين دول؟ هما مصنع النظافة في جسمنا، بيستقبلوا الدم من الشريان الكلوي الكبير عشان تبدأ أهم رحلة تنقية!",
+      keyPoints: [
+        "يدخل الدم غير المصفى إلى الكليتين عبر الشريان الكلوي المتفرع من الشريان الأورطي الكبير.",
+        "تقع الكليتان في الناحية الظهرية للتجويف البطني على جانبي العمود الفقري.",
+        "يصل تدفق الدم للكليتين إلى حوالي ربع كمية الدم التي يضخها القلب في الدقيقة."
+      ],
+      scientificFact: "الكليتان هما العضوان الرئيسيان في الجهاز البولي لتنقية الدم باستمرار والحفاظ على توازن السوائل.",
       visualAction: "يظهر مجسم الكليتين مع الشريان الكلوي الكبير باللون الأحمر، وتبدأ خلايا الدم بالتدفق من أعلى الشريان باتجاه الكليتين.",
       particleType: "incoming_blood",
       showFilters: false,
       activeGlow: false,
       labels: [
-        { text: "الشريان الكلوي (دم محمل بالفضلات)", x: 370, y: 70, color: "#ef4444" },
+        { text: "الشريان الكلوي (دم قادم للتنقية)", x: 370, y: 70, color: "#ef4444" },
         { text: "الكلية اليسرى", x: 170, y: 140, color: "#f87171" },
         { text: "الكلية اليمنى", x: 630, y: 140, color: "#f87171" }
       ]
     },
     {
       stepNumber: 2,
-      title: "2. فحص الدم غير النقي (المحمل بالفضلات)",
-      category: "تركيب الدم قبل الفلترة",
-      teacherScript: "بصوا معايا جوة الشريان! الدم مش ماشي لوحده، فيه كرات دم حمراء مفيدة، وفيه جزيئات فضلات ضارة صفراء لازم نتخلص منها فوراً عشان جسمنا يفضل سليم!",
-      visualAction: "تكبير لمجرى الدم وظهور جزيئات صفراء تمثل الفضلات والسموم محاطة بكرات الدم الحمراء، متجهة إلى داخل أنسجة الكلية.",
+      title: "2. فحص الدم غير النقي وظهور جزيئات الفضلات",
+      category: "تركيب الدم ومحتوى السموم واليوريا",
+      teacherScript: "بصوا معايا بتركيز جوة الشريان! الدم جواه كرات دم حمراء مفيدة، وفيه جزيئات صفراء واضحة هي الفضلات النيتروجينية واليوريا والأملاح الزائدة اللي لازم نطردها فوراً!",
+      keyPoints: [
+        "الدم القادم يحمل خلايا حيوية مفيدة (كرات الدم الحمراء) ممزوجة بجزيئات فضلات ضارة.",
+        "الفضلات تضم: اليوريا الناتجة عن هدم البروتينات، حمض البوليك، والأملاح والماء الزائد.",
+        "تظهر جزيئات الفضلات بلون أصفر مميز داخل تيار الدم لتوضيح مسار عزلها وتنظيفها."
+      ],
+      scientificFact: "تراكم اليوريا والفضلات النيتروجينية في الدم يؤدي إلى التسمم البولي إن لم تتخلص منها الكلى باستمرار.",
+      visualAction: "تكبير لمجرى الشريان وظهور جزيئات الفضلات الصفراء بوضوح ممزوجة بالدم الأحمر، تتدفق نحو أنسجة الكلية.",
       particleType: "waste_particles",
       showFilters: false,
       activeGlow: false,
+      wasteDetails: "حبيبات صفراء مميزة تمثل اليوريا والسموم محاطة بكرات الدم الحمراء.",
       labels: [
-        { text: "🔴 دم غير نقي", x: 260, y: 190, color: "#ef4444" },
-        { text: "⚠️ فضلات ضارة (يجب طردها)", x: 470, y: 190, color: "#facc15" }
+        { text: "🔴 كرات دم حمراء مفيدة", x: 260, y: 180, color: "#ef4444" },
+        { text: "🟡 فضلات ضارة (يوريا وأملاح سامة)", x: 480, y: 180, color: "#facc15" }
       ]
     },
     {
       stepNumber: 3,
-      title: "3. دخول الفلاتر المجهرية (النيفرونات)",
-      category: "عملية الغربلة والتصفية الدقيقة",
+      title: "3. دخول الفلاتر المجهرية (النيفرونات) والغربلة",
+      category: "عملية الترشيح وإعادة الامتصاص",
       teacherScript: "شايفين النجوم والمصافي الصفراء اللي نورت جوة الكلية؟ دي النيفرونات! ملايين الفلاتر الدقيقة بتغربل الدم، تحبس الفضلات وتعدي الدم النظيف بأمان!",
-      visualAction: "إضاءة شبكات النيفرون داخل الكليتين كدوائر فلترة صفراء متوهجة تهتز لتصفية الفضلات وفصلها عن الدم النقي.",
+      keyPoints: [
+        "تحتوي كل كلية على حوالي مليون وحدة ترشيح مجهرية تسمى (النيفرون).",
+        "تتم عملية ترشيح الفضلات والماء والأملاح من الشعيرات الدموية داخل محفظة بومان.",
+        "تقوم الأنابيب الكلوية بإعادة امتصاص المواد النافعة كالجلوكوز ومعظم الماء إلى الدم النظيف."
+      ],
+      scientificFact: "شبكة النيفرونات تعمل كغربال فائق الدقة يفصل الفضلات دون أن تفقد خلية دم واحدة مفيدة.",
+      visualAction: "إضاءة شبكات النيفرون داخل الكليتين كفلاتر صفراء متوهجة تهتز أثناء تصفية وحجز جزيئات الفضلات.",
       particleType: "filtering_action",
       showFilters: true,
       activeGlow: true,
       labels: [
         { text: "فلاتر النيفرون الذكية", x: 210, y: 260, color: "#fbbf24" },
-        { text: "عملية الغربلة والترشيح", x: 580, y: 260, color: "#fbbf24" }
+        { text: "عملية الترشيح الدقيق", x: 580, y: 260, color: "#fbbf24" }
       ]
     },
     {
       stepNumber: 4,
-      title: "4. فصل الفضلات ونزولها في الحالبين (البول)",
-      category: "مرحلة التخلص من السموم",
+      title: "4. فصل الفضلات ونزولها عبر الحالبين (تكوين البول)",
+      category: "مرحلة التخلص من البول نحو المثانة",
       teacherScript: "الفضلات والمية الزايدة اتجمعت وتحولت لبول، وبدأت تنزل نقطة بنقطة في الأنبوبين الصفر دول (الحالبين) لحد ما توصل للمثانة وتخرج برة جسمنا خالص!",
-      visualAction: "تدفق قطرات صفراء متتابعة عبر الحالبين الأيمن والأيسر هبوطاً إلى المثانة البولية للتخلص النهائي من الفضلات.",
+      keyPoints: [
+        "تتجمع الفضلات المعزولة مع الماء الزائد والأملاح لتكوين سائل البول.",
+        "ينتقل البول من حوض الكلية عبر أنبوبين عضليين هما (الحالبان) باتجاه المثانة البولية.",
+        "المثانة كيس عضلي مرن يخزن البول مؤقتاً حتى يتم تفريغه خارج الجسم عبر مجرى البول."
+      ],
+      scientificFact: "الحالب ينقل البول من الكلية للمثانة بقطرات متتالية بفضل حركات عضلية دودية منتظمة.",
+      visualAction: "تدفق قطرات بول صفراء متتابعة عبر الحالبين الأيمن والأيسر هبوطاً إلى المثانة البولية.",
       particleType: "urine_flow",
       showFilters: true,
       activeGlow: false,
       labels: [
         { text: "الحالب (ينقل البول)", x: 300, y: 380, color: "#eab308" },
-        { text: "المثانة البولية (تخزين البول)", x: 400, y: 490, color: "#facc15" }
+        { text: "المثانة البولية (تخزين مؤقت)", x: 400, y: 490, color: "#facc15" }
       ]
     },
     {
       stepNumber: 5,
-      title: "5. عودة الدم النقي تماماً إلى الجسم",
-      category: "اكتمال دورة النظافة",
+      title: "5. عودة الدم النقي 100% إلى الجسم",
+      category: "اكتمال دورة التنقية وصحة الجسم",
       teacherScript: "وبكدا يا أبطالي، الدم اتنقى 100%! بيخرج من الوريد الأزرق النظيف ويرجع للقلب وباقي الجسم وهو منتعش وبصحة ممتازة! تبارك الله أحسن الخالقين!",
-      visualAction: "توهج الوريد الكلوي باللون السماوي وخروج جزيئات دم نقية زرقاء صافية صاعدة إلى أعلى الجسم لاكتمال الدورة الدموية بنجاح.",
+      keyPoints: [
+        "يخرج الدم النقي تماماً والخالي من الفضلات عبر الوريدين الكلويين إلى الوريد الأجوف السفلي.",
+        "يعود الدم النظيف إلى القلب ليتم ضخه من جديد إلى جميع خلايا وأنسجة الجسم.",
+        "تنظيم نسبة الأملاح ودرجة حموضة الدم (pH) وكمية السوائل في الجسم بدقة بالغة."
+      ],
+      scientificFact: "الدورة الدموية الكلوية تتكرر باستمرار لغسيل وتنقية دم الإنسان قرابة 300 مرة يومياً!",
+      visualAction: "توهج الوريد الكلوي باللون السماوي وخروج جزيئات دم نقية زرقاء صافية صاعدة إلى أعلى الجسم.",
       particleType: "clean_blood_return",
       showFilters: false,
       activeGlow: true,
       labels: [
         { text: "الوريد الكلوي (دم نقي 100%)", x: 430, y: 70, color: "#38bdf8" },
-        { text: "تمت التنقية بنجاح ✨", x: 400, y: 240, color: "#34d399" }
+        { text: "دم نقي جاهز للجسم ✨", x: 400, y: 240, color: "#34d399" }
       ]
     }
   ]
 };
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"video" | "presentation">("video");
+  const [activeTab, setActiveTab] = useState<"video" | "presentation">("presentation");
   const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow" | "paired" | "powerpoint">("paired");
   
   // Video Prompts State
@@ -122,9 +153,15 @@ export default function Home() {
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
 
   // Interactive Presentation State
-  const [activePresentation, setActivePresentation] = useState<InteractivePresentation | null>(null);
+  const [activePresentation, setActivePresentation] = useState<InteractivePresentation | null>(PRESET_KIDNEY_PRESENTATION);
   const [presentationTopicInput, setPresentationTopicInput] = useState("رحلة الكليتين وتنقية الدم");
   const [isGeneratingPresentation, setIsGeneratingPresentation] = useState(false);
+
+  // PDF Book Upload for Interactive Presentation
+  const [presentationFile, setPresentationFile] = useState<File | null>(null);
+  const [presStartPage, setPresStartPage] = useState<string>("");
+  const [presEndPage, setPresEndPage] = useState<string>("");
+  const presentationFileInputRef = useRef<HTMLInputElement>(null);
 
   // تحميل المشاريع المحفوظة من الهارد ديسك عند فتح الصفحة
   useEffect(() => {
@@ -206,6 +243,65 @@ export default function Home() {
       }
     } catch (e) {
       console.error("Failed to delete project", e);
+    }
+  };
+
+  // Upload and convert book pages directly to Interactive PowerPoint
+  const handleUploadBookForPresentation = async () => {
+    if (!presentationFile) {
+      alert("الرجاء اختيار ملف PDF لكتاب المدرسة أو المذكرة أولاً.");
+      return;
+    }
+
+    setIsGeneratingPresentation(true);
+    try {
+      let fileToSend = presentationFile;
+
+      if (presStartPage && presEndPage) {
+        const start = parseInt(presStartPage);
+        const end = parseInt(presEndPage);
+        if (!isNaN(start) && !isNaN(end) && start >= 1 && end >= start) {
+          const arrayBuffer = await presentationFile.arrayBuffer();
+          const pdfDoc = await PDFDocument.load(arrayBuffer);
+          const totalPages = pdfDoc.getPageCount();
+
+          const realStart = Math.max(1, start);
+          const realEnd = Math.min(totalPages, end);
+
+          const newPdf = await PDFDocument.create();
+          const pageIndices = Array.from({ length: realEnd - realStart + 1 }, (_, i) => realStart - 1 + i);
+          const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
+          copiedPages.forEach((page) => newPdf.addPage(page));
+
+          const pdfBytes = await newPdf.save();
+          fileToSend = new File([pdfBytes as any], `sliced_${realStart}_to_${realEnd}_${presentationFile.name}`, { type: "application/pdf" });
+        }
+      }
+
+      const formData = new FormData();
+      formData.append("file", fileToSend);
+      formData.append("topic", `رحلة تفاعلية من صفحات الكتاب (${presStartPage || 1} إلى ${presEndPage || "النهاية"}): ${presentationFile.name}`);
+
+      const res = await fetch("/api/presentation", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "فشل تحليل صفحات الكتاب");
+      }
+
+      const data = await res.json();
+      if (data.presentation) {
+        setActivePresentation(data.presentation);
+        alert(`🎉 تم تحويل صفحات الكتاب بنجاح إلى رحلة باوربوينت تفاعلية من ${data.presentation.steps.length} خطوات! كل خطوة بها النقاط التعليمية المكتوبة.`);
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert("حدث خطأ أثناء تحليل الكتاب: " + e.message);
+    } finally {
+      setIsGeneratingPresentation(false);
     }
   };
 
@@ -386,7 +482,7 @@ export default function Home() {
     alert(`سيتم إعادة إنشاء المشهد رقم ${index + 1}... (هذه الميزة قيد التطوير)`);
   };
 
-  // Generate Interactive PowerPoint Presentation from topic or PDF
+  // Generate Interactive PowerPoint Presentation from topic
   const handleGenerateInteractivePresentation = async (customTopic?: string, lessonContent?: string) => {
     const topicToUse = customTopic || presentationTopicInput.trim() || "رحلة الكليتين وتنقية الدم";
     
@@ -413,7 +509,6 @@ export default function Home() {
       }
     } catch (e: any) {
       console.error(e);
-      // Fallback to preset kidney if error
       setActivePresentation(PRESET_KIDNEY_PRESENTATION);
       setActiveTab("presentation");
       alert("تم تفعيل نموذج رحلة الكليتين التفاعلي بنجاح!");
@@ -479,6 +574,17 @@ export default function Home() {
             {/* Main Tabs Navigation */}
             <div className="mt-6 flex flex-wrap justify-center gap-3 border-t pt-4">
               <button
+                onClick={() => setActiveTab("presentation")}
+                className={`py-3 px-6 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm ${
+                  activeTab === "presentation"
+                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/30 scale-105"
+                    : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200"
+                }`}
+              >
+                <span>📊</span> صانع الباوربوينت التفاعلي (كليك لكل حركة - شرح المعلمة الحي) 🖥️
+              </button>
+
+              <button
                 onClick={() => setActiveTab("video")}
                 className={`py-3 px-6 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm ${
                   activeTab === "video"
@@ -488,100 +594,159 @@ export default function Home() {
               >
                 <span>🎬</span> استوديو الفيديوهات والبرومبتات (معلمة + شاشة ذكية)
               </button>
-
-              <button
-                onClick={() => {
-                  setActiveTab("presentation");
-                  if (!activePresentation) {
-                    setActivePresentation(PRESET_KIDNEY_PRESENTATION);
-                  }
-                }}
-                className={`py-3 px-6 rounded-xl font-bold text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm ${
-                  activeTab === "presentation"
-                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-emerald-500/30 scale-105"
-                    : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200"
-                }`}
-              >
-                <span>📊</span> صانع الباوربوينت التفاعلي (كليك لكل حركة - بدون فيديو) 🖥️
-              </button>
             </div>
           </header>
 
           {/* TAB 1: INTERACTIVE POWERPOINT PRESENTATION MODE */}
           {activeTab === "presentation" && (
             <div className="space-y-6">
-              {/* Feature Intro & Generator Box */}
-              <div className="bg-gradient-to-r from-teal-900 to-slate-900 text-white p-6 rounded-2xl shadow-lg border border-teal-700/50">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-3xl">📊</span>
+              
+              {/* Card 1: Upload Book & Select Pages Range (New Requested Feature) */}
+              <div className="bg-white p-6 rounded-2xl shadow-md border-2 border-teal-500/40">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-3xl">📚</span>
                   <div>
-                    <h2 className="text-2xl font-black text-teal-300">
-                      صانع الباوربوينت التفاعلي للشرح الحي (كليك لكل حركة)
+                    <h2 className="text-xl font-black text-teal-950">
+                      رفع كتاب المدرسة / المذكرة وتحديد الصفحات لتحويلها لرحلة باوربوينت تفاعلية
                     </h2>
-                    <p className="text-sm text-slate-300">
-                      لا يوجد فيديو ولا كرتون! المعلمة هي التي تشرح بنفسها للطلاب، وكل حركة تظهر بكليك تحكم كامل بالماوس أو المسطرة.
+                    <p className="text-xs text-gray-600">
+                      ارفعي ملف الـ PDF وحددي الصفحات المطلوبة (من وإلى)، وسيقوم الذكاء الاصطناعي بتحليلها بالكامل وكتابة كل النقاط العلمية المهمة على الشرائح مع كل كليك!
                     </p>
                   </div>
                 </div>
 
-                {/* Quick Presets */}
-                <div className="mt-4 pt-4 border-t border-teal-800/80">
-                  <span className="text-xs font-bold text-teal-300 block mb-2">
-                    ⚡ نماذج جاهزة للتشغيل الفوري بكليك واحد:
-                  </span>
-                  <div className="flex flex-wrap gap-2">
+                <div className="bg-teal-50/60 p-5 rounded-xl border border-teal-200 flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      ref={presentationFileInputRef}
+                      onChange={(e) => setPresentationFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                    />
                     <button
-                      onClick={() => setActivePresentation(PRESET_KIDNEY_PRESENTATION)}
-                      className="bg-teal-800/80 hover:bg-teal-700 text-white text-xs px-3 py-2 rounded-xl border border-teal-600/60 font-bold transition flex items-center gap-1.5"
+                      onClick={() => presentationFileInputRef.current?.click()}
+                      className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition flex items-center justify-center gap-2 text-sm"
                     >
-                      <span>🫘</span> رحلة الكليتين وتنقية الدم (نموذج الـ 5 كليكات)
+                      <span>📎</span>
+                      <span>{presentationFile ? `تم اختيار: ${presentationFile.name}` : "اختيار ملف كتاب المدرسة (PDF)"}</span>
                     </button>
-                    <button
-                      onClick={() => handleGenerateInteractivePresentation("رحلة القلب والدورة الدموية وتوزيع الأكسجين")}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
-                    >
-                      <span>🫀</span> القلب والدورة الدموية
-                    </button>
-                    <button
-                      onClick={() => handleGenerateInteractivePresentation("رحلة الجهاز الهضمي وامتصاص الغذاء")}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
-                    >
-                      <span>🥗</span> الجهاز الهضمي
-                    </button>
-                    <button
-                      onClick={() => handleGenerateInteractivePresentation("الجهاز التنفسي وتبادل الغازات في الرئتين")}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
-                    >
-                      <span>🫁</span> الجهاز التنفسي
-                    </button>
-                  </div>
-                </div>
 
-                {/* Custom Topic Generator */}
-                <div className="mt-5 bg-slate-950/60 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row gap-3 items-center">
-                  <input
-                    type="text"
-                    value={presentationTopicInput}
-                    onChange={(e) => setPresentationTopicInput(e.target.value)}
-                    placeholder="اكتبي أي درس أو عملية علمية (مثلاً: الكليتان وتنقية الدم، تكوين البول...)"
-                    className="flex-1 w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-teal-400"
-                  />
+                    {presentationFile && (
+                      <span className="text-xs font-semibold text-teal-900 truncate max-w-xs bg-white px-3 py-1.5 rounded-lg border border-teal-300">
+                        📄 {presentationFile.name} ({(presentationFile.size / 1024 / 1024).toFixed(2)} MB)
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Page range inputs */}
+                  <div className="flex flex-wrap items-center gap-4 bg-white p-3 rounded-xl border border-teal-200 justify-center">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-bold text-gray-700">من صفحة:</label>
+                      <input 
+                        type="number" 
+                        min="1"
+                        value={presStartPage}
+                        onChange={(e) => setPresStartPage(e.target.value)}
+                        placeholder="مثال: 41"
+                        className="border p-2 rounded-lg w-20 text-center text-sm font-bold border-gray-300 focus:border-teal-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-bold text-gray-700">إلى صفحة:</label>
+                      <input 
+                        type="number" 
+                        min="1"
+                        value={presEndPage}
+                        onChange={(e) => setPresEndPage(e.target.value)}
+                        placeholder="مثال: 45"
+                        className="border p-2 rounded-lg w-20 text-center text-sm font-bold border-gray-300 focus:border-teal-500 focus:outline-none"
+                      />
+                    </div>
+                    <span className="text-[11px] text-gray-500">
+                      (يمكنك تحديد صفحة واحدة مثل من 41 إلى 41 أو مجموعة صفحات كاملة)
+                    </span>
+                  </div>
+
+                  {/* Process Button */}
                   <button
-                    onClick={() => handleGenerateInteractivePresentation()}
-                    disabled={isGeneratingPresentation}
-                    className="w-full sm:w-auto bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white font-bold px-6 py-2.5 rounded-lg shadow-lg text-sm transition whitespace-nowrap disabled:opacity-50 flex items-center justify-center gap-2"
+                    onClick={handleUploadBookForPresentation}
+                    disabled={!presentationFile || isGeneratingPresentation}
+                    className={`w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 text-sm ${
+                      !presentationFile || isGeneratingPresentation
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 hover:from-teal-500 hover:to-green-500 transform hover:scale-[1.01]"
+                    }`}
                   >
                     {isGeneratingPresentation ? (
                       <>
                         <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        <span>جاري التحليل والإنشاء...</span>
+                        <span>جاري قراءة صفحات الكتاب وتحويلها لباوربوينت تفاعلي بالذكاء الاصطناعي...</span>
                       </>
                     ) : (
                       <>
                         <span>🚀</span>
-                        <span>إنشاء العرض التفاعلي بالذكاء الاصطناعي</span>
+                        <span>تحويل صفحات الكتاب المحددة إلى رحلة باوربوينت تفاعلية متكاملة بالذكاء الاصطناعي</span>
                       </>
                     )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 2: Quick Presets & Direct Topic Input */}
+              <div className="bg-gradient-to-r from-teal-900 to-slate-900 text-white p-6 rounded-2xl shadow-lg border border-teal-700/50">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl">⚡</span>
+                  <div>
+                    <h3 className="text-lg font-bold text-teal-300">
+                      أو اختاري درساً جاهزاً أو اكتبي أي موضوع مباشر:
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <button
+                    onClick={() => setActivePresentation(PRESET_KIDNEY_PRESENTATION)}
+                    className="bg-teal-800/90 hover:bg-teal-700 text-white text-xs px-3.5 py-2 rounded-xl border border-teal-500/60 font-bold transition flex items-center gap-1.5 shadow"
+                  >
+                    <span>🫘</span> رحلة الكليتين وتنقية الدم (نموذج الـ 5 كليكات الكامل)
+                  </button>
+                  <button
+                    onClick={() => handleGenerateInteractivePresentation("رحلة القلب والدورة الدموية وتوزيع الأكسجين")}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
+                  >
+                    <span>🫀</span> القلب والدورة الدموية
+                  </button>
+                  <button
+                    onClick={() => handleGenerateInteractivePresentation("رحلة الجهاز الهضمي وتفتيت الطعام")}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
+                  >
+                    <span>🥗</span> الجهاز الهضمي
+                  </button>
+                  <button
+                    onClick={() => handleGenerateInteractivePresentation("الجهاز التنفسي وتبادل الغازات في الرئتين")}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1.5"
+                  >
+                    <span>🫁</span> الجهاز التنفسي
+                  </button>
+                </div>
+
+                {/* Direct Topic */}
+                <div className="mt-4 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 flex flex-col sm:flex-row gap-3 items-center">
+                  <input
+                    type="text"
+                    value={presentationTopicInput}
+                    onChange={(e) => setPresentationTopicInput(e.target.value)}
+                    placeholder="اكتبي أي درس أو عملية علمية أخرى..."
+                    className="flex-1 w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-teal-400"
+                  />
+                  <button
+                    onClick={() => handleGenerateInteractivePresentation()}
+                    disabled={isGeneratingPresentation}
+                    className="w-full sm:w-auto bg-teal-600 hover:bg-teal-500 text-white font-bold px-5 py-2 rounded-lg text-xs transition whitespace-nowrap disabled:opacity-50"
+                  >
+                    إنشاء من الموضوع 🚀
                   </button>
                 </div>
               </div>
