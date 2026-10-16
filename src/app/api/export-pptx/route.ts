@@ -197,12 +197,16 @@ export async function POST(req: NextRequest) {
         line: { color: ACCENT_YELLOW, width: 1.5 },
       });
 
-      slide.addText(`🔍 الجزء النشط في هذا الكليك: ${step.category}`, {
+      const badgeText = step.flowRoute 
+        ? `🧭 مسار الحركة: ${step.flowRoute}`
+        : `🔍 الجزء النشط: ${step.category}`;
+
+      slide.addText(badgeText, {
         x: 1.3,
         y: 1.6,
         w: 6.2,
         h: 0.5,
-        fontSize: 13,
+        fontSize: 11.5,
         bold: true,
         color: ACCENT_YELLOW,
         align: "center",
@@ -319,8 +323,9 @@ export async function POST(req: NextRequest) {
       }
 
       // NATIVE SPEAKER NOTES (ملاحظات المحاضر داخل الباوربوينت)
+      const flowNote = step.flowRoute ? `🧭 مسار الحركة (مين رايح لمين):\n${step.flowRoute}\n\n` : "";
       slide.addNotes(
-        `[ملاحظات المعلمة رحاب أثناء عرض الشريحة]:\n\n"${step.teacherScript}"\n\n(هذا النص مخصص لإلقاء المعلمة الصوتي، ولا يظهر للطلاب في شاشة العرض الرئيسية).`
+        `${flowNote}[ملاحظات المعلمة رحاب أثناء عرض الشريحة]:\n\n"${step.teacherScript}"\n\n(هذا النص مخصص لإلقاء المعلمة الصوتي، ولا يظهر للطلاب في شاشة العرض الرئيسية).`
       );
     });
 
