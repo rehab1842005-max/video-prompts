@@ -656,7 +656,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
 
         {/* Story Directional Flow Tracker (مين رايح لمين) */}
         <div className="z-10 flex flex-wrap items-center justify-between bg-gradient-to-r from-slate-900/90 via-indigo-950/80 to-slate-900/90 border border-indigo-500/40 px-3.5 py-1.5 rounded-xl shadow-lg gap-2 mt-1">
-          <div className="flex items-center gap-2 text-xs sm:text-sm overflow-x-auto py-0.5">
+          <div className="flex items-center gap-2 text-xs sm:text-sm py-0.5">
             <span className="font-black text-amber-400 flex items-center gap-1 whitespace-nowrap">
               <span>🧭</span> مسار الحركة (مين رايح لمين):
             </span>
@@ -835,98 +835,174 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 <g id="master-base-drawing">
                   {/* Subtle Torso Background Guide */}
                   <path 
-                    d="M 280 40 Q 400 20 520 40 Q 560 250 540 480 Q 400 490 260 480 Q 240 250 280 40 Z" 
-                    fill="rgba(30, 41, 59, 0.15)" 
-                    stroke="rgba(71, 85, 105, 0.25)" 
+                    d="M 280 30 Q 400 15 520 30 Q 570 240 550 480 Q 400 495 250 480 Q 230 240 280 30 Z" 
+                    fill="rgba(30, 41, 59, 0.25)" 
+                    stroke="rgba(71, 85, 105, 0.35)" 
                     strokeDasharray="6,6" 
                     strokeWidth="1.5"
                   />
 
-                  {/* 3D Abdominal Aorta with Cylindrical Specular Shading */}
-                  <g>
-                    <path 
-                      d="M 370 20 L 370 480" 
-                      stroke="url(#aorta3dGrad)" 
-                      strokeWidth="24" 
-                      strokeLinecap="round"
-                      filter="drop-shadow(0 0 8px rgba(220, 38, 38, 0.5))"
+                  {/* Vertebral Column Shadow Guide */}
+                  <line x1="400" y1="30" x2="400" y2="480" stroke="#334155" strokeWidth="8" strokeDasharray="14,4" opacity="0.4" />
+
+                  {/* 3D Abdominal Aorta Ribbon (Guaranteed 100% Width Visibility) */}
+                  <g id="aorta-system">
+                    <rect 
+                      x="356" 
+                      y="15" 
+                      width="26" 
+                      height="465" 
+                      rx="13" 
+                      fill="url(#aorta3dGrad)" 
+                      filter="drop-shadow(0 0 10px rgba(239, 68, 68, 0.7))"
                     />
                     {/* Branching to Left Kidney */}
                     <path 
-                      d="M 370 210 Q 320 210 270 230" 
+                      d="M 370 215 Q 315 215 265 235" 
                       fill="none" 
-                      stroke="url(#aorta3dGrad)" 
+                      stroke="#dc2626" 
                       strokeWidth="16" 
+                      strokeLinecap="round"
+                    />
+                    <path 
+                      d="M 370 213 Q 315 213 265 233" 
+                      fill="none" 
+                      stroke="#fca5a5" 
+                      strokeWidth="4" 
                       strokeLinecap="round"
                     />
                     {/* Branching to Right Kidney */}
                     <path 
-                      d="M 370 210 Q 450 210 530 230" 
+                      d="M 370 215 Q 425 215 535 235" 
                       fill="none" 
-                      stroke="url(#aorta3dGrad)" 
+                      stroke="#dc2626" 
                       strokeWidth="16" 
+                      strokeLinecap="round"
+                    />
+                    <path 
+                      d="M 370 213 Q 425 213 535 233" 
+                      fill="none" 
+                      stroke="#fca5a5" 
+                      strokeWidth="4" 
                       strokeLinecap="round"
                     />
                   </g>
 
-                  {/* 3D Inferior Vena Cava with Cylindrical Specular Shading */}
-                  <g>
-                    <path 
-                      d="M 430 20 L 430 480" 
-                      stroke="url(#vein3dGrad)" 
-                      strokeWidth="22" 
-                      strokeLinecap="round"
-                      filter="drop-shadow(0 0 8px rgba(2, 132, 199, 0.4))"
+                  {/* 3D Inferior Vena Cava Ribbon (Guaranteed 100% Width Visibility) */}
+                  <g id="vena-cava-system">
+                    <rect 
+                      x="418" 
+                      y="15" 
+                      width="24" 
+                      height="465" 
+                      rx="12" 
+                      fill="url(#vein3dGrad)" 
+                      filter="drop-shadow(0 0 10px rgba(2, 132, 199, 0.6))"
                     />
                     {/* Left Renal Vein */}
                     <path 
-                      d="M 270 250 Q 350 250 430 240" 
+                      d="M 265 255 Q 345 255 429 245" 
                       fill="none" 
-                      stroke="url(#vein3dGrad)" 
-                      strokeWidth="14" 
+                      stroke="#0284c7" 
+                      strokeWidth="15" 
+                      strokeLinecap="round"
+                    />
+                    <path 
+                      d="M 265 253 Q 345 253 429 243" 
+                      fill="none" 
+                      stroke="#7dd3fc" 
+                      strokeWidth="4" 
                       strokeLinecap="round"
                     />
                     {/* Right Renal Vein */}
                     <path 
-                      d="M 530 250 Q 480 250 430 240" 
+                      d="M 535 255 Q 475 255 429 245" 
                       fill="none" 
-                      stroke="url(#vein3dGrad)" 
-                      strokeWidth="14" 
+                      stroke="#0284c7" 
+                      strokeWidth="15" 
+                      strokeLinecap="round"
+                    />
+                    <path 
+                      d="M 535 253 Q 475 253 429 243" 
+                      fill="none" 
+                      stroke="#7dd3fc" 
+                      strokeWidth="4" 
                       strokeLinecap="round"
                     />
                   </g>
 
-                  {/* 3D Ureters & Bladder */}
-                  <g>
+                  {/* 3D Ureters & Large Translucent Urinary Bladder */}
+                  <g id="ureter-bladder-system">
+                    {/* Left Ureter */}
                     <path 
-                      d="M 245 280 Q 280 380 370 430" 
+                      d="M 245 280 Q 280 375 375 425" 
                       fill="none" 
-                      stroke="url(#ureter3dGrad)" 
-                      strokeWidth="11" 
+                      stroke="#ca8a04" 
+                      strokeWidth="12" 
                       strokeLinecap="round"
-                      filter="drop-shadow(0 0 5px rgba(234, 179, 8, 0.4))"
                     />
                     <path 
-                      d="M 555 280 Q 520 380 430 430" 
+                      d="M 245 280 Q 280 375 375 425" 
                       fill="none" 
-                      stroke="url(#ureter3dGrad)" 
-                      strokeWidth="11" 
+                      stroke="#fef08a" 
+                      strokeWidth="3.5" 
                       strokeLinecap="round"
-                      filter="drop-shadow(0 0 5px rgba(234, 179, 8, 0.4))"
+                      filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.6))"
                     />
-                    {/* Translucent 3D Bladder Sphere */}
-                    <ellipse 
-                      cx="400" 
-                      cy="445" 
-                      rx="52" 
-                      ry="34" 
-                      fill="#ca8a04" 
-                      opacity="0.9" 
-                      stroke="#facc15" 
-                      strokeWidth="3"
-                      filter="drop-shadow(0 4px 10px rgba(0,0,0,0.6))"
+                    {/* Right Ureter */}
+                    <path 
+                      d="M 555 280 Q 520 375 425 425" 
+                      fill="none" 
+                      stroke="#ca8a04" 
+                      strokeWidth="12" 
+                      strokeLinecap="round"
                     />
-                    <ellipse cx="400" cy="435" rx="36" ry="14" fill="rgba(254, 240, 138, 0.3)" />
+                    <path 
+                      d="M 555 280 Q 520 375 425 425" 
+                      fill="none" 
+                      stroke="#fef08a" 
+                      strokeWidth="3.5" 
+                      strokeLinecap="round"
+                      filter="drop-shadow(0 0 6px rgba(234, 179, 8, 0.6))"
+                    />
+
+                    {/* Grand 3D Urinary Bladder */}
+                    <g id="bladder-organ" className={currentStepIndex === 10 ? "animate-pulse" : ""}>
+                      <ellipse 
+                        cx="400" 
+                        cy="435" 
+                        rx="58" 
+                        ry="38" 
+                        fill="url(#kidney3dVolume)" 
+                        opacity="0.3" 
+                      />
+                      <ellipse 
+                        cx="400" 
+                        cy="435" 
+                        rx="56" 
+                        ry="36" 
+                        fill="#ca8a04" 
+                        stroke="#facc15" 
+                        strokeWidth={currentStepIndex === 10 ? 3.5 : 2}
+                        filter="drop-shadow(0 6px 14px rgba(0,0,0,0.8))"
+                      />
+                      {/* Specular Bladder Highlight */}
+                      <ellipse cx="400" cy="422" rx="38" ry="14" fill="rgba(254, 240, 138, 0.4)" />
+                      {/* Internal Urine Pool */}
+                      <ellipse cx="400" cy="442" rx="42" ry="20" fill="#eab308" opacity="0.8" />
+
+                      {/* Sphincter Muscle Ring & Urethra Neck */}
+                      <ellipse 
+                        cx="400" 
+                        cy="470" 
+                        rx="16" 
+                        ry="7" 
+                        fill="#854d0e" 
+                        stroke="#fde047" 
+                        strokeWidth="2" 
+                      />
+                      <line x1="400" y1="476" x2="400" y2="495" stroke="#ca8a04" strokeWidth="8" strokeLinecap="round" />
+                    </g>
                   </g>
 
                   {/* --------------------------------------------------------- */}
@@ -1166,18 +1242,53 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
               {/* ------------------------------------------------------------- */}
               {!isOverview && activeStep?.labels && activeStep.labels.length > 0 && (
                 <g id="interactive-pins" className="animate-fade-in">
-                  {activeStep.labels.map((lbl, idx) => (
-                    <g key={idx} transform={`translate(${lbl.x}, ${lbl.y})`}>
-                      {/* Pulsing Pin Head */}
-                      <circle cx="0" cy="0" r="7" fill={lbl.color} filter="drop-shadow(0 0 6px currentColor)"/>
-                      <circle cx="0" cy="0" r="14" fill="none" stroke={lbl.color} strokeWidth="1.5" opacity="0.6" className="animate-ping"/>
-                      {/* Glassmorphism Chip */}
-                      <rect x="-85" y="-34" width="170" height="26" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke={lbl.color} strokeWidth="1.5" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.8))"/>
-                      <text x="0" y="-17" fill="#fff" fontSize="10.5" fontWeight="bold" textAnchor="middle">
-                        {lbl.text}
-                      </text>
-                    </g>
-                  ))}
+                  {activeStep.labels.map((lbl, idx) => {
+                    const isLeft = lbl.x < 400;
+                    const cardW = 230;
+                    const cardH = 34;
+                    const cardX = isLeft ? Math.max(10, lbl.x - cardW) : Math.min(800 - cardW - 10, lbl.x);
+                    const cardY = lbl.y - cardH / 2;
+
+                    return (
+                      <g key={idx} className="transition-all duration-300">
+                        {/* Leader Line to Target */}
+                        <line 
+                          x1={lbl.x} 
+                          y1={lbl.y} 
+                          x2={isLeft ? cardX + cardW : cardX} 
+                          y2={cardY + cardH / 2} 
+                          stroke={lbl.color} 
+                          strokeWidth="2" 
+                          strokeDasharray="4,3"
+                        />
+                        {/* Glowing Target Reticle */}
+                        <circle cx={lbl.x} cy={lbl.y} r="6" fill={lbl.color} filter="drop-shadow(0 0 6px currentColor)"/>
+                        <circle cx={lbl.x} cy={lbl.y} r="13" fill="none" stroke={lbl.color} strokeWidth="1.5" opacity="0.75" className="animate-ping"/>
+                        {/* Wide Spacious Callout Card (NO OVERLAP) */}
+                        <rect 
+                          x={cardX} 
+                          y={cardY} 
+                          width={cardW} 
+                          height={cardH} 
+                          rx="10" 
+                          fill="rgba(15, 23, 42, 0.96)" 
+                          stroke={lbl.color} 
+                          strokeWidth="2" 
+                          filter="drop-shadow(0 6px 14px rgba(0,0,0,0.85))"
+                        />
+                        <text 
+                          x={cardX + cardW / 2} 
+                          y={cardY + cardH / 2 + 4.5} 
+                          fill="#ffffff" 
+                          fontSize="11.5" 
+                          fontWeight="black" 
+                          textAnchor="middle"
+                        >
+                          {lbl.text}
+                        </text>
+                      </g>
+                    );
+                  })}
                 </g>
               )}
 
@@ -1190,7 +1301,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
           <div className={`${layoutMode === "cinema" ? "w-full max-w-4xl mx-auto mt-2" : "lg:col-span-5"} bg-slate-900/95 border-2 border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3 backdrop-blur`}>
             
             {/* Section Tabs Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2 gap-1 overflow-x-auto">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2 gap-1">
               <button
                 onClick={() => setActiveInfoTab("points")}
                 className={`text-xs font-bold px-2.5 py-1 rounded-lg transition whitespace-nowrap ${
