@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 export interface VideoPrompt {
   id: string;
@@ -25,9 +25,19 @@ export interface VideoPrompt {
 interface PromptResultListProps {
   prompts: VideoPrompt[] | null;
   onRegenerate: (index: number) => void;
+  onAddPrompt?: (prompt: VideoPrompt) => void;
+  teacherOutfit?: string;
 }
 
-export default function PromptResultList({ prompts, onRegenerate }: PromptResultListProps) {
+export default function PromptResultList({ 
+  prompts, 
+  onRegenerate,
+  onAddPrompt,
+  teacherOutfit
+}: PromptResultListProps) {
+  const [outroInput, setOutroInput] = useState("");
+  const [isGeneratingOutro, setIsGeneratingOutro] = useState(false);
+
   if (!prompts || prompts.length === 0) return null;
 
   const copyToClipboard = (text: string, label = "تم النسخ بنجاح!") => {
@@ -53,6 +63,45 @@ export default function PromptResultList({ prompts, onRegenerate }: PromptResult
   };
 
   const hasImagePrompts = prompts.some(p => p.imagePrompt);
+
+  const handleGenerateOutro = async () => {
+    const lastPrompt = prompts[prompts.length - 1];
+    const textToSend = outroInput.trim() || (lastPrompt ? lastPrompt.fullText : "");
+    
+    if (!textToSend) {
+      alert("الرجاء وضع نص آخر برومبت أو الضغط على زر الاستيراد التلقائي.");
+      return;
+    }
+
+    setIsGeneratingOutro(true);
+    try {
+      const nextNum = lastPrompt ? lastPrompt.videoNumber + 1 : prompts.length + 1;
+      const res = await fetch("/api/outro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lastPromptText: textToSend,
+          teacherOutfit: teacherOutfit,
+          videoNumber: nextNum,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "فشل توليد الخاتمة");
+      }
+
+      const data = await res.json();
+      if (data.prompt && onAddPrompt) {
+        onAddPrompt(data.prompt);
+        alert("🎉 تم توليد مشهد الخاتمة والتوديع وإضافته بنجاح إلى قائمة الفيديوهات بالأسفل!");
+      }
+    } catch (e: any) {
+      alert("حدث خطأ أثناء توليد الخاتمة: " + e.message);
+    } finally {
+      setIsGeneratingOutro(false);
+    }
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-6 mb-12">
@@ -180,6 +229,67 @@ export default function PromptResultList({ prompts, onRegenerate }: PromptResult
             </div>
           </div>
         ))}
+      </div>
+
+      {/* 5. قسم توليد الخاتمة والتوديع */}
+      <div className="mt-12 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl p-6 shadow-md" dir="rtl">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-3xl">🎉</span>
+          <div>
+            <h3 className="text-xl font-bold text-amber-900">5. توليد مشهد خاتمة وتوديع للدرس (Outro Video Prompt)</h3>
+            <p className="text-xs text-amber-700 mt-1">مشهد سينمائي احتفالي للمعلمة رحاب لتلخيص ما تم إنجازه، تهنئة الأبطال، وتوديعهم وتشويقهم للحلقة القادمة مع لافتة Sci.Rehab Elsibai.</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-sm font-bold text-gray-700">
+                نص آخر برومبت (لربط الخاتمة بموضوع الشرح):
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const last = prompts[prompts.length - 1];
+                  if (last) {
+                    setOutroInput(last.fullText);
+                  }
+                }}
+                className="text-xs bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold py-1 px-3 rounded transition-colors"
+              >
+                📥 استيراد آخر برومبت تلقائياً (VIDEO {prompts[prompts.length - 1]?.videoNumber})
+              </button>
+            </div>
+            <textarea
+              value={outroInput}
+              onChange={(e) => setOutroInput(e.target.value)}
+              placeholder="الصقي هنا نص آخر برومبت، أو اضغطي زر 'استيراد آخر برومبت تلقائياً' أعلاه..."
+              className="w-full border border-amber-300 rounded-lg p-3 text-xs font-mono bg-white min-h-[90px] focus:ring-2 focus:ring-amber-500 text-left"
+              dir="ltr"
+            />
+          </div>
+
+          <button
+            type="button"
+            disabled={isGeneratingOutro}
+            onClick={handleGenerateOutro}
+            className={`w-full py-3 px-6 rounded-lg font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
+              isGeneratingOutro ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 transform hover:scale-[1.01]'
+            }`}
+          >
+            {isGeneratingOutro ? (
+              <>
+                <span className="animate-spin text-lg">⏳</span>
+                <span>جاري تأليف مشهد الخاتمة الاحتفالي بالذكاء الاصطناعي...</span>
+              </>
+            ) : (
+              <>
+                <span className="text-xl">✨</span>
+                <span>توليد مشهد خاتمة للدرس وإضافته للفيديوهات فوراً</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

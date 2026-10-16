@@ -376,7 +376,12 @@ export default function Home() {
           )}
 
           {prompts && (
-            <PromptResultList prompts={prompts} onRegenerate={handleRegenerate} />
+            <PromptResultList 
+              prompts={prompts} 
+              onRegenerate={handleRegenerate}
+              onAddPrompt={(newPrompt) => setPrompts(prev => prev ? [...prev, newPrompt] : [newPrompt])}
+              teacherOutfit={characterConfig.teacherOutfit}
+            />
           )}
         </main>
       </div>
