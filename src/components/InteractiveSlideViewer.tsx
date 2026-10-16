@@ -40,10 +40,11 @@ interface Props {
 }
 
 export default function InteractiveSlideViewer({ presentation, onSave, onClose }: Props) {
+  // 0: Master Overview (الرسمة موجودة بالكامل في البداية), 1..N: Progressive details appear
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isScreenRecordMode, setIsScreenRecordMode] = useState(false);
-  const [showNotesDrawer, setShowNotesDrawer] = useState(false);
+  const [isExportingPptx, setIsExportingPptx] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const particlesContainerRef = useRef<SVGGElement>(null);
@@ -51,9 +52,11 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
 
   const steps = presentation.steps;
-  const currentStep = steps[currentStepIndex] || steps[0];
+  const isOverview = currentStepIndex === 0;
+  // Step 0 is overview, step 1 is index 0 of steps, step 2 is index 1, etc.
+  const activeStep = isOverview ? null : steps[currentStepIndex - 1];
 
-  // Initialize BroadcastChannel to sync separate Teacher Notes Window
+  // Initialize BroadcastChannel
   useEffect(() => {
     try {
       const channel = new BroadcastChannel("rehab_slide_notes");
@@ -69,22 +72,33 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
   // Broadcast step change to presenter window
   useEffect(() => {
     if (broadcastChannelRef.current) {
-      broadcastChannelRef.current.postMessage({
-        stepNumber: currentStep.stepNumber,
-        totalSteps: steps.length,
-        title: currentStep.title,
-        category: currentStep.category,
-        teacherScript: currentStep.teacherScript,
-        nextStepTitle: steps[currentStepIndex + 1]?.title || "نهاية العرض",
-      });
+      if (isOverview) {
+        broadcastChannelRef.current.postMessage({
+          stepNumber: 0,
+          totalSteps: steps.length,
+          title: "نظرة عامة على الرسمة والتركيب الأساسي",
+          category: "مقدمة الرسمة",
+          teacherScript: "أهلاً بكم يا أبطالي! تعالوا نبص مع بعض على الرسمة الجميلة دي.. ده الجهاز الإخراجي والكليتين في جسمنا، ومع كل كليك هنبدأ نكتشف سر وتفصيلة جديدة!",
+          nextStepTitle: steps[0]?.title || "",
+        });
+      } else if (activeStep) {
+        broadcastChannelRef.current.postMessage({
+          stepNumber: activeStep.stepNumber,
+          totalSteps: steps.length,
+          title: activeStep.title,
+          category: activeStep.category,
+          teacherScript: activeStep.teacherScript,
+          nextStepTitle: steps[currentStepIndex]?.title || "نهاية العرض",
+        });
+      }
     }
-  }, [currentStepIndex, currentStep, steps]);
+  }, [currentStepIndex, isOverview, activeStep, steps]);
 
   const nextStep = () => {
-    if (currentStepIndex < steps.length - 1) {
+    if (currentStepIndex < steps.length) {
       setCurrentStepIndex(prev => prev + 1);
     } else {
-      setCurrentStepIndex(0);
+      setCurrentStepIndex(0); // Loop back to overview
     }
   };
 
@@ -94,7 +108,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     }
   };
 
-  // Keyboard controls: Space, Arrow Left/Right, Enter, N (Notes toggle), R (Record mode toggle)
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -104,8 +118,6 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
       } else if (e.code === "ArrowRight") {
         e.preventDefault();
         prevStep();
-      } else if (e.key.toLowerCase() === "n") {
-        setShowNotesDrawer(prev => !prev);
       } else if (e.key.toLowerCase() === "r") {
         setIsScreenRecordMode(prev => !prev);
       }
@@ -114,17 +126,19 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentStepIndex, steps.length]);
 
-  // Dynamic particle animations (including waste in blood)
+  // Dynamic particle animations (including clear waste in blood)
   useEffect(() => {
     const container = particlesContainerRef.current;
     if (!container) return;
     container.innerHTML = "";
 
-    const type = currentStep.particleType;
+    if (isOverview || !activeStep) return;
+
+    const type = activeStep.particleType;
     let count = 0;
     const interval = setInterval(() => {
       count++;
-      if (count > 30 && container.firstChild) {
+      if (count > 28 && container.firstChild) {
         container.removeChild(container.firstChild);
       }
 
@@ -134,12 +148,12 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
 
         if (isWaste) {
           // Sharp Yellow/Amber Waste Crystal
-          const rect = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-          rect.setAttribute("points", "370,55 374,62 370,69 366,62");
-          rect.setAttribute("fill", "#facc15");
-          rect.setAttribute("stroke", "#ca8a04");
-          rect.setAttribute("stroke-width", "1.5");
-          container.appendChild(rect);
+          const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+          poly.setAttribute("points", "370,55 375,62 370,69 365,62");
+          poly.setAttribute("fill", "#facc15");
+          poly.setAttribute("stroke", "#ca8a04");
+          poly.setAttribute("stroke-width", "1.5");
+          container.appendChild(poly);
 
           let t = 0;
           const move = setInterval(() => {
@@ -152,10 +166,10 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
               cx = 370 + (targetX - 370) * branchT;
               cy = 210 + (240 - 210) * branchT;
             }
-            rect.setAttribute("points", `${cx},${cy - 5} ${cx + 5},${cy} ${cx},${cy + 5} ${cx - 5},${cy}`);
+            poly.setAttribute("points", `${cx},${cy - 5} ${cx + 5},${cy} ${cx},${cy + 5} ${cx - 5},${cy}`);
             if (t >= 1) {
               clearInterval(move);
-              rect.remove();
+              poly.remove();
             }
           }, 30);
         } else {
@@ -249,7 +263,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     }, 170);
 
     return () => clearInterval(interval);
-  }, [currentStepIndex, currentStep.particleType]);
+  }, [currentStepIndex, isOverview, activeStep]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -261,17 +275,24 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     }
   };
 
-  // Open Synced Presenter Notes in a separate popup window
+  // Open Synced Presenter Notes Window
   const openPresenterNotesWindow = () => {
     const popup = window.open("", "RehabPresenterNotes", "width=520,height=650,left=50,top=50");
     if (popup) {
       presenterWindowRef.current = popup;
+      const initialTitle = isOverview ? "نظرة عامة على الرسمة والتركيب الأساسي" : activeStep?.title || "";
+      const initialScript = isOverview 
+        ? "أهلاً بكم يا أبطالي! تعالوا نبص مع بعض على الرسمة الكاملة دي.. ده الجهاز الإخراجي والكليتين في جسمنا، ومع كل كليك هنبدأ نكتشف سر وتفصيلة جديدة!"
+        : activeStep?.teacherScript || "";
+      const initialCat = isOverview ? "مقدمة الرسمة" : activeStep?.category || "";
+      const initialNext = isOverview ? steps[0]?.title : (steps[currentStepIndex]?.title || "نهاية العرض");
+
       popup.document.write(`
         <!DOCTYPE html>
         <html lang="ar" dir="rtl">
         <head>
           <meta charset="UTF-8">
-          <title>🎙️ ملاحظات المعلمة (المُلقن الصوتي الخفي)</title>
+          <title>🎙️ ملاحظات المعلمة (شاشة المحاضر المستقلة)</title>
           <script src="https://cdn.tailwindcss.com"></script>
         </head>
         <body class="bg-slate-900 text-slate-100 p-6 font-sans select-none flex flex-col justify-between min-h-screen">
@@ -279,18 +300,18 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
               <div>
                 <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold px-2.5 py-1 rounded-full">
-                  شاشة المحاضر المستقلة (لا تظهر للطلاب)
+                  شاشة المعلمة الخفية (لا تظهر للطلاب)
                 </span>
                 <h1 class="text-lg font-black text-white mt-1">نافذة التلقين الصوتي لمس رحاب</h1>
               </div>
               <span id="step-badge" class="bg-blue-600/40 text-blue-300 font-bold text-sm px-3 py-1 rounded-full border border-blue-500">
-                الخطوة ${currentStep.stepNumber} من ${steps.length}
+                ${isOverview ? "نظرة عامة" : `الخطوة ${activeStep?.stepNumber} من ${steps.length}`}
               </span>
             </div>
 
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-4">
-              <span class="text-xs text-teal-400 font-bold" id="category">المرحلة: ${currentStep.category}</span>
-              <h2 id="title" class="text-xl font-black text-white mt-0.5">${currentStep.title}</h2>
+              <span class="text-xs text-teal-400 font-bold" id="category">المرحلة: ${initialCat}</span>
+              <h2 id="title" class="text-xl font-black text-white mt-0.5">${initialTitle}</h2>
             </div>
 
             <div class="bg-blue-950/80 border-2 border-blue-600/60 rounded-2xl p-5 shadow-2xl">
@@ -298,13 +319,13 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 🎙️ قولي للطلاب بصوتك الآن:
               </span>
               <p id="script" class="text-lg text-slate-100 font-bold leading-relaxed">
-                "${currentStep.teacherScript}"
+                "${initialScript}"
               </p>
             </div>
           </div>
 
           <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 mt-4 flex justify-between items-center">
-            <span>الخطوة القادمة: <b id="next-title" class="text-slate-200">${steps[currentStepIndex + 1]?.title || "نهاية العرض"}</b></span>
+            <span>الخطوة القادمة: <b id="next-title" class="text-slate-200">${initialNext}</b></span>
             <span class="text-teal-400">متزامنة تلقائياً مع الكليك ✅</span>
           </div>
 
@@ -312,7 +333,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             const channel = new BroadcastChannel("rehab_slide_notes");
             channel.onmessage = (e) => {
               const data = e.data;
-              document.getElementById("step-badge").textContent = "الخطوة " + data.stepNumber + " من " + data.totalSteps;
+              document.getElementById("step-badge").textContent = data.stepNumber === 0 ? "نظرة عامة" : "الخطوة " + data.stepNumber + " من " + data.totalSteps;
               document.getElementById("category").textContent = "المرحلة: " + data.category;
               document.getElementById("title").textContent = data.title;
               document.getElementById("script").textContent = '"' + data.teacherScript + '"';
@@ -326,16 +347,33 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     }
   };
 
-  const exportStandaloneHTML = () => {
-    const html = generateFullStandaloneHtml(presentation);
-    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `عرض_باوربوينت_تفاعلي_${presentation.title.replace(/\s+/g, "_")}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
-    alert("🎉 تم تحميل ملف الباوربوينت التفاعلي بنجاح! يعمل بدون نت، ويحتوي على وضع تصوير الشاشة ونافذة الملاحظات المنفصلة.");
+  // Export Real Microsoft PowerPoint (.pptx) file via API
+  const exportRealPPTX = async () => {
+    setIsExportingPptx(true);
+    try {
+      const res = await fetch("/api/export-pptx", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ presentation }),
+      });
+
+      if (!res.ok) {
+        throw new Error("فشل توليد ملف الباوربوينت");
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${presentation.title.replace(/\s+/g, "_")}.pptx`;
+      a.click();
+      URL.revokeObjectURL(url);
+      alert("🎉 تم تحميل ملف الباوربوينت الأصلي (.pptx) بنجاح! يمكنك فتحه في مايكروسوفت باوربوينت مع الشرائح المتسلسلة وملاحظات المعلمة.");
+    } catch (e: any) {
+      alert("حدث خطأ أثناء تحميل ملف الباوربوينت: " + e.message);
+    } finally {
+      setIsExportingPptx(false);
+    }
   };
 
   return (
@@ -353,19 +391,30 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
           <div>
             <div className="flex items-center gap-2">
               <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-2 py-0.5 rounded-md font-bold">
-                عرض باوربوينت تفاعلي
+                باوربوينت تفاعلي (أسلوب د. أحمد الجوهري)
               </span>
               <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
                 {presentation.title}
               </h2>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              كليك لكل حركة بالماوس أو المسطرة (Space) - النقاط العلمية مكتوبة على الشريحة
+              الرسمة موجودة في البداية 🫘، ومع كل كليك يظهر تفصيل وسهم ومعلومة مكتوبة 🎯
             </p>
           </div>
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
+          {/* Download Real PPTX */}
+          <button
+            onClick={exportRealPPTX}
+            disabled={isExportingPptx}
+            className="bg-orange-600 hover:bg-orange-500 text-white text-xs px-3.5 py-1.5 rounded-xl shadow transition flex items-center gap-1.5 font-bold disabled:opacity-50"
+            title="تحميل كملف مايكروسوفت باوربوينت حقيقي (.pptx) يحتوي على الشرائح المتتالية وملاحظات المحاضر"
+          >
+            <span>📊</span>
+            <span>{isExportingPptx ? "جاري تجهيز PPTX..." : "تحميل باوربوينت (.pptx)"}</span>
+          </button>
+
           {/* Screen Recording Mode Toggle */}
           <button
             onClick={() => setIsScreenRecordMode(prev => !prev)}
@@ -374,17 +423,17 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 ? "bg-rose-600 hover:bg-rose-500 text-white border-rose-500 shadow-md shadow-rose-600/30 animate-pulse"
                 : "bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700"
             }`}
-            title="إخفاء كلام المعلمة من الشاشة الموجهة للطلاب لتسجيل فيديو شاشة احترافي بدون نصوص مكررة"
+            title="إخفاء كلام المعلمة من الشاشة الموجهة للطلاب لتسجيل فيديو شاشة احترافي"
           >
             <span>📹</span>
-            <span>{isScreenRecordMode ? "وضع تسجيل الشاشة (مُفعّل)" : "وضع تسجيل الشاشة"}</span>
+            <span>{isScreenRecordMode ? "وضع تصوير الشاشة (مُفعّل)" : "وضع تصوير الشاشة"}</span>
           </button>
 
           {/* Open Separate Presenter Window */}
           <button
             onClick={openPresenterNotesWindow}
             className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-xl border border-indigo-500 shadow transition flex items-center gap-1.5 font-bold"
-            title="فتح نافذة منفصلة تعرض كلام المعلمة متزامناً مع الكليك، لتضعيها على شاشة ثانية أثناء تسجيل الشاشة"
+            title="فتح نافذة منفصلة تعرض كلام المعلمة متزامناً مع الكليك لتضعيها على شاشة ثانية"
           >
             <span>🎙️</span> نافذة ملاحظاتي (منفصلة)
           </button>
@@ -396,15 +445,6 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             title="ملء الشاشة"
           >
             <span>🖥️</span> {isFullscreen ? "تصغير" : "ملء الشاشة"}
-          </button>
-
-          {/* Download Standalone HTML */}
-          <button
-            onClick={exportStandaloneHTML}
-            className="bg-teal-600 hover:bg-teal-500 text-white text-xs px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1 font-bold"
-            title="تحميل كملف باوربوينت تفاعلي مستقل يعمل بدون إنترنت"
-          >
-            <span>📥</span> تحميل HTML
           </button>
 
           {onSave && (
@@ -437,11 +477,13 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 ماذا تقولين للطلاب في هذا الكليك (شرح صوتي مباشر):
               </span>
               <span className="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded">
-                (يمكنك إخفاؤه بالضغط على زر "وضع تسجيل الشاشة")
+                (خفي أثناء تصوير الشاشة)
               </span>
             </div>
             <p className="text-slate-100 text-sm font-semibold leading-relaxed">
-              "{currentStep.teacherScript}"
+              "{isOverview 
+                ? "أهلاً بكم يا أبطالي! تعالوا نبص مع بعض على الرسمة الكاملة دي.. ده الجهاز الإخراجي والكليتين في جسمنا، ومع كل كليك هنبدأ نكتشف سر وتفصيلة جديدة!"
+                : activeStep?.teacherScript}"
             </p>
           </div>
           <button
@@ -453,31 +495,31 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
         </div>
       )}
 
-      {/* Main Presentation Stage (16:9 Educational Canvas) */}
+      {/* Main Presentation Stage (16:9 Master Canvas - Progressive Reveal) */}
       <div 
         onClick={nextStep}
-        className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 rounded-2xl border-2 border-slate-800 hover:border-blue-500/50 transition-all p-3 sm:p-5 cursor-pointer overflow-hidden flex-1 min-h-[500px] shadow-2xl flex flex-col justify-between group"
+        className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 rounded-2xl border-2 border-slate-800 hover:border-blue-500/50 transition-all p-3 sm:p-5 cursor-pointer overflow-hidden flex-1 min-h-[510px] shadow-2xl flex flex-col justify-between group"
         title="اضغط في أي مكان أو اضغط المسطرة (Space) للحركة التالية"
       >
         {/* Step Header on Slide */}
         <div className="flex justify-between items-center z-10 bg-slate-950/70 backdrop-blur border border-slate-800/80 px-4 py-2.5 rounded-xl">
           <div>
             <span className="text-xs font-bold text-teal-400">
-              المرحلة {currentStep.stepNumber} من {steps.length}: {currentStep.category}
+              {isOverview ? "البداية: نظرة عامة" : `كليك ${currentStepIndex} من ${steps.length}: ${activeStep?.category}`}
             </span>
             <h3 className="text-xl sm:text-2xl font-black text-white">
-              {currentStep.title}
+              {isOverview ? "الرسمة التشريحية الأساسية للكليتين" : activeStep?.title}
             </h3>
           </div>
           <span className="bg-blue-600/40 text-blue-200 border border-blue-500/50 text-xs font-bold px-3 py-1 rounded-full">
-            كليك {currentStep.stepNumber}
+            {isOverview ? "نظرة عامة 🫘" : `كليك ${currentStepIndex}`}
           </span>
         </div>
 
-        {/* Central Display: SVG Visual + Written Key Points Grid */}
+        {/* Central Display: Progressive SVG Visual + Written Key Points */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center my-auto py-2 z-10">
           
-          {/* Left/Center: Visual Anatomical SVG Stage */}
+          {/* Visual Master Diagram Box with Progressive Disclosure */}
           <div className="lg:col-span-8 relative flex items-center justify-center">
             <svg viewBox="0 0 800 500" className="w-full h-full max-h-[440px] drop-shadow-2xl">
               <defs>
@@ -504,10 +546,19 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                     <feMergeNode in="SourceGraphic"/>
                   </feMerge>
                 </filter>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
+                </marker>
+                <marker id="arrow-yellow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15" />
+                </marker>
+                <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                </marker>
               </defs>
 
-              {/* Kidneys Anatomical SVG */}
-              <g>
+              {/* 1. MASTER BASE DRAWING (موجودة دائماً في الخلفية كأساس تشريحي) */}
+              <g id="master-base-drawing">
                 {/* Silhouette */}
                 <path 
                   d="M 280 40 Q 400 20 520 40 Q 560 250 540 480 Q 400 490 260 480 Q 240 250 280 40 Z" 
@@ -517,19 +568,77 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                   strokeWidth="2"
                 />
 
-                {/* Artery & Vein */}
-                <path d="M 370 30 L 370 480" stroke="url(#arteryGrad)" strokeWidth="22" strokeLinecap="round"/>
-                <path d="M 370 210 Q 320 210 270 230" fill="none" stroke="url(#arteryGrad)" strokeWidth="14" strokeLinecap="round"/>
-                <path d="M 370 210 Q 450 210 530 230" fill="none" stroke="url(#arteryGrad)" strokeWidth="14" strokeLinecap="round"/>
+                {/* Main Artery (Active and illuminated if currentStepIndex >= 1) */}
+                <path 
+                  d="M 370 30 L 370 480" 
+                  stroke={currentStepIndex >= 1 ? "url(#arteryGrad)" : "rgba(239, 68, 68, 0.3)"} 
+                  strokeWidth="22" 
+                  strokeLinecap="round"
+                  className={currentStepIndex === 1 || currentStepIndex === 2 ? "filter-pulse" : ""}
+                />
+                <path 
+                  d="M 370 210 Q 320 210 270 230" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 1 ? "url(#arteryGrad)" : "rgba(239, 68, 68, 0.3)"} 
+                  strokeWidth="14" 
+                  strokeLinecap="round"
+                />
+                <path 
+                  d="M 370 210 Q 450 210 530 230" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 1 ? "url(#arteryGrad)" : "rgba(239, 68, 68, 0.3)"} 
+                  strokeWidth="14" 
+                  strokeLinecap="round"
+                />
 
-                <path d="M 430 30 L 430 480" stroke="url(#veinGrad)" strokeWidth="20" strokeLinecap="round"/>
-                <path d="M 270 250 Q 350 250 430 240" fill="none" stroke="url(#veinGrad)" strokeWidth="12" strokeLinecap="round"/>
-                <path d="M 530 250 Q 480 250 430 240" fill="none" stroke="url(#veinGrad)" strokeWidth="12" strokeLinecap="round"/>
+                {/* Main Vein (Active and illuminated if currentStepIndex >= 5) */}
+                <path 
+                  d="M 430 30 L 430 480" 
+                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  strokeWidth="20" 
+                  strokeLinecap="round"
+                  className={currentStepIndex >= 5 ? "filter-pulse" : ""}
+                />
+                <path 
+                  d="M 270 250 Q 350 250 430 240" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  strokeWidth="12" 
+                  strokeLinecap="round"
+                />
+                <path 
+                  d="M 530 250 Q 480 250 430 240" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  strokeWidth="12" 
+                  strokeLinecap="round"
+                />
 
-                {/* Ureters & Bladder */}
-                <path d="M 245 280 Q 280 380 370 430" fill="none" stroke="url(#ureterGrad)" strokeWidth="10" strokeLinecap="round"/>
-                <path d="M 555 280 Q 520 380 430 430" fill="none" stroke="url(#ureterGrad)" strokeWidth="10" strokeLinecap="round"/>
-                <ellipse cx="400" cy="445" rx="50" ry="32" fill="#ca8a04" opacity="0.85" stroke="#facc15" strokeWidth="3"/>
+                {/* Ureters & Bladder (Active if currentStepIndex >= 4) */}
+                <path 
+                  d="M 245 280 Q 280 380 370 430" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 4 ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
+                  strokeWidth="10" 
+                  strokeLinecap="round"
+                />
+                <path 
+                  d="M 555 280 Q 520 380 430 430" 
+                  fill="none" 
+                  stroke={currentStepIndex >= 4 ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
+                  strokeWidth="10" 
+                  strokeLinecap="round"
+                />
+                <ellipse 
+                  cx="400" 
+                  cy="445" 
+                  rx="50" 
+                  ry="32" 
+                  fill="#ca8a04" 
+                  opacity={currentStepIndex >= 4 ? 0.9 : 0.3} 
+                  stroke="#facc15" 
+                  strokeWidth={currentStepIndex >= 4 ? 3 : 1.5}
+                />
 
                 {/* Left Kidney */}
                 <g className="transition-all duration-500">
@@ -537,13 +646,14 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                     d="M 250 150 C 190 150 170 210 170 250 C 170 310 200 350 250 350 C 280 350 285 300 270 260 C 260 230 270 190 280 170 C 275 155 260 150 250 150 Z" 
                     fill="url(#kidneyGlow)" 
                     stroke="#f87171" 
-                    strokeWidth="4"
-                    filter={currentStep.activeGlow ? "url(#pulseGlow)" : undefined}
+                    strokeWidth={currentStepIndex >= 3 ? 4 : 2}
+                    filter={currentStepIndex === 3 ? "url(#pulseGlow)" : undefined}
                   />
-                  <g opacity={currentStep.showFilters ? "1" : "0"} className="transition-opacity duration-700">
-                    <circle cx="210" cy="230" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
-                    <circle cx="230" cy="270" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
-                    <circle cx="215" cy="300" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
+                  {/* Nephron filter circles reveal at Click 3+ */}
+                  <g opacity={currentStepIndex >= 3 ? "1" : "0"} className="transition-opacity duration-700">
+                    <circle cx="210" cy="230" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
+                    <circle cx="230" cy="270" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
+                    <circle cx="215" cy="300" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
                     <text x="210" y="234" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
                     <text x="230" y="274" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
                     <text x="215" y="304" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
@@ -561,13 +671,14 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                     d="M 550 150 C 610 150 630 210 630 250 C 630 310 600 350 550 350 C 520 350 515 300 530 260 C 540 230 530 190 520 170 C 525 155 540 150 550 150 Z" 
                     fill="url(#kidneyGlow)" 
                     stroke="#f87171" 
-                    strokeWidth="4"
-                    filter={currentStep.activeGlow ? "url(#pulseGlow)" : undefined}
+                    strokeWidth={currentStepIndex >= 3 ? 4 : 2}
+                    filter={currentStepIndex === 3 ? "url(#pulseGlow)" : undefined}
                   />
-                  <g opacity={currentStep.showFilters ? "1" : "0"} className="transition-opacity duration-700">
-                    <circle cx="590" cy="230" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
-                    <circle cx="570" cy="270" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
-                    <circle cx="585" cy="300" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" strokeWidth="1.5"/>
+                  {/* Nephron filter circles reveal at Click 3+ */}
+                  <g opacity={currentStepIndex >= 3 ? "1" : "0"} className="transition-opacity duration-700">
+                    <circle cx="590" cy="230" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
+                    <circle cx="570" cy="270" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
+                    <circle cx="585" cy="300" r="14" fill="#fbbf24" opacity="0.95" stroke="#fff" strokeWidth="1.5"/>
                     <text x="590" y="234" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
                     <text x="570" y="274" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
                     <text x="585" y="304" fontSize="10" fill="#000" textAnchor="middle" fontWeight="bold">فلتر</text>
@@ -578,81 +689,117 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                   <circle cx="559" cy="200" r="3" fill="#000"/>
                   <path d="M 564 215 Q 572 225 580 215" stroke="#fff" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
                 </g>
-
-                {/* Waste Zoom Callout Box during Step 2 & 3 */}
-                {(currentStep.stepNumber === 2 || currentStep.stepNumber === 3) && (
-                  <g className="animate-pulse">
-                    <rect x="270" y="40" width="260" height="42" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2"/>
-                    <circle cx="285" cy="61" r="5" fill="#ef4444"/>
-                    <text x="330" y="65" fill="#f87171" fontSize="11" fontWeight="bold">كرات دم حمراء</text>
-                    <polygon points="380,56 385,61 380,66 375,61" fill="#facc15" stroke="#ca8a04"/>
-                    <text x="445" y="65" fill="#facc15" fontSize="11" fontWeight="bold">جزيئات فضلات (يوريا/أملاح)</text>
-                  </g>
-                )}
               </g>
 
-              {/* Dynamic Animated Particles Container */}
-              <g ref={particlesContainerRef}></g>
+              {/* 2. PROGRESSIVE CALLOUTS & ARROWS ACCORDING TO CURRENT CLICK */}
 
-              {/* Floating Labels */}
-              {currentStep.labels.map((lbl, idx) => {
-                const padding = 14;
-                const textLen = lbl.text.length * 8.5 + padding * 2;
-                return (
-                  <g key={idx}>
-                    <rect 
-                      x={lbl.x - textLen / 2} 
-                      y={lbl.y - 18} 
-                      width={textLen} 
-                      height={28} 
-                      rx="14" 
-                      fill="rgba(15, 23, 42, 0.92)" 
-                      stroke={lbl.color} 
-                      strokeWidth="2"
-                      filter="drop-shadow(0 4px 6px rgba(0,0,0,0.5))"
-                    />
-                    <text 
-                      x={lbl.x} 
-                      y={lbl.y + 1} 
-                      fill={lbl.color} 
-                      fontSize="12" 
-                      fontWeight="bold" 
-                      textAnchor="middle"
-                    >
-                      {lbl.text}
-                    </text>
-                  </g>
-                );
-              })}
+              {/* Click 1: Arrow pointing to Renal Artery */}
+              {currentStepIndex === 1 && (
+                <g className="animate-fade-in">
+                  <path d="M 280 80 L 355 80" stroke="#ef4444" strokeWidth="3" markerEnd="url(#arrow-red)"/>
+                  <rect x="110" y="62" width="160" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#ef4444" strokeWidth="2"/>
+                  <text x="190" y="84" fill="#f87171" fontSize="12" fontWeight="bold" textAnchor="middle">1. الشريان الكلوي (دخول الدم)</text>
+                </g>
+              )}
+
+              {/* Click 2: Clear Waste Particles Zoom Callout */}
+              {currentStepIndex === 2 && (
+                <g className="animate-pulse">
+                  <line x1="370" y1="120" x2="310" y2="70" stroke="#facc15" strokeWidth="2" strokeDasharray="4,4"/>
+                  <rect x="220" y="35" width="360" height="52" rx="14" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2.5" filter="drop-shadow(0 4px 10px rgba(0,0,0,0.8))"/>
+                  <circle cx="245" cy="61" r="7" fill="#ef4444"/>
+                  <text x="295" y="65" fill="#f87171" fontSize="11" fontWeight="bold">كرات دم حمراء</text>
+                  <polygon points="370,55 376,61 370,67 364,61" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5"/>
+                  <text x="460" y="65" fill="#facc15" fontSize="12" fontWeight="black">⚠️ جزيئات فضلات (يوريا/أملاح سامة)</text>
+                </g>
+              )}
+
+              {/* Click 3: Arrow pointing to Nephron Filters inside Kidney */}
+              {currentStepIndex === 3 && (
+                <g className="animate-fade-in">
+                  <path d="M 120 270 L 195 270" stroke="#fbbf24" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="10" y="252" width="105" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#fbbf24" strokeWidth="2"/>
+                  <text x="62" y="274" fill="#fbbf24" fontSize="12" fontWeight="bold" textAnchor="middle">فلاتر النيفرون 🔬</text>
+
+                  <path d="M 680 270 L 605 270" stroke="#fbbf24" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="685" y="252" width="105" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#fbbf24" strokeWidth="2"/>
+                  <text x="737" y="274" fill="#fbbf24" fontSize="12" fontWeight="bold" textAnchor="middle">مليون فلتر ترشيح</text>
+                </g>
+              )}
+
+              {/* Click 4: Arrow pointing to Ureters & Bladder */}
+              {currentStepIndex === 4 && (
+                <g className="animate-fade-in">
+                  <path d="M 230 390 L 300 370" stroke="#facc15" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="90" y="380" width="135" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2"/>
+                  <text x="157" y="402" fill="#facc15" fontSize="12" fontWeight="bold" textAnchor="middle">الحالب (نزول البول ⬇️)</text>
+
+                  <path d="M 530 445 L 455 445" stroke="#facc15" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="535" y="428" width="145" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2"/>
+                  <text x="607" y="450" fill="#facc15" fontSize="12" fontWeight="bold" textAnchor="middle">المثانة (تجميع البول)</text>
+                </g>
+              )}
+
+              {/* Click 5: Arrow pointing to Clean Renal Vein */}
+              {currentStepIndex === 5 && (
+                <g className="animate-fade-in">
+                  <path d="M 540 80 L 445 80" stroke="#38bdf8" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <rect x="545" y="62" width="180" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" strokeWidth="2"/>
+                  <text x="635" y="84" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">الوريد الكلوي (دم نقي 100% ⬆️)</text>
+                </g>
+              )}
+
+              {/* Dynamic Particles Container */}
+              <g ref={particlesContainerRef}></g>
             </svg>
           </div>
 
           {/* Right: Written Key Points & Scientific Facts (Real PowerPoint Slide Content) */}
           <div className="lg:col-span-4 bg-slate-900/95 border-2 border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3 backdrop-blur">
-            <div className="border-b border-slate-800 pb-2">
+            <div className="border-b border-slate-800 pb-2 flex justify-between items-center">
               <span className="text-xs font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
                 <span>📝</span> نقاط الشرح المكتوبة للطلاب:
+              </span>
+              <span className="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold">
+                {isOverview ? "المقدمة" : `خطوة ${currentStepIndex}`}
               </span>
             </div>
 
             {/* Bullet Points */}
             <ul className="space-y-2.5 text-sm text-slate-200">
-              {(currentStep.keyPoints || [currentStep.visualAction]).map((pt, i) => (
-                <li key={i} className="flex items-start gap-2 leading-relaxed">
-                  <span className="text-teal-400 font-bold mt-0.5">•</span>
-                  <span>{pt}</span>
-                </li>
-              ))}
+              {isOverview ? (
+                <>
+                  <li className="flex items-start gap-2 leading-relaxed">
+                    <span className="text-teal-400 font-bold mt-0.5">•</span>
+                    <span>الرسمة تمثل الجهاز البولي والإخراجي المسؤول عن تنقية دم الإنسان باستمرار.</span>
+                  </li>
+                  <li className="flex items-start gap-2 leading-relaxed">
+                    <span className="text-teal-400 font-bold mt-0.5">•</span>
+                    <span>يتكون من الكليتين، الشريان الكلوي، الوريد الكلوي، الحالبين، والمثانة البولية.</span>
+                  </li>
+                  <li className="flex items-start gap-2 leading-relaxed">
+                    <span className="text-teal-400 font-bold mt-0.5">•</span>
+                    <span className="text-amber-300 font-semibold">اضغطي كليك بالماوس لبدء ظهور تفاصيل الرسمة خطوة بخطوة بالترتيب!</span>
+                  </li>
+                </>
+              ) : (
+                (activeStep?.keyPoints || [activeStep?.visualAction || ""]).map((pt, i) => (
+                  <li key={i} className="flex items-start gap-2 leading-relaxed">
+                    <span className="text-teal-400 font-bold mt-0.5">•</span>
+                    <span>{pt}</span>
+                  </li>
+                ))
+              )}
             </ul>
 
             {/* Scientific Golden Fact */}
-            {currentStep.scientificFact && (
+            {(!isOverview && activeStep?.scientificFact) && (
               <div className="mt-2 bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-600/40 rounded-xl p-3">
                 <span className="text-[11px] font-black text-amber-400 flex items-center gap-1">
                   💡 معلومة علمية ذهبية:
                 </span>
                 <p className="text-xs text-amber-100/90 mt-1 leading-relaxed font-medium">
-                  {currentStep.scientificFact}
+                  {activeStep.scientificFact}
                 </p>
               </div>
             )}
@@ -666,7 +813,7 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             <span>اضغطي في أي مكان أو المسطرة (Space) للحركة التالية</span>
           </span>
           <span className="hidden sm:inline text-slate-500">
-            اختصار الملاحظات: حرف N | اختصار وضع التسجيل: حرف R
+            {isOverview ? "اضغطي كليك للكشف عن الجزء الأول من الرسمة" : `الحركة الحالية: ${currentStepIndex} من ${steps.length}`}
           </span>
         </div>
       </div>
@@ -675,18 +822,26 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
       <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-lg">
         {/* Step dots */}
         <div className="flex items-center gap-1.5 flex-1 max-w-xl w-full">
+          <button
+            onClick={() => setCurrentStepIndex(0)}
+            className={`h-2.5 px-3 rounded-full text-[10px] font-bold transition-all ${
+              isOverview ? "bg-amber-400 text-slate-950 scale-105" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+            }`}
+          >
+            نظرة عامة
+          </button>
           {steps.map((st, i) => (
             <button
               key={i}
-              onClick={() => setCurrentStepIndex(i)}
+              onClick={() => setCurrentStepIndex(i + 1)}
               className={`h-2.5 flex-1 rounded-full transition-all duration-300 ${
-                i === currentStepIndex
+                i + 1 === currentStepIndex
                   ? "bg-gradient-to-r from-teal-400 to-blue-500 scale-y-125 shadow-md shadow-blue-500/50"
-                  : i < currentStepIndex
+                  : i + 1 < currentStepIndex
                   ? "bg-teal-700/80 hover:bg-teal-600"
                   : "bg-slate-800 hover:bg-slate-700"
               }`}
-              title={`الانتقال إلى خطوة ${i + 1}: ${st.title}`}
+              title={`كليك ${i + 1}: ${st.title}`}
             />
           ))}
         </div>
@@ -708,12 +863,12 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             onClick={nextStep}
             className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2 rounded-xl shadow-lg shadow-blue-600/30 text-xs sm:text-sm transition transform hover:scale-105 flex items-center gap-1.5"
           >
-            ⬅️ <span>التالي (كليك)</span>
+            ⬅️ <span>{isOverview ? "بدء استكشاف التفاصيل (كليك)" : "التالي (كليك)"}</span>
           </button>
           <button
             onClick={() => setCurrentStepIndex(0)}
             className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-xl border border-slate-700 transition"
-            title="إعادة العرض من البداية"
+            title="العودة لنظرة عامة على الرسمة"
           >
             🔄 البداية
           </button>
@@ -721,448 +876,4 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
       </footer>
     </div>
   );
-}
-
-// Standalone HTML Exporter with Screen Record Mode & Synced Presenter Window
-function generateFullStandaloneHtml(presentation: InteractivePresentation): string {
-  const stepsJson = JSON.stringify(presentation.steps);
-  return `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>عرض باوربوينت تفاعلي: ${presentation.title}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @keyframes pulse-glow {
-      0%, 100% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)); }
-      50% { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.95)); }
-    }
-    .active-glow { animation: pulse-glow 2s infinite ease-in-out; }
-  </style>
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between p-4 select-none font-sans">
-  <header class="w-full max-w-6xl mx-auto flex flex-wrap justify-between items-center bg-slate-900/90 border border-slate-800 rounded-2xl px-5 py-3 shadow-xl gap-3">
-    <div>
-      <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent">
-        ${presentation.title}
-      </h1>
-      <p class="text-xs text-slate-400">عرض تفاعلي كليك لكل حركة - إعداد: Sci.Rehab Elsibai</p>
-    </div>
-    <div class="flex items-center gap-2">
-      <button id="record-mode-btn" onclick="toggleRecordMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1">
-        <span>📹</span> وضع تسجيل الشاشة
-      </button>
-      <button onclick="openPresenterNotes()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-xl border border-indigo-500 font-bold transition flex items-center gap-1">
-        <span>🎙️</span> نافذة ملاحظاتي (منفصلة)
-      </button>
-      <button onclick="toggleFullscreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl border border-slate-700 font-bold transition">
-        🖥️ ملء الشاشة
-      </button>
-    </div>
-  </header>
-
-  <div id="teacher-notes-banner" class="w-full max-w-6xl mx-auto my-3 bg-blue-950/70 border border-blue-800/60 rounded-2xl p-3 shadow-inner flex justify-between items-center gap-3">
-    <div>
-      <span class="text-xs font-bold text-blue-300">🎙️ ماذا تقولين للطلاب في هذا الكليك (شرح صوتي مباشر):</span>
-      <p id="teacher-script" class="text-slate-100 text-sm font-semibold mt-0.5"></p>
-    </div>
-    <button onclick="toggleRecordMode()" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700">👁️ إخفاء</button>
-  </div>
-
-  <main class="w-full max-w-6xl mx-auto my-auto flex-1 flex flex-col bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-2xl relative cursor-pointer" onclick="nextStep()">
-    <div class="flex justify-between items-center bg-slate-950/70 border border-slate-800/80 px-4 py-2.5 rounded-xl mb-3">
-      <div>
-        <span id="step-category" class="text-xs font-bold text-teal-400"></span>
-        <h2 id="step-title" class="text-xl sm:text-2xl font-black text-white"></h2>
-      </div>
-      <span id="step-badge" class="bg-blue-600/40 text-blue-200 border border-blue-500/50 text-xs font-bold px-3 py-1 rounded-full"></span>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center my-auto">
-      <div class="lg:col-span-8 flex items-center justify-center">
-        <svg id="stage-svg" viewBox="0 0 800 500" class="w-full h-full max-h-[440px] drop-shadow-2xl">
-          <defs>
-            <linearGradient id="arteryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ef4444" />
-              <stop offset="100%" stop-color="#b91c1c" />
-            </linearGradient>
-            <linearGradient id="veinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#38bdf8" />
-              <stop offset="100%" stop-color="#1d4ed8" />
-            </linearGradient>
-            <linearGradient id="ureterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#eab308" />
-              <stop offset="100%" stop-color="#ca8a04" />
-            </linearGradient>
-            <radialGradient id="kidneyGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#f87171" stop-opacity="0.95" />
-              <stop offset="100%" stop-color="#991b1b" stop-opacity="1" />
-            </radialGradient>
-          </defs>
-
-          <path d="M 280 40 Q 400 20 520 40 Q 560 250 540 480 Q 400 490 260 480 Q 240 250 280 40 Z" fill="rgba(30, 41, 59, 0.2)" stroke="rgba(71, 85, 105, 0.35)" stroke-dasharray="6,6" stroke-width="2"/>
-          <path id="main-artery" d="M 370 30 L 370 480" stroke="url(#arteryGrad)" stroke-width="22" stroke-linecap="round"/>
-          <path d="M 370 210 Q 320 210 270 230" fill="none" stroke="url(#arteryGrad)" stroke-width="14" stroke-linecap="round"/>
-          <path d="M 370 210 Q 450 210 530 230" fill="none" stroke="url(#arteryGrad)" stroke-width="14" stroke-linecap="round"/>
-          <path id="main-vein" d="M 430 30 L 430 480" stroke="url(#veinGrad)" stroke-width="20" stroke-linecap="round"/>
-          <path d="M 270 250 Q 350 250 430 240" fill="none" stroke="url(#veinGrad)" stroke-width="12" stroke-linecap="round"/>
-          <path d="M 530 250 Q 480 250 430 240" fill="none" stroke="url(#veinGrad)" stroke-width="12" stroke-linecap="round"/>
-          <path d="M 245 280 Q 280 380 370 430" fill="none" stroke="url(#ureterGrad)" stroke-width="10" stroke-linecap="round"/>
-          <path d="M 555 280 Q 520 380 430 430" fill="none" stroke="url(#ureterGrad)" stroke-width="10" stroke-linecap="round"/>
-          <ellipse cx="400" cy="445" rx="50" ry="32" fill="#ca8a04" opacity="0.85" stroke="#facc15" stroke-width="3"/>
-
-          <g id="kidney-left" class="transition-all duration-500">
-            <path d="M 250 150 C 190 150 170 210 170 250 C 170 310 200 350 250 350 C 280 350 285 300 270 260 C 260 230 270 190 280 170 C 275 155 260 150 250 150 Z" fill="url(#kidneyGlow)" stroke="#f87171" stroke-width="4"/>
-            <g id="filters-left" opacity="0" class="transition-opacity duration-700">
-              <circle cx="210" cy="230" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="230" cy="270" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="215" cy="300" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <text x="210" y="234" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-              <text x="230" y="274" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-              <text x="215" y="304" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-            </g>
-            <circle cx="215" cy="200" r="6" fill="#fff"/>
-            <circle cx="216" cy="200" r="3" fill="#000"/>
-            <circle cx="240" cy="200" r="6" fill="#fff"/>
-            <circle cx="241" cy="200" r="3" fill="#000"/>
-            <path d="M 220 215 Q 228 225 236 215" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          </g>
-
-          <g id="kidney-right" class="transition-all duration-500">
-            <path d="M 550 150 C 610 150 630 210 630 250 C 630 310 600 350 550 350 C 520 350 515 300 530 260 C 540 230 530 190 520 170 C 525 155 540 150 550 150 Z" fill="url(#kidneyGlow)" stroke="#f87171" stroke-width="4"/>
-            <g id="filters-right" opacity="0" class="transition-opacity duration-700">
-              <circle cx="590" cy="230" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="570" cy="270" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="585" cy="300" r="14" fill="#fbbf24" opacity="0.9" stroke="#fff" stroke-width="1.5"/>
-              <text x="590" y="234" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-              <text x="570" y="274" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-              <text x="585" y="304" font-size="10" fill="#000" text-anchor="middle" font-weight="bold">فلتر</text>
-            </g>
-            <circle cx="585" cy="200" r="6" fill="#fff"/>
-            <circle cx="584" cy="200" r="3" fill="#000"/>
-            <circle cx="560" cy="200" r="6" fill="#fff"/>
-            <circle cx="559" cy="200" r="3" fill="#000"/>
-            <path d="M 564 215 Q 572 225 580 215" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          </g>
-
-          <g id="waste-callout"></g>
-          <g id="particles-container"></g>
-          <g id="labels-layer"></g>
-        </svg>
-      </div>
-
-      <div class="lg:col-span-4 bg-slate-900/95 border-2 border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
-        <span class="text-xs font-bold text-teal-400 border-b border-slate-800 pb-2">📝 نقاط الشرح المكتوبة للطلاب:</span>
-        <ul id="key-points-list" class="space-y-2 text-sm text-slate-200"></ul>
-        <div id="fact-box" class="mt-2 bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-600/40 rounded-xl p-3">
-          <span class="text-[11px] font-black text-amber-400">💡 معلومة علمية ذهبية:</span>
-          <p id="fact-text" class="text-xs text-amber-100/90 mt-1"></p>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="w-full max-w-6xl mx-auto mt-3 flex items-center justify-between gap-3 bg-slate-900 border border-slate-800 rounded-2xl p-3">
-    <div id="prog-bar" class="flex items-center gap-1.5 flex-1 max-w-xl"></div>
-    <div class="flex items-center gap-2">
-      <button onclick="prevStep()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl border border-slate-700 text-sm">السابق ➡️</button>
-      <button onclick="nextStep()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2 rounded-xl text-sm shadow-lg shadow-blue-600/30">⬅️ التالي (كليك)</button>
-    </div>
-  </footer>
-
-  <script>
-    const steps = ${stepsJson};
-    let currentStepIndex = 0;
-    let animInterval = null;
-    let isRecordMode = false;
-    const notesChannel = new BroadcastChannel("rehab_slide_notes");
-
-    function renderStep() {
-      const step = steps[currentStepIndex];
-      document.getElementById("step-badge").textContent = "كليك " + step.stepNumber;
-      document.getElementById("step-title").textContent = step.title;
-      document.getElementById("step-category").textContent = "المرحلة " + step.stepNumber + " من " + steps.length + ": " + step.category;
-      document.getElementById("teacher-script").textContent = '"' + step.teacherScript + '"';
-
-      const progContainer = document.getElementById("prog-bar");
-      progContainer.innerHTML = "";
-      steps.forEach((_, idx) => {
-        const div = document.createElement("div");
-        div.className = "h-2.5 flex-1 rounded-full transition-all " + (idx <= currentStepIndex ? "bg-gradient-to-r from-teal-400 to-blue-500" : "bg-slate-800");
-        progContainer.appendChild(div);
-      });
-
-      const kpList = document.getElementById("key-points-list");
-      kpList.innerHTML = "";
-      (step.keyPoints || [step.visualAction]).forEach(pt => {
-        const li = document.createElement("li");
-        li.className = "flex items-start gap-2 leading-relaxed";
-        li.innerHTML = '<span class="text-teal-400 font-bold">•</span><span>' + pt + '</span>';
-        kpList.appendChild(li);
-      });
-
-      const factBox = document.getElementById("fact-box");
-      if (step.scientificFact) {
-        factBox.style.display = "block";
-        document.getElementById("fact-text").textContent = step.scientificFact;
-      } else {
-        factBox.style.display = "none";
-      }
-
-      const fl = document.getElementById("filters-left");
-      const fr = document.getElementById("filters-right");
-      if (fl && fr) {
-        fl.setAttribute("opacity", step.showFilters ? "1" : "0");
-        fr.setAttribute("opacity", step.showFilters ? "1" : "0");
-      }
-
-      const kl = document.getElementById("kidney-left");
-      const kr = document.getElementById("kidney-right");
-      if (kl && kr) {
-        if (step.activeGlow) {
-          kl.classList.add("active-glow");
-          kr.classList.add("active-glow");
-        } else {
-          kl.classList.remove("active-glow");
-          kr.classList.remove("active-glow");
-        }
-      }
-
-      const wasteCallout = document.getElementById("waste-callout");
-      wasteCallout.innerHTML = "";
-      if (step.stepNumber === 2 || step.stepNumber === 3) {
-        wasteCallout.innerHTML = '<rect x="270" y="40" width="260" height="42" rx="12" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" stroke-width="2"/><circle cx="285" cy="61" r="5" fill="#ef4444"/><text x="330" y="65" fill="#f87171" font-size="11" font-weight="bold">كرات دم حمراء</text><polygon points="380,56 385,61 380,66 375,61" fill="#facc15" stroke="#ca8a04"/><text x="445" y="65" fill="#facc15" font-size="11" font-weight="bold">جزيئات فضلات (يوريا/أملاح)</text>';
-      }
-
-      const labelsLayer = document.getElementById("labels-layer");
-      labelsLayer.innerHTML = "";
-      (step.labels || []).forEach(lbl => {
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        const padding = 12;
-        const textLen = lbl.text.length * 8.5 + padding * 2;
-        rect.setAttribute("x", lbl.x - textLen / 2);
-        rect.setAttribute("y", lbl.y - 18);
-        rect.setAttribute("width", textLen);
-        rect.setAttribute("height", 28);
-        rect.setAttribute("rx", "14");
-        rect.setAttribute("fill", "rgba(15, 23, 42, 0.92)");
-        rect.setAttribute("stroke", lbl.color);
-        rect.setAttribute("stroke-width", "2");
-
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", lbl.x);
-        text.setAttribute("y", lbl.y + 1);
-        text.setAttribute("fill", lbl.color);
-        text.setAttribute("font-size", "12");
-        text.setAttribute("font-weight", "bold");
-        text.setAttribute("text-anchor", "middle");
-        text.textContent = lbl.text;
-
-        g.appendChild(rect);
-        g.appendChild(text);
-        labelsLayer.appendChild(g);
-      });
-
-      spawnParticles(step.particleType);
-
-      notesChannel.postMessage({
-        stepNumber: step.stepNumber,
-        totalSteps: steps.length,
-        title: step.title,
-        category: step.category,
-        teacherScript: step.teacherScript,
-        nextStepTitle: steps[currentStepIndex + 1]?.title || "نهاية العرض"
-      });
-    }
-
-    function spawnParticles(type) {
-      if (animInterval) clearInterval(animInterval);
-      const container = document.getElementById("particles-container");
-      container.innerHTML = "";
-      let count = 0;
-      animInterval = setInterval(() => {
-        count++;
-        if (count > 25 && container.firstChild) container.removeChild(container.firstChild);
-
-        if (type === "incoming_blood" || type === "waste_particles") {
-          const isLeft = Math.random() > 0.5;
-          const isWaste = (type === "waste_particles") && (Math.random() > 0.35);
-
-          if (isWaste) {
-            const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-            poly.setAttribute("points", "370,55 374,62 370,69 366,62");
-            poly.setAttribute("fill", "#facc15");
-            poly.setAttribute("stroke", "#ca8a04");
-            container.appendChild(poly);
-            let t = 0;
-            const move = setInterval(() => {
-              t += 0.05;
-              let cx = 370;
-              let cy = 60 + t * 300;
-              if (t >= 0.5) {
-                const branchT = (t - 0.5) * 2;
-                const targetX = isLeft ? 240 : 560;
-                cx = 370 + (targetX - 370) * branchT;
-                cy = 210 + (240 - 210) * branchT;
-              }
-              poly.setAttribute("points", cx + "," + (cy-5) + " " + (cx+5) + "," + cy + " " + cx + "," + (cy+5) + " " + (cx-5) + "," + cy);
-              if (t >= 1) { clearInterval(move); poly.remove(); }
-            }, 30);
-          } else {
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", "370");
-            circle.setAttribute("cy", "60");
-            circle.setAttribute("r", "4");
-            circle.setAttribute("fill", "#ef4444");
-            container.appendChild(circle);
-            let t = 0;
-            const move = setInterval(() => {
-              t += 0.05;
-              if (t < 0.5) circle.setAttribute("cy", 60 + t * 300);
-              else {
-                const branchT = (t - 0.5) * 2;
-                const targetX = isLeft ? 240 : 560;
-                circle.setAttribute("cx", 370 + (targetX - 370) * branchT);
-                circle.setAttribute("cy", 210 + (240 - 210) * branchT);
-              }
-              if (t >= 1) { clearInterval(move); circle.remove(); }
-            }, 30);
-          }
-        } else if (type === "filtering_action") {
-          const isLeft = Math.random() > 0.5;
-          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle.setAttribute("cx", isLeft ? 220 + (Math.random()*40-20) : 580 + (Math.random()*40-20));
-          circle.setAttribute("cy", 240 + (Math.random()*60-30));
-          circle.setAttribute("r", "4.5");
-          circle.setAttribute("fill", Math.random() > 0.5 ? "#fbbf24" : "#38bdf8");
-          container.appendChild(circle);
-          setTimeout(() => circle.remove(), 1200);
-        } else if (type === "urine_flow") {
-          const isLeft = Math.random() > 0.5;
-          const startX = isLeft ? 245 : 555;
-          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle.setAttribute("cx", startX);
-          circle.setAttribute("cy", "280");
-          circle.setAttribute("r", "5");
-          circle.setAttribute("fill", "#facc15");
-          container.appendChild(circle);
-          let t = 0;
-          const move = setInterval(() => {
-            t += 0.04;
-            circle.setAttribute("cx", startX + ((isLeft ? 370 : 430) - startX) * t);
-            circle.setAttribute("cy", 280 + (430 - 280) * t);
-            if (t >= 1) { clearInterval(move); circle.remove(); }
-          }, 30);
-        } else if (type === "clean_blood_return") {
-          const isLeft = Math.random() > 0.5;
-          const startX = isLeft ? 270 : 530;
-          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-          circle.setAttribute("cx", startX);
-          circle.setAttribute("cy", "240");
-          circle.setAttribute("r", "4.5");
-          circle.setAttribute("fill", "#38bdf8");
-          container.appendChild(circle);
-          let t = 0;
-          const move = setInterval(() => {
-            t += 0.04;
-            if (t < 0.5) circle.setAttribute("cx", startX + (430 - startX) * (t * 2));
-            else { circle.setAttribute("cx", "430"); circle.setAttribute("cy", 240 - (t - 0.5) * 400); }
-            if (t >= 1) { clearInterval(move); circle.remove(); }
-          }, 30);
-        }
-      }, 170);
-    }
-
-    function toggleRecordMode() {
-      isRecordMode = !isRecordMode;
-      const banner = document.getElementById("teacher-notes-banner");
-      const btn = document.getElementById("record-mode-btn");
-      if (isRecordMode) {
-        banner.style.display = "none";
-        btn.className = "bg-rose-600 text-white text-xs px-3 py-1.5 rounded-xl border border-rose-500 font-bold transition flex items-center gap-1 animate-pulse";
-        btn.innerHTML = "<span>📹</span> وضع تسجيل الشاشة (مُفعّل)";
-      } else {
-        banner.style.display = "flex";
-        btn.className = "bg-slate-800 text-slate-300 text-xs px-3 py-1.5 rounded-xl border border-slate-700 font-bold transition flex items-center gap-1";
-        btn.innerHTML = "<span>📹</span> وضع تسجيل الشاشة";
-      }
-    }
-
-    function openPresenterNotes() {
-      const popup = window.open("", "PresenterNotesWin", "width=520,height=650,left=50,top=50");
-      if (popup) {
-        popup.document.write(\`<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>🎙️ ملاحظات المعلمة (شاشة المحاضر)</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-900 text-slate-100 p-6 font-sans select-none flex flex-col justify-between min-h-screen">
-  <div>
-    <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
-      <span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full">شاشة المعلمة الخفية</span>
-      <span id="p-badge" class="bg-blue-600/40 text-blue-300 font-bold text-sm px-3 py-1 rounded-full"></span>
-    </div>
-    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 mb-4">
-      <span id="p-cat" class="text-xs text-teal-400 font-bold"></span>
-      <h2 id="p-title" class="text-xl font-black text-white mt-0.5"></h2>
-    </div>
-    <div class="bg-blue-950/80 border-2 border-blue-600/60 rounded-2xl p-5 shadow-2xl">
-      <span class="text-xs font-bold text-blue-300 mb-2 block">🎙️ قولي للطلاب بصوتك الآن:</span>
-      <p id="p-script" class="text-lg text-slate-100 font-bold leading-relaxed"></p>
-    </div>
-  </div>
-  <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400 mt-4 flex justify-between">
-    <span>الخطوة التالية: <b id="p-next" class="text-slate-200"></b></span>
-    <span class="text-teal-400">متزامنة ✅</span>
-  </div>
-  <script>
-    const ch = new BroadcastChannel("rehab_slide_notes");
-    ch.onmessage = (e) => {
-      const d = e.data;
-      document.getElementById("p-badge").textContent = "الخطوة " + d.stepNumber + " من " + d.totalSteps;
-      document.getElementById("p-cat").textContent = "المرحلة: " + d.category;
-      document.getElementById("p-title").textContent = d.title;
-      document.getElementById("p-script").textContent = '"' + d.teacherScript + '"';
-      document.getElementById("p-next").textContent = d.nextStepTitle;
-    };
-  <\/script>
-</body>
-</html>\`);
-        popup.document.close();
-      }
-    }
-
-    function nextStep() {
-      currentStepIndex = (currentStepIndex + 1) % steps.length;
-      renderStep();
-    }
-
-    function prevStep() {
-      if (currentStepIndex > 0) { currentStepIndex--; renderStep(); }
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space" || e.code === "ArrowLeft" || e.code === "Enter") {
-        e.preventDefault();
-        nextStep();
-      } else if (e.code === "ArrowRight") {
-        e.preventDefault();
-        prevStep();
-      } else if (e.key.toLowerCase() === "r") {
-        toggleRecordMode();
-      }
-    });
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else if (document.exitFullscreen) document.exitFullscreen();
-    }
-
-    renderStep();
-  </script>
-</body>
-</html>`;
 }
