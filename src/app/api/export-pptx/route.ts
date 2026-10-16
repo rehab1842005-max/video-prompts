@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pptxgen from "pptxgenjs";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,6 +10,18 @@ export async function POST(req: NextRequest) {
 
     if (!presentation || !presentation.steps || presentation.steps.length === 0) {
       return NextResponse.json({ error: "Invalid presentation data" }, { status: 400 });
+    }
+
+    const localPresetPath = path.join(process.cwd(), "public", "urinary_system_presentation.pptx");
+    if (presentation.id === "kidney_model_preset" && fs.existsSync(localPresetPath)) {
+      const buffer = fs.readFileSync(localPresetPath);
+      return new NextResponse(buffer as any, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "Content-Disposition": 'attachment; filename="urinary_system_presentation.pptx"',
+        },
+      });
     }
 
     const pptx = new pptxgen();
