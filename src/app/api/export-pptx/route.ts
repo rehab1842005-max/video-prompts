@@ -324,8 +324,11 @@ export async function POST(req: NextRequest) {
 
       // NATIVE SPEAKER NOTES (ملاحظات المحاضر داخل الباوربوينت)
       const flowNote = step.flowRoute ? `🧭 مسار الحركة (مين رايح لمين):\n${step.flowRoute}\n\n` : "";
+      const examNote = step.examQuestion ? `\n\n🎯 [سؤال امتحاني معلل للطلاب]:\nس: ${step.examQuestion.q}\nالإجابة: ${step.examQuestion.a}\nالتعليل: ${step.examQuestion.reason}` : "";
+      const balanceNote = step.fluidBalance ? `\n\n🧪 [ميزان السوائل والتحويل الحيوي]:\n- الداخل: ${step.fluidBalance.inflow}\n- الآلية: ${step.fluidBalance.action}\n- الناتج: ${step.fluidBalance.outflow}` : "";
+
       slide.addNotes(
-        `${flowNote}[ملاحظات المعلمة رحاب أثناء عرض الشريحة]:\n\n"${step.teacherScript}"\n\n(هذا النص مخصص لإلقاء المعلمة الصوتي، ولا يظهر للطلاب في شاشة العرض الرئيسية).`
+        `${flowNote}[ملاحظات المعلمة رحاب أثناء عرض الشريحة]:\n\n"${step.teacherScript}"${examNote}${balanceNote}\n\n(هذا النص مخصص لإلقاء المعلمة الصوتي، ولا يظهر للطلاب في شاشة العرض الرئيسية).`
       );
     });
 
