@@ -16,7 +16,7 @@ interface SavedProject {
 }
 
 export default function Home() {
-  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow">("studio");
+  const [videoMode, setVideoMode] = useState<"cartoon" | "teacher" | "review" | "studio" | "story" | "gameshow" | "paired">("studio");
   const [characterConfig, setCharacterConfig] = useState<CharacterConfig>({
     description: "",
     characterLock: true,
@@ -323,6 +323,7 @@ export default function Home() {
               onChange={(e) => setVideoMode(e.target.value as any)}
               className="border-2 border-blue-400 text-blue-900 font-bold rounded-lg p-3 w-full sm:w-auto bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all cursor-pointer"
             >
+              <option value="paired">🧬 سلسلة علمية مترابطة (صورة مرجعية + فيديو متصل لكل جزئية) 🖼️🎬</option>
               <option value="story">🦊 وضع القصة السينمائية (شخصيات متغيرة حسب الدرس)</option>
               <option value="cartoon">🎭 الفيلم الكرتوني (شخصيات مبتكرة وكوميديا)</option>
               <option value="teacher">👩‍🏫 وضع المعلمة (شرح احترافي بشاشات ذكية)</option>
