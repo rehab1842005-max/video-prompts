@@ -259,6 +259,58 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             circle.remove();
           }
         }, 30);
+      } else if (type === "generic_flow") {
+        const isUrine = Math.random() > 0.5;
+        if (isUrine) {
+          const isLeft = Math.random() > 0.5;
+          const startX = isLeft ? 245 : 555;
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", startX.toString());
+          circle.setAttribute("cy", "280");
+          circle.setAttribute("r", "5");
+          circle.setAttribute("fill", "#facc15");
+          circle.setAttribute("stroke", "#ca8a04");
+          circle.setAttribute("stroke-width", "1.5");
+          container.appendChild(circle);
+
+          let t = 0;
+          const move = setInterval(() => {
+            t += 0.04;
+            const curX = startX + ((isLeft ? 370 : 430) - startX) * t;
+            const curY = 280 + (430 - 280) * t;
+            circle.setAttribute("cx", curX.toString());
+            circle.setAttribute("cy", curY.toString());
+            if (t >= 1) {
+              clearInterval(move);
+              circle.remove();
+            }
+          }, 30);
+        } else {
+          const isLeft = Math.random() > 0.5;
+          const startX = isLeft ? 270 : 530;
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", startX.toString());
+          circle.setAttribute("cy", "240");
+          circle.setAttribute("r", "4.5");
+          circle.setAttribute("fill", "#38bdf8");
+          container.appendChild(circle);
+
+          let t = 0;
+          const move = setInterval(() => {
+            t += 0.04;
+            if (t < 0.5) {
+              const curX = startX + (430 - startX) * (t * 2);
+              circle.setAttribute("cx", curX.toString());
+            } else {
+              circle.setAttribute("cx", "430");
+              circle.setAttribute("cy", (240 - (t - 0.5) * 400).toString());
+            }
+            if (t >= 1) {
+              clearInterval(move);
+              circle.remove();
+            }
+          }, 30);
+        }
       }
     }, 170);
 
@@ -591,41 +643,41 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                   strokeLinecap="round"
                 />
 
-                {/* Main Vein (Active and illuminated if currentStepIndex >= 5) */}
+                {/* Main Vein (Active and illuminated if currentStepIndex >= 6 or >= 5 in 5-step) */}
                 <path 
                   d="M 430 30 L 430 480" 
-                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  stroke={(steps.length >= 7 ? currentStepIndex >= 6 : currentStepIndex >= 5) ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
                   strokeWidth="20" 
                   strokeLinecap="round"
-                  className={currentStepIndex >= 5 ? "filter-pulse" : ""}
+                  className={(steps.length >= 7 ? currentStepIndex >= 6 : currentStepIndex >= 5) ? "filter-pulse" : ""}
                 />
                 <path 
                   d="M 270 250 Q 350 250 430 240" 
                   fill="none" 
-                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  stroke={(steps.length >= 7 ? currentStepIndex >= 6 : currentStepIndex >= 5) ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
                   strokeWidth="12" 
                   strokeLinecap="round"
                 />
                 <path 
                   d="M 530 250 Q 480 250 430 240" 
                   fill="none" 
-                  stroke={currentStepIndex >= 5 ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
+                  stroke={(steps.length >= 7 ? currentStepIndex >= 6 : currentStepIndex >= 5) ? "url(#veinGrad)" : "rgba(56, 189, 248, 0.25)"} 
                   strokeWidth="12" 
                   strokeLinecap="round"
                 />
 
-                {/* Ureters & Bladder (Active if currentStepIndex >= 4) */}
+                {/* Ureters & Bladder (Active if currentStepIndex >= 5 or >= 4 in 5-step) */}
                 <path 
                   d="M 245 280 Q 280 380 370 430" 
                   fill="none" 
-                  stroke={currentStepIndex >= 4 ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
+                  stroke={(steps.length >= 7 ? currentStepIndex >= 5 : currentStepIndex >= 4) ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
                   strokeWidth="10" 
                   strokeLinecap="round"
                 />
                 <path 
                   d="M 555 280 Q 520 380 430 430" 
                   fill="none" 
-                  stroke={currentStepIndex >= 4 ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
+                  stroke={(steps.length >= 7 ? currentStepIndex >= 5 : currentStepIndex >= 4) ? "url(#ureterGrad)" : "rgba(234, 179, 8, 0.25)"} 
                   strokeWidth="10" 
                   strokeLinecap="round"
                 />
@@ -635,9 +687,9 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                   rx="50" 
                   ry="32" 
                   fill="#ca8a04" 
-                  opacity={currentStepIndex >= 4 ? 0.9 : 0.3} 
+                  opacity={(steps.length >= 7 ? currentStepIndex >= 5 : currentStepIndex >= 4) ? 0.9 : 0.3} 
                   stroke="#facc15" 
-                  strokeWidth={currentStepIndex >= 4 ? 3 : 1.5}
+                  strokeWidth={(steps.length >= 7 ? currentStepIndex >= 5 : currentStepIndex >= 4) ? 3 : 1.5}
                 />
 
                 {/* Left Kidney */}
@@ -727,8 +779,23 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 </g>
               )}
 
-              {/* Click 4: Arrow pointing to Ureters & Bladder */}
-              {currentStepIndex === 4 && (
+              {/* Click 4 in 7-step mode: Filtration & Reabsorption mechanism */}
+              {steps.length >= 7 && currentStepIndex === 4 && (
+                <g className="animate-fade-in">
+                  <path d="M 115 280 L 195 280" stroke="#facc15" strokeWidth="2.5" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="10" y="260" width="115" height="40" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2"/>
+                  <text x="67" y="278" fill="#facc15" fontSize="10.5" fontWeight="bold" textAnchor="middle">ترشيح الفضلات</text>
+                  <text x="67" y="293" fill="#cbd5e1" fontSize="9.5" textAnchor="middle">يوريا + ماء + أملاح</text>
+
+                  <path d="M 685 280 L 605 280" stroke="#ef4444" strokeWidth="2.5" markerEnd="url(#arrow-red)"/>
+                  <rect x="675" y="260" width="115" height="40" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#ef4444" strokeWidth="2"/>
+                  <text x="732" y="278" fill="#f87171" fontSize="10.5" fontWeight="bold" textAnchor="middle">حجز خلايا الدم</text>
+                  <text x="732" y="293" fill="#cbd5e1" fontSize="9.5" textAnchor="middle">كرات دم + بروتين</text>
+                </g>
+              )}
+
+              {/* Ureters & Bladder Click */}
+              {((steps.length >= 7 && currentStepIndex === 5) || (steps.length < 7 && currentStepIndex === 4)) && (
                 <g className="animate-fade-in">
                   <path d="M 230 390 L 300 370" stroke="#facc15" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
                   <rect x="90" y="380" width="135" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2"/>
@@ -740,12 +807,27 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
                 </g>
               )}
 
-              {/* Click 5: Arrow pointing to Clean Renal Vein */}
-              {currentStepIndex === 5 && (
+              {/* Clean Renal Vein Click */}
+              {((steps.length >= 7 && currentStepIndex === 6) || (steps.length < 7 && currentStepIndex === 5)) && (
                 <g className="animate-fade-in">
                   <path d="M 540 80 L 445 80" stroke="#38bdf8" strokeWidth="3" markerEnd="url(#arrow)"/>
                   <rect x="545" y="62" width="180" height="34" rx="8" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" strokeWidth="2"/>
                   <text x="635" y="84" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">الوريد الكلوي (دم نقي 100% ⬆️)</text>
+                </g>
+              )}
+
+              {/* Step 7: Dual Outputs Summary */}
+              {steps.length >= 7 && currentStepIndex === 7 && (
+                <g className="animate-fade-in">
+                  {/* Output 1: Clean blood up to body */}
+                  <path d="M 540 80 L 445 80" stroke="#38bdf8" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <rect x="520" y="58" width="225" height="38" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" strokeWidth="2.5"/>
+                  <text x="632" y="82" fill="#38bdf8" fontSize="12" fontWeight="black" textAnchor="middle">المخرج 1: دم نقي 100% يعود للجسم ✨</text>
+
+                  {/* Output 2: Urine expelled down */}
+                  <path d="M 530 450 L 455 450" stroke="#facc15" strokeWidth="3" markerEnd="url(#arrow-yellow)"/>
+                  <rect x="515" y="430" width="230" height="38" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#facc15" strokeWidth="2.5"/>
+                  <text x="630" y="454" fill="#facc15" fontSize="12" fontWeight="black" textAnchor="middle">المخرج 2: بول محمل بالفضلات يُطرد للخارج 🚽</text>
                 </g>
               )}
 
