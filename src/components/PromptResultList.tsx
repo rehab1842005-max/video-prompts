@@ -103,11 +103,57 @@ export default function PromptResultList({
     }
   };
 
+  const downloadToDevice = () => {
+    let content = `======================================================================\n`;
+    content += `  Sci.Rehab Elsibai Studio - جميع برومبتات الفيديو للدرس\n`;
+    content += `  التاريخ: ${new Date().toLocaleString("ar-EG")}\n`;
+    content += `  عدد الفيديوهات: ${prompts.length}\n`;
+    content += `======================================================================\n\n`;
+
+    prompts.forEach((p) => {
+      content += `######################################################################\n`;
+      content += `🎬 VIDEO ${p.videoNumber.toString().padStart(2, '0')} - صفحة: ${p.pageNumber} (${p.partName})\n`;
+      content += `⏱️ المدة: ${p.duration}\n`;
+      content += `----------------------------------------------------------------------\n`;
+      if (p.imagePrompt) {
+        content += `🖼️ برومبت الصورة المرجعية (Starting Frame):\n${p.imagePrompt}\n\n`;
+      }
+      content += `SCENE:\n${p.scene}\n\n`;
+      content += `CHARACTER:\n${p.character}\n\n`;
+      content += `ACTION:\n${p.action}\n\n`;
+      content += `CAMERA:\n${p.camera}\n\n`;
+      content += `DIALOGUE & VOICEOVER:\n${p.dialogue}\n\n`;
+      content += `AUDIO:\n${p.audio}\n\n`;
+      if (p.endContinuity) {
+        content += `END STATE: ${p.endContinuity}\n`;
+      }
+      content += `\n\n`;
+    });
+
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `برومبتات_الفيديو_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert("✅ تم تنزيل ملف البرومبتات مباشرة على جهازك في مجلد التنزيلات (Downloads)!");
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-6 mb-12">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4 gap-3">
         <h2 className="text-xl font-bold text-gray-800">4. النتائج (Video Prompts)</h2>
         <div className="flex flex-wrap gap-2">
+          <button
+            onClick={downloadToDevice}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3.5 rounded text-xs transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="تنزيل ملف نصي بكل البرومبتات على جهازك"
+          >
+            <span>📥</span> حفظ وتنزيل على جهازك (.txt)
+          </button>
           {hasImagePrompts && (
             <button
               onClick={copyAllImages}

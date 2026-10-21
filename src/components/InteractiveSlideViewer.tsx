@@ -56,6 +56,90 @@ export interface InteractivePresentation {
   steps: PresentationStep[];
 }
 
+export const PIXAR_SCENES = [
+  {
+    id: 1,
+    title: "المشهد 1: جسم الإنسان والبيئة التشريحية",
+    subtitle: "جسم شفاف يوضح موقع الكليتين ومسارات الدماء المتوهجة بنمط بيكسار ثلاثي الأبعاد",
+    image: "/scenes/scene_1.jpg",
+    applicableSteps: [0, 1],
+    prompt3D: "Cross-section of a translucent human body with volumetric lighting, soft cinematic Pixar 3D style, showing abdominal aorta and vena cava glowing with warm crimson and deep blue.",
+  },
+  {
+    id: 2,
+    title: "المشهد 2: تيار الدم غير النقي وبلورات اليوريا",
+    subtitle: "تدفق دم داكن تسبح فيه بلورات اليوريا وحمض البوليك متجهاً للشريان الكلوي",
+    image: "/scenes/scene_2.jpg",
+    applicableSteps: [2, 3, 4],
+    prompt3D: "Macro cinematic 3D interior shot of the renal artery: crimson blood stream carrying glowing crystalline urea and uric acid particles, flowing toward a majestic biological kidney structure.",
+  },
+  {
+    id: 3,
+    title: "المشهد 3: النفرونات والترشيح المجهري الفائق",
+    subtitle: "أنابيب مجهرية شبه شفافة تفصل السائل النقي عن بلورات الفضلات بدقة متناهية",
+    image: "/scenes/scene_3.jpg",
+    applicableSteps: [5, 6, 7, 8],
+    prompt3D: "Microscopic Pixar 3D camera zoom inside a nephron unit: intricate translucent cellular tubules separating purified glowing red fluid from concentrated golden droplets of waste.",
+  },
+  {
+    id: 4,
+    title: "المشهد 4: المسار المزدوج - الوريد الكلوي والحالب والمثانة",
+    subtitle: "صعود الدم النقي عبر الوريد الكلوي، وانحدار قطرات البول الذهبية للمثانة",
+    image: "/scenes/scene_4.jpg",
+    applicableSteps: [9, 10, 11, 12],
+    prompt3D: "Cinematic wide 3D view: clean oxygenated blood ascending through the renal vein back to the heart, while golden urine droplets slide down smooth flexible ureters into a glowing bladder.",
+  },
+];
+
+export const STUDIO_BOARD_SCENES = [
+  {
+    id: 1,
+    title: "1. حركة الدم داخل (الشريان الكلوي)",
+    subtitle: "السبورة الذكية كاملة: تدفق الدم غير النقي وبلورات اليوريا عبر الشريان الكلوي إلى الكليتين السعيدتين",
+    image: "/scenes/smartboard_1.jpg",
+    applicableSteps: [0, 1, 2, 3, 4],
+    prompt: "Full screen 16:9 smartboard, cute 3D cartoon kidneys, biconcave red blood cells and urea crystals pouring into kidneys.",
+  },
+  {
+    id: 2,
+    title: "2. حركة الكليتان بتفلتر (النفرونات والغربلة)",
+    subtitle: "تصفية وغربلة مجهرية: شبكة النفرونات تفصل الدم النقي عن قطرات الفضلات واليوريا",
+    image: "/scenes/smartboard_2.jpg",
+    applicableSteps: [5, 6, 7, 8],
+    prompt: "Full screen 16:9 smartboard, nephron microscopic filtration separating pure blood from golden waste fluid.",
+  },
+  {
+    id: 3,
+    title: "3. حركة المثانة بتتملى (الحالبان والمثانة)",
+    subtitle: "انحدار البول عبر الحالبين، والمثانة البولية الكيوت تتسع وتمتلئ كبالون سعيد بالسوائل",
+    image: "/scenes/smartboard_3.jpg",
+    applicableSteps: [9, 10],
+    prompt: "Full screen 16:9 smartboard, golden urine streaming down ureters, cute bladder happily filling up like a balloon.",
+  },
+  {
+    id: 4,
+    title: "4. حركة الدم طالع وطرد الفضلات (المسار المزدوج)",
+    subtitle: "عودة الدم النقي صعوداً للقلب عبر الوريد الكلوي، وخروج البول عبر الإحليل تماماً",
+    image: "/scenes/smartboard_4.jpg",
+    applicableSteps: [11, 12],
+    prompt: "Full screen 16:9 smartboard, dual flow cycle: clean blood ascending up to heart, waste expelled via urethra.",
+  },
+];
+
+export const getActivePixarScene = (stepIdx: number) => {
+  if (stepIdx === 0 || stepIdx === 1) return PIXAR_SCENES[0];
+  if (stepIdx >= 2 && stepIdx <= 4) return PIXAR_SCENES[1];
+  if (stepIdx >= 5 && stepIdx <= 8) return PIXAR_SCENES[2];
+  return PIXAR_SCENES[3];
+};
+
+export const getActiveStudioScene = (stepIdx: number) => {
+  if (stepIdx <= 4) return STUDIO_BOARD_SCENES[0];
+  if (stepIdx <= 8) return STUDIO_BOARD_SCENES[1];
+  if (stepIdx <= 10) return STUDIO_BOARD_SCENES[2];
+  return STUDIO_BOARD_SCENES[3];
+};
+
 interface Props {
   presentation: InteractivePresentation;
   onSave?: (presentation: InteractivePresentation) => void;
@@ -65,9 +149,10 @@ interface Props {
 export default function InteractiveSlideViewer({ presentation, onSave, onClose }: Props) {
   // 0: Master Overview, 1..N: Progressive details appear
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [visualMode, setVisualMode] = useState<"studio_board" | "pixar3d" | "diagram">("studio_board");
+  const [selectedSceneModal, setSelectedSceneModal] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isScreenRecordMode, setIsScreenRecordMode] = useState(false);
-  const [isExportingPptx, setIsExportingPptx] = useState(false);
   const [activeInfoTab, setActiveInfoTab] = useState<"points" | "balance" | "exam" | "numbers">("points");
   const [layoutMode, setLayoutMode] = useState<"studio" | "cinema">("studio");
   const [isLensExpanded, setIsLensExpanded] = useState(true);
@@ -80,6 +165,8 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
   const steps = presentation.steps;
   const isOverview = currentStepIndex === 0;
   const activeStep = isOverview ? null : steps[currentStepIndex - 1];
+  const currentPixarScene = getActivePixarScene(currentStepIndex);
+  const currentStudioScene = getActiveStudioScene(currentStepIndex);
 
   // Initialize BroadcastChannel
   useEffect(() => {
@@ -457,34 +544,6 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
     }
   };
 
-  // Export Real Microsoft PowerPoint (.pptx) file via API
-  const exportRealPPTX = async () => {
-    setIsExportingPptx(true);
-    try {
-      const res = await fetch("/api/export-pptx", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ presentation }),
-      });
-
-      if (!res.ok) {
-        throw new Error("فشل توليد ملف الباوربوينت");
-      }
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${presentation.title.replace(/\s+/g, "_")}.pptx`;
-      a.click();
-      URL.revokeObjectURL(url);
-      alert("🎉 تم تحميل ملف الباوربوينت الأصلي (.pptx) بنجاح! يحتوي على كافة الشرائح الـ 12 وملاحظات المعلمة وجداول السوائل.");
-    } catch (e: any) {
-      alert("حدث خطأ أثناء تحميل ملف الباوربوينت: " + e.message);
-    } finally {
-      setIsExportingPptx(false);
-    }
-  };
 
   return (
     <div 
@@ -536,16 +595,6 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
             </button>
           </div>
 
-          {/* Download Real PPTX */}
-          <button
-            onClick={exportRealPPTX}
-            disabled={isExportingPptx}
-            className="bg-orange-600 hover:bg-orange-500 text-white text-xs px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1.5 font-bold disabled:opacity-50"
-            title="تحميل كملف مايكروسوفت باوربوينت حقيقي (.pptx)"
-          >
-            <span>📊</span>
-            <span>{isExportingPptx ? "جاري التجهيز..." : "تحميل باوربوينت (.pptx)"}</span>
-          </button>
 
           {/* Screen Recording Mode Toggle */}
           <button
@@ -672,9 +721,267 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
         {/* Central Display: Progressive 3D Visual + Structured Scientific Multi-Card Dashboard */}
         <div className={`grid ${layoutMode === "cinema" ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-12"} gap-4 items-center my-auto py-2 z-10`}>
           
-          {/* Visual Master 3D Diagram Box with Realistic Lighting & Continuous Particles */}
-          <div className={`${layoutMode === "cinema" ? "w-full max-w-4xl mx-auto" : "lg:col-span-7"} relative flex items-center justify-center`}>
-            <svg viewBox="0 0 800 500" className="w-full h-full max-h-[460px] drop-shadow-2xl">
+          {/* Visual Column: Pixar 3D Scene OR Interactive Diagram */}
+          <div className={`${layoutMode === "cinema" ? "w-full max-w-4xl mx-auto" : "lg:col-span-7"} relative flex flex-col gap-2.5`}>
+            
+            {/* Visual Mode Selector Header */}
+            <div className="flex items-center justify-between px-1 flex-wrap gap-2">
+              <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setVisualMode("studio_board")}
+                  className={`px-3.5 py-1.5 rounded-lg font-black transition flex items-center gap-1.5 ${
+                    visualMode === "studio_board"
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/30 ring-1 ring-emerald-400/50"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>📺</span>
+                  <span>استوديو بورد (السبورة الذكية)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVisualMode("pixar3d")}
+                  className={`px-3.5 py-1.5 rounded-lg font-black transition flex items-center gap-1.5 ${
+                    visualMode === "pixar3d"
+                      ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-md shadow-orange-500/30"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>🎬</span>
+                  <span>المجسمات 3D</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVisualMode("diagram")}
+                  className={`px-3.5 py-1.5 rounded-lg font-black transition flex items-center gap-1.5 ${
+                    visualMode === "diagram"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  <span>🩺</span>
+                  <span>المخطط النابض</span>
+                </button>
+              </div>
+
+              {visualMode === "studio_board" && (
+                <div className="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+                  <span>✨</span> استوديو بورد (السبورة الذكية كاملة بدون معلمة للأطفال)
+                </div>
+              )}
+              {visualMode === "pixar3d" && (
+                <div className="text-[11px] font-bold text-amber-300 flex items-center gap-1">
+                  <span>✨</span> ريندر سينمائي 3D (Disney / Pixar)
+                </div>
+              )}
+            </div>
+
+            {/* Main Visual Display */}
+            {visualMode === "studio_board" ? (
+              <div className="flex flex-col gap-2.5">
+                <div className="relative rounded-2xl overflow-hidden border-2 border-emerald-500/50 shadow-2xl bg-slate-900 group aspect-[16/9] max-h-[440px] flex items-center justify-center">
+                  <img
+                    src={currentStudioScene.image}
+                    alt={currentStudioScene.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+
+                  {/* Top Floating Badge & Fullscreen Zoom */}
+                  <div className="absolute top-3 right-3 left-3 flex justify-between items-start pointer-events-none">
+                    <div className="bg-slate-950/85 backdrop-blur border border-emerald-400/40 rounded-xl px-3 py-1.5 text-right shadow-lg pointer-events-auto">
+                      <div className="text-xs font-black text-emerald-300 flex items-center gap-1">
+                        <span>📺</span> {currentStudioScene.title}
+                      </div>
+                      <div className="text-[11px] text-slate-300 font-medium mt-0.5 line-clamp-1">
+                        {currentStudioScene.subtitle}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSceneModal(currentStudioScene.image)}
+                      className="pointer-events-auto bg-slate-950/85 hover:bg-slate-900 text-white p-2 rounded-xl border border-emerald-400/30 shadow-lg transition"
+                      title="عرض السبورة بدقة كاملة عالية الجودة"
+                    >
+                      🔍
+                    </button>
+                  </div>
+
+                  {/* Bottom Overlay Info */}
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent p-3 pt-6 flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-bold text-emerald-300 flex items-center gap-1">
+                        <span>🎥</span> حركة الأنيميشن على السبورة (للأطفال):
+                      </span>
+                      <span className="text-slate-400 text-[10px]">
+                        شاشة تفاعلية 100%
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-200 line-clamp-2">
+                      {activeStep?.visualAction || currentStudioScene.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Interactive Animation Action Triggers for Kids (الدم داخل، الدم طالع، المثانة بتتملى) */}
+                <div className="bg-slate-900/90 border border-emerald-500/30 p-2 rounded-2xl flex flex-wrap items-center justify-between gap-2 shadow-lg">
+                  <span className="text-xs font-black text-emerald-300 flex items-center gap-1 px-1 whitespace-nowrap">
+                    <span>🎬</span> حركات الأنيميشن بكليك:
+                  </span>
+                  <div className="flex items-center flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStepIndex(2)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                        currentStudioScene.id === 1 ? "bg-rose-600 text-white shadow-md shadow-rose-600/30 ring-2 ring-rose-400 scale-105" : "bg-slate-800 text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      🩸 الدم داخل
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStepIndex(6)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                        currentStudioScene.id === 2 ? "bg-amber-600 text-white shadow-md shadow-amber-600/30 ring-2 ring-amber-400 scale-105" : "bg-slate-800 text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      🔬 الكليتان بتفلتر
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStepIndex(9)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                        currentStudioScene.id === 4 ? "bg-sky-600 text-white shadow-md shadow-sky-600/30 ring-2 ring-sky-400 scale-105" : "bg-slate-800 text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      💙 الدم طالع
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStepIndex(10)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                        currentStudioScene.id === 3 ? "bg-yellow-500 text-slate-950 font-black shadow-md shadow-yellow-500/30 ring-2 ring-yellow-300 scale-105" : "bg-slate-800 text-slate-300 hover:text-white"
+                      }`}
+                    >
+                      🎈 المثانة بتتملى
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStepIndex(11)}
+                      className="px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 bg-slate-800 text-slate-300 hover:text-white"
+                    >
+                      🚪 البول بيخرج
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4 Thumbnails Selector Bar for Studio Board */}
+                <div className="grid grid-cols-4 gap-2">
+                  {STUDIO_BOARD_SCENES.map((scene) => {
+                    const isSelected = scene.id === currentStudioScene.id;
+                    return (
+                      <button
+                        key={scene.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentStepIndex(scene.applicableSteps[0]);
+                        }}
+                        className={`relative rounded-xl overflow-hidden border-2 transition text-right p-1.5 flex flex-col gap-1 ${
+                          isSelected
+                            ? "border-emerald-400 bg-emerald-950/40 shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-400/40"
+                            : "border-slate-800 bg-slate-900/70 hover:border-slate-700 opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="aspect-video w-full rounded-lg overflow-hidden bg-slate-950">
+                          <img src={scene.image} alt={scene.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="text-[10px] font-black text-emerald-200 truncate">
+                          {scene.title.split(":")[0]}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : visualMode === "pixar3d" ? (
+              <div className="flex flex-col gap-2.5">
+                <div className="relative rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-2xl bg-slate-900 group aspect-[4/3] max-h-[440px] flex items-center justify-center">
+                  <img
+                    src={currentPixarScene.image}
+                    alt={currentPixarScene.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+
+                  {/* Top Floating Badge & Fullscreen Zoom */}
+                  <div className="absolute top-3 right-3 left-3 flex justify-between items-start pointer-events-none">
+                    <div className="bg-slate-950/85 backdrop-blur border border-amber-400/40 rounded-xl px-3 py-1.5 text-right shadow-lg pointer-events-auto">
+                      <div className="text-xs font-black text-amber-300 flex items-center gap-1">
+                        <span>🎬</span> {currentPixarScene.title}
+                      </div>
+                      <div className="text-[11px] text-slate-300 font-medium mt-0.5 line-clamp-1">
+                        {currentPixarScene.subtitle}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSceneModal(currentPixarScene.image)}
+                      className="pointer-events-auto bg-slate-950/85 hover:bg-slate-900 text-white p-2 rounded-xl border border-amber-400/30 shadow-lg transition"
+                      title="عرض بدقة كاملة عالية الجودة"
+                    >
+                      🔍
+                    </button>
+                  </div>
+
+                  {/* Bottom Overlay Info */}
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-transparent p-3 pt-6 flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-bold text-amber-300 flex items-center gap-1">
+                        <span>🎥</span> اللقطة السينمائية 3D:
+                      </span>
+                      <span className="text-slate-400 text-[10px]">
+                        Midjourney / Runway Gen-3 / Sora
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-200 line-clamp-2">
+                      {activeStep?.visualAction || currentPixarScene.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 4 Thumbnails Selector Bar */}
+                <div className="grid grid-cols-4 gap-2">
+                  {PIXAR_SCENES.map((scene) => {
+                    const isSelected = scene.id === currentPixarScene.id;
+                    return (
+                      <button
+                        key={scene.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentStepIndex(scene.applicableSteps[0]);
+                        }}
+                        className={`relative rounded-xl overflow-hidden border-2 transition text-right p-1.5 flex flex-col gap-1 ${
+                          isSelected
+                            ? "border-amber-400 bg-amber-950/40 shadow-lg shadow-amber-500/20 ring-2 ring-amber-400/40"
+                            : "border-slate-800 bg-slate-900/70 hover:border-slate-700 opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <div className="aspect-video w-full rounded-lg overflow-hidden bg-slate-950">
+                          <img src={scene.image} alt={scene.title} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="text-[10px] font-black text-amber-200 truncate">
+                          {scene.title.split(":")[0]}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* View 3: Interactive SVG Diagram */
+              <div className="relative flex items-center justify-center">
+                <svg viewBox="0 0 800 500" className="w-full h-full max-h-[460px] drop-shadow-2xl">
               <defs>
                 {/* 3D Cylindrical Aorta Gradient */}
                 <linearGradient id="aorta3dGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -1295,6 +1602,8 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
               {/* Dynamic Particles Container */}
               <g ref={particlesContainerRef}></g>
             </svg>
+              </div>
+            )}
           </div>
 
           {/* Structured Multi-Card Scientific Dashboard (Real Interactive HUD) */}
@@ -1537,6 +1846,37 @@ export default function InteractiveSlideViewer({ presentation, onSave, onClose }
           </button>
         </div>
       </footer>
+
+      {/* Pixar Scene Fullscreen Lightbox Modal */}
+      {selectedSceneModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedSceneModal(null)}
+        >
+          <div 
+            className="relative max-w-5xl w-full max-h-[92vh] rounded-3xl overflow-hidden border-2 border-amber-400/60 shadow-2xl bg-slate-900 flex flex-col items-center justify-center p-2" 
+            onClick={e => e.stopPropagation()}
+          >
+            <img 
+              src={selectedSceneModal} 
+              alt="Pixar 3D Cinematic Render" 
+              className="w-full h-full max-h-[85vh] object-contain rounded-2xl"
+            />
+            <div className="w-full flex items-center justify-between px-4 py-2 mt-1">
+              <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+                <span>🎬</span> ريندر ثلاثي الأبعاد فائق الدقة (Disney / Pixar Studio Style)
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedSceneModal(null)}
+                className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl px-4 py-1 text-xs font-bold border border-slate-700 transition"
+              >
+                إغلاق ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

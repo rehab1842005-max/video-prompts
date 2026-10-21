@@ -35,7 +35,7 @@ export default function ContentMapViewer({
           {map.length} أجزاء مقسمة
         </span>
       </div>
-      <p className='text-sm text-gray-600 mb-4'>تم تقسيم الملف إلى أجزاء دقيقة. يمكنك توليد فيديوهات لها، أو تحويل أي جزء مباشرة إلى باوربوينت تفاعلي كليك لكل حركة.</p>
+      <p className='text-sm text-gray-600 mb-4'>تم تقسيم الملف إلى أجزاء دقيقة. اضغطي على الزر بالأسفل لتوليد المشاهد وبرومبتات الفيديو.</p>
       
       <div className='bg-gray-50 p-4 rounded-md border border-gray-200 max-h-96 overflow-y-auto mb-6'>
         {map.map((part, idx) => (
@@ -46,15 +46,6 @@ export default function ContentMapViewer({
               </h3>
               <p className='text-sm text-gray-600'>{part.contentSummary}</p>
             </div>
-            {onConvertToPresentation && (
-              <button
-                onClick={() => onConvertToPresentation(part)}
-                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 hover:border-indigo-400 font-bold text-xs px-3 py-2 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1.5 shadow-sm"
-                title="تحويل هذه الصفحة إلى عرض باوربوينت تفاعلي كليك لكل حركة"
-              >
-                <span>📊</span> تحويل لباوربوينت تفاعلي
-              </button>
-            )}
           </div>
         ))}
       </div>
