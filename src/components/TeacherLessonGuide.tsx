@@ -32,7 +32,8 @@ export interface Experiment {
   experimentTitle: string;
   goal: string;
   materials: string[];
-  steps: ExperimentStep[];
+  steps?: ExperimentStep[];
+  stepsWithLogic?: any[];
   observations: string;
   observationVideoPrompt?: string;
   finalConclusion: string;
@@ -57,10 +58,12 @@ export interface LessonGuideData {
   lessonTitle: string;
   detectedTopic?: string;
   introHook?: IntroHook;
-  scientificBeats: ScientificBeat[];
+  scientificBeats?: ScientificBeat[];
+  beats?: any[];
+  sections?: any[];
   experiments?: Experiment[];
-  blackboardSummary: BlackboardSummary;
-  checkUnderstanding: CheckUnderstandingItem[];
+  blackboardSummary?: BlackboardSummary;
+  checkUnderstanding?: CheckUnderstandingItem[];
 }
 
 export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
@@ -207,6 +210,54 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
   ]
 };
 
+// Safe helper functions preventing any undefined property access
+function getSafeSteps(exp: any): ExperimentStep[] {
+  if (!exp) return [];
+  if (Array.isArray(exp.steps) && exp.steps.length > 0) {
+    return exp.steps;
+  }
+  if (Array.isArray(exp.stepsWithLogic) && exp.stepsWithLogic.length > 0) {
+    return exp.stepsWithLogic.map((st: any, sIdx: number) => ({
+      stepNumber: sIdx + 1,
+      stepTitle: typeof st === "string" ? st : (st.step || `الخطوة ${sIdx + 1}`),
+      actionDetails: typeof st === "string" ? st : `${st.step || ""} ${st.whyWeDoIt ? "- لماذا: " + st.whyWeDoIt : ""}`.trim(),
+      teacherSpeech: st.teacherSpeech || "",
+      flowVideoPrompt: "Detailed 3D laboratory animation of this step action. Clean Pixar educational style. ABSOLUTELY NO teachers."
+    }));
+  }
+  return [];
+}
+
+function getSafeBeats(data: any): ScientificBeat[] {
+  if (!data) return [];
+  if (Array.isArray(data.scientificBeats) && data.scientificBeats.length > 0) {
+    return data.scientificBeats;
+  }
+  if (Array.isArray(data.beats) && data.beats.length > 0) {
+    return data.beats.map((b: any, idx: number) => ({
+      beatNumber: b.beatNumber || idx + 1,
+      conceptTitle: b.conceptTitle || `جزئية ${idx + 1}`,
+      teacherScript: b.teacherVoiceover || b.teacherScript || "",
+      simpleExplanation: b.simpleExplanation || b.analogyIdea || "",
+      textbookTerm: b.textbookTerm || b.conceptTitle || "المصطلح العلمي",
+      textbookDefinition: b.textbookDefinition || b.simpleExplanation || "التعريف العلمي المعتمد",
+      flowVideoPrompt: b.flowVideoPrompt || ""
+    }));
+  }
+  if (Array.isArray(data.sections) && data.sections.length > 0) {
+    return data.sections.map((s: any, idx: number) => ({
+      beatNumber: idx + 1,
+      conceptTitle: s.title || `جزئية ${idx + 1}`,
+      teacherScript: s.teacherSpeech || "",
+      simpleExplanation: s.scientificExplanation || s.realLifeAnalogy || "",
+      textbookTerm: s.title || "المصطلح العلمي",
+      textbookDefinition: s.scientificExplanation || "",
+      flowVideoPrompt: s.flowVideoPrompt || s.analogyVideoMotionPrompt || ""
+    }));
+  }
+  return [];
+}
+
 export default function TeacherLessonGuide() {
   const [guideData, setGuideData] = useState<LessonGuideData | null>(PRESET_SAMPLE_GUIDE);
   const [topicInput, setTopicInput] = useState("");
@@ -262,42 +313,14 @@ export default function TeacherLessonGuide() {
 
       const data = await res.json();
       if (data.guide) {
-        // Normalization for scientificBeats
-        let normalizedBeats: ScientificBeat[] = [];
-        if (data.guide.scientificBeats && Array.isArray(data.guide.scientificBeats)) {
-          normalizedBeats = data.guide.scientificBeats;
-        } else if (data.guide.beats && Array.isArray(data.guide.beats)) {
-          normalizedBeats = data.guide.beats.map((b: any, idx: number) => ({
-            beatNumber: b.beatNumber || idx + 1,
-            conceptTitle: b.conceptTitle || `جزئية ${idx + 1}`,
-            teacherScript: b.teacherVoiceover || b.teacherScript || "",
-            simpleExplanation: b.simpleExplanation || b.analogyIdea || "",
-            textbookTerm: b.textbookTerm || b.conceptTitle || "المصطلح العلمي",
-            textbookDefinition: b.textbookDefinition || b.simpleExplanation || "التعريف العلمي المعتمد",
-            flowVideoPrompt: b.flowVideoPrompt || ""
-          }));
-        }
-
-        // Normalization for experiments steps
-        let normalizedExperiments = data.guide.experiments;
-        if (normalizedExperiments && Array.isArray(normalizedExperiments)) {
-          normalizedExperiments = normalizedExperiments.map((exp: any) => {
-            let steps = exp.steps || [];
-            if (!steps.length && exp.stepsWithLogic) {
-              steps = exp.stepsWithLogic.map((st: any, sIdx: number) => ({
-                stepNumber: sIdx + 1,
-                stepTitle: `الخطوة ${sIdx + 1}`,
-                actionDetails: `${st.step} - لماذا: ${st.whyWeDoIt}`,
-                teacherSpeech: st.teacherSpeech || "",
-                flowVideoPrompt: "Detailed 3D laboratory animation of this step action. ABSOLUTELY NO teachers."
-              }));
-            }
-            return {
-              ...exp,
-              steps
-            };
-          });
-        }
+        // Safe extraction of beats and experiments
+        const normalizedBeats = getSafeBeats(data.guide);
+        const rawExperiments = Array.isArray(data.guide.experiments) ? data.guide.experiments : [];
+        const normalizedExperiments = rawExperiments.map((exp: any) => ({
+          ...exp,
+          materials: Array.isArray(exp.materials) ? exp.materials : [],
+          steps: getSafeSteps(exp)
+        }));
 
         setGuideData({
           ...data.guide,
@@ -314,6 +337,18 @@ export default function TeacherLessonGuide() {
     }
   };
 
+  // Safe computed lists
+  const beatsToRender = getSafeBeats(guideData);
+  const experimentsToRender = Array.isArray(guideData?.experiments) ? guideData!.experiments : [];
+  const blackboard = guideData?.blackboardSummary || {
+    title: guideData?.lessonTitle || "ملخص السبورة",
+    keyVocabulary: [],
+    definitions: [],
+    comparisons: [],
+    conclusions: []
+  };
+  const questionsToRender = Array.isArray(guideData?.checkUnderstanding) ? guideData!.checkUnderstanding : [];
+
   // Copy All Voiceovers in sequential order for easy microphone recording
   const copyAllVoiceoverScript = () => {
     if (!guideData) return;
@@ -323,18 +358,19 @@ export default function TeacherLessonGuide() {
       script += `[الدخلة التمهيدية - تشبيه البداية]:\n${guideData.introHook.teacherScript}\n\n---\n\n`;
     }
 
-    if (guideData.scientificBeats) {
-      guideData.scientificBeats.forEach((b) => {
+    if (beatsToRender.length > 0) {
+      beatsToRender.forEach((b) => {
         script += `[المشهد ${String(b.beatNumber).padStart(2, "0")} - ${b.conceptTitle}]:\n`;
         script += `${b.teacherScript}\n`;
         script += `(المصطلح في الكتاب: ${b.textbookTerm} | تعريفه: ${b.textbookDefinition})\n\n---\n\n`;
       });
     }
 
-    if (guideData.experiments) {
-      guideData.experiments.forEach((exp, idx) => {
+    if (experimentsToRender.length > 0) {
+      experimentsToRender.forEach((exp, idx) => {
         script += `[تجربة ${idx + 1}: ${exp.experimentTitle}]:\n`;
-        exp.steps.forEach((st) => {
+        const steps = getSafeSteps(exp);
+        steps.forEach((st) => {
           script += `الخطوة ${st.stepNumber}: ${st.teacherSpeech}\n`;
         });
         script += `\n---\n\n`;
@@ -353,8 +389,8 @@ export default function TeacherLessonGuide() {
       prompts += `SCENE 00 [INTRO HOOK - ANALOGY]:\n${guideData.introHook.flowVideoPrompt}\n\n` + "=".repeat(45) + "\n\n";
     }
 
-    if (guideData.scientificBeats) {
-      guideData.scientificBeats.forEach((b) => {
+    if (beatsToRender.length > 0) {
+      beatsToRender.forEach((b) => {
         prompts += `SCENE ${String(b.beatNumber).padStart(2, "0")} [SCIENTIFIC VISUALIZATION - ${b.textbookTerm}]:\n`;
         prompts += `${b.flowVideoPrompt}\n\n` + "=".repeat(45) + "\n\n";
       });
@@ -365,12 +401,13 @@ export default function TeacherLessonGuide() {
 
   // Copy All Experiment Flow Video Prompts
   const copyAllExperimentPrompts = () => {
-    if (!guideData || !guideData.experiments) return;
-    let prompts = `=== برومبتات فيديو Flow للتجارب العلمية ===\nدرس: ${guideData.lessonTitle}\n\n`;
+    if (!experimentsToRender.length) return;
+    let prompts = `=== برومبتات فيديو Flow للتجارب العلمية ===\nدرس: ${guideData?.lessonTitle || ""}\n\n`;
 
-    guideData.experiments.forEach((exp, eIdx) => {
+    experimentsToRender.forEach((exp, eIdx) => {
       prompts += `EXPERIMENT ${eIdx + 1}: ${exp.experimentTitle}\n\n`;
-      exp.steps.forEach((st) => {
+      const steps = getSafeSteps(exp);
+      steps.forEach((st) => {
         prompts += `STEP ${st.stepNumber} (${st.stepTitle}):\n${st.flowVideoPrompt}\n\n`;
       });
       if (exp.observationVideoPrompt) {
@@ -402,9 +439,9 @@ export default function TeacherLessonGuide() {
       txt += `----------------------------------------------------------------------\n\n`;
     }
 
-    if (guideData.scientificBeats && guideData.scientificBeats.length > 0) {
+    if (beatsToRender.length > 0) {
       txt += `🔬 الشرح العلمي المفصل بالراحة للأطفال (المشاهد العلمية):\n\n`;
-      guideData.scientificBeats.forEach((b) => {
+      beatsToRender.forEach((b) => {
         txt += `######################################################################\n`;
         txt += `مشهد ${String(b.beatNumber).padStart(2, "0")}: ${b.conceptTitle}\n`;
         txt += `🎙️ كلامكِ الصوتي في المونتاج:\n${b.teacherScript}\n\n`;
@@ -417,13 +454,14 @@ export default function TeacherLessonGuide() {
       txt += `\n======================================================================\n\n`;
     }
 
-    if (guideData.experiments && guideData.experiments.length > 0) {
+    if (experimentsToRender.length > 0) {
       txt += `🧪 التجارب العلمية الاحترافية خطوة بخطوة مع برومبتات الفيديو:\n\n`;
-      guideData.experiments.forEach((exp, idx) => {
+      experimentsToRender.forEach((exp, idx) => {
         txt += `[تجربة ${idx + 1}: ${exp.experimentTitle}]\n`;
         txt += `* الهدف: ${exp.goal}\n`;
-        txt += `* الأدوات: ${exp.materials.join(" - ")}\n\n`;
-        exp.steps.forEach((st) => {
+        txt += `* الأدوات: ${(exp.materials || []).join(" - ")}\n\n`;
+        const steps = getSafeSteps(exp);
+        steps.forEach((st) => {
           txt += `  خطوة ${st.stepNumber} (${st.stepTitle}):\n`;
           txt += `  - التفاصيل: ${st.actionDetails}\n`;
           txt += `  - كلام المعلمة: "${st.teacherSpeech}"\n`;
@@ -440,19 +478,19 @@ export default function TeacherLessonGuide() {
     }
 
     txt += `📋 ما يُكتب على السبورة فقط:\n`;
-    txt += `* العنوان: ${guideData.blackboardSummary.title}\n`;
+    txt += `* العنوان: ${blackboard.title}\n`;
     txt += `* الكلمات والمصطلحات الأساسية:\n`;
-    guideData.blackboardSummary.keyVocabulary.forEach((v) => (txt += `  - ${v}\n`));
+    (blackboard.keyVocabulary || []).forEach((v) => (txt += `  - ${v}\n`));
     txt += `* التعريفات الأساسية:\n`;
-    guideData.blackboardSummary.definitions.forEach((d) => (txt += `  - ${d}\n`));
+    (blackboard.definitions || []).forEach((d) => (txt += `  - ${d}\n`));
     txt += `* المقارنات:\n`;
-    guideData.blackboardSummary.comparisons.forEach((c) => (txt += `  - ${c}\n`));
+    (blackboard.comparisons || []).forEach((c) => (txt += `  - ${c}\n`));
     txt += `* الاستنتاجات:\n`;
-    guideData.blackboardSummary.conclusions.forEach((cn) => (txt += `  - ${cn}\n`));
+    (blackboard.conclusions || []).forEach((cn) => (txt += `  - ${cn}\n`));
     txt += `\n----------------------------------------------------------------------\n\n`;
 
     txt += `❓ أسئلة التأكد من الفهم وإجاباتها:\n\n`;
-    guideData.checkUnderstanding.forEach((q, idx) => {
+    questionsToRender.forEach((q, idx) => {
       txt += `سؤال ${idx + 1} (${q.questionType}): ${q.question}\n`;
       txt += `الإجابة النموذجية: ${q.correctAnswer}\n\n`;
     });
@@ -461,7 +499,7 @@ export default function TeacherLessonGuide() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `دليل_الشرح_العلمي_وفيديوهات_فلو_${guideData.lessonTitle.replace(/[/\\?%*:|"<>]/g, "_")}.txt`;
+    a.download = `دليل_الشرح_العلمي_وفيديوهات_فلو_${(guideData.lessonTitle || "درس").replace(/[/\\?%*:|"<>]/g, "_")}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -469,13 +507,12 @@ export default function TeacherLessonGuide() {
   };
 
   const copyBlackboardOnly = () => {
-    if (!guideData) return;
     let b = `=== ما يُكتب على السبورة فقط ===\n`;
-    b += `${guideData.blackboardSummary.title}\n\n`;
-    b += `الكلمات والمصطلحات:\n` + guideData.blackboardSummary.keyVocabulary.map((k) => `• ${k}`).join("\n") + "\n\n";
-    b += `التعريفات المعتمدة:\n` + guideData.blackboardSummary.definitions.map((d) => `• ${d}`).join("\n") + "\n\n";
-    b += `المقارنات:\n` + guideData.blackboardSummary.comparisons.map((c) => `• ${c}`).join("\n") + "\n\n";
-    b += `الاستنتاج:\n` + guideData.blackboardSummary.conclusions.map((c) => `• ${c}`).join("\n");
+    b += `${blackboard.title}\n\n`;
+    b += `الكلمات والمصطلحات:\n` + (blackboard.keyVocabulary || []).map((k) => `• ${k}`).join("\n") + "\n\n";
+    b += `التعريفات المعتمدة:\n` + (blackboard.definitions || []).map((d) => `• ${d}`).join("\n") + "\n\n";
+    b += `المقارنات:\n` + (blackboard.comparisons || []).map((c) => `• ${c}`).join("\n") + "\n\n";
+    b += `الاستنتاج:\n` + (blackboard.conclusions || []).map((c) => `• ${c}`).join("\n");
     copyText(b, "blackboard_only");
   };
 
@@ -581,7 +618,7 @@ export default function TeacherLessonGuide() {
           <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                ✨ تم إعداد الشرح العلمي الهادئ ({guideData.scientificBeats?.length || 0} جزئية علمية)
+                ✨ تم إعداد الشرح العلمي الهادئ ({beatsToRender.length} جزئية علمية)
               </span>
               <h3 className="text-lg font-black text-gray-900 mt-1">{guideData.lessonTitle}</h3>
             </div>
@@ -603,7 +640,7 @@ export default function TeacherLessonGuide() {
                 <span>🎬</span> {copiedSection === "all_flow_prompts" ? "✅ تم نسخ البرومبتات!" : "نسخ كل برومبتات Flow العلمية"}
               </button>
 
-              {guideData.experiments && guideData.experiments.length > 0 && (
+              {experimentsToRender.length > 0 && (
                 <button
                   onClick={copyAllExperimentPrompts}
                   className="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs py-2 px-3 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1"
@@ -716,13 +753,13 @@ export default function TeacherLessonGuide() {
               </div>
 
               <span className="text-xs bg-blue-100 text-blue-900 font-bold px-3 py-1 rounded-full">
-                {guideData.scientificBeats?.length || 0} جزئية علمية
+                {beatsToRender.length} جزئية علمية
               </span>
             </div>
 
             {/* List of Scientific Beats */}
             <div className="space-y-5">
-              {guideData.scientificBeats?.map((beat, idx) => (
+              {beatsToRender.map((beat, idx) => (
                 <div
                   key={idx}
                   className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-blue-300 transition-all space-y-4"
@@ -833,7 +870,7 @@ export default function TeacherLessonGuide() {
           </div>
 
           {/* SECTION 3: التجارب والأنشطة العلمية مقسمة لخطوات 1، 2، 3 بالفيديو */}
-          {guideData.experiments && guideData.experiments.length > 0 && (
+          {experimentsToRender.length > 0 && (
             <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-200 shadow-sm space-y-5">
               <div className="flex items-center justify-between border-b border-teal-200 pb-3">
                 <div className="flex items-center gap-2.5">
@@ -857,110 +894,121 @@ export default function TeacherLessonGuide() {
                 </button>
               </div>
 
-              {guideData.experiments.map((exp, eIdx) => (
-                <div key={eIdx} className="bg-white rounded-xl p-5 border border-teal-200 shadow-2xs space-y-4">
-                  <div className="border-b border-gray-100 pb-2">
-                    <h4 className="font-black text-base text-teal-900">{exp.experimentTitle}</h4>
-                    <p className="text-xs text-teal-700 mt-0.5 font-medium">🎯 الهدف: {exp.goal}</p>
-                  </div>
+              {experimentsToRender.map((exp, eIdx) => {
+                const steps = getSafeSteps(exp);
+                const materials = Array.isArray(exp.materials) ? exp.materials : [];
 
-                  <div>
-                    <span className="text-xs font-bold text-gray-700 block mb-1">🧰 الأدوات المطلوبة بالمعمل:</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {exp.materials.map((m, mIdx) => (
-                        <span key={mIdx} className="bg-teal-50 text-teal-900 text-xs px-2.5 py-1 rounded-md border border-teal-200 font-medium">
-                          {m}
-                        </span>
-                      ))}
+                return (
+                  <div key={eIdx} className="bg-white rounded-xl p-5 border border-teal-200 shadow-2xs space-y-4">
+                    <div className="border-b border-gray-100 pb-2">
+                      <h4 className="font-black text-base text-teal-900">{exp.experimentTitle}</h4>
+                      <p className="text-xs text-teal-700 mt-0.5 font-medium">🎯 الهدف: {exp.goal}</p>
                     </div>
-                  </div>
 
-                  {/* الخطوات المقسمة 1، 2، 3 */}
-                  <div className="space-y-3">
-                    <span className="text-xs font-bold text-teal-950 block">
-                      🪜 خطوات التجربة بالتسلسل (مع كلام المعلمة وبرومبت فيديو Flow لكل خطوة):
-                    </span>
-                    
-                    {exp.steps.map((st, sIdx) => (
-                      <div key={sIdx} className="bg-gray-50/80 p-4 rounded-xl border border-gray-200 space-y-2.5">
-                        <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
-                          <div className="flex items-center gap-2">
-                            <span className="w-6 h-6 bg-teal-700 text-white rounded-full flex items-center justify-center font-black text-xs">
-                              {st.stepNumber}
+                    {materials.length > 0 && (
+                      <div>
+                        <span className="text-xs font-bold text-gray-700 block mb-1">🧰 الأدوات المطلوبة بالمعمل:</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {materials.map((m, mIdx) => (
+                            <span key={mIdx} className="bg-teal-50 text-teal-900 text-xs px-2.5 py-1 rounded-md border border-teal-200 font-medium">
+                              {m}
                             </span>
-                            <span className="font-black text-xs sm:text-sm text-teal-950">
-                              {st.stepTitle}
-                            </span>
-                          </div>
-
-                          <button
-                            onClick={() => copyText(st.flowVideoPrompt, `exp_step_${eIdx}_${sIdx}`)}
-                            className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-                          >
-                            <span>🎬</span>
-                            <span>{copiedSection === `exp_step_${eIdx}_${sIdx}` ? "✅ تم النسخ" : "نسخ فيديو الخطوة"}</span>
-                          </button>
-                        </div>
-
-                        <div className="text-xs space-y-1">
-                          <p className="text-gray-700">
-                            <span className="font-bold text-teal-900">ما نفعله ولماذا: </span>
-                            {st.actionDetails}
-                          </p>
-                          <p className="text-gray-900 bg-white p-2 rounded-lg border border-gray-200">
-                            <span className="font-bold text-emerald-800">🎙️ كلام المعلمة: </span>
-                            "{st.teacherSpeech}"
-                          </p>
-                        </div>
-
-                        {/* برومبت فيديو الخطوة */}
-                        <div className="bg-purple-50/80 p-2.5 rounded-lg border border-purple-200 text-left font-mono text-[11px] text-purple-950" dir="ltr">
-                          <span className="font-sans font-bold text-purple-800 text-[10px] block mb-0.5" dir="rtl">
-                            برومبت فيديو Flow لتنفيذ هذه الخطوة معملياً (3D Tabletop - بدون معلمة):
-                          </span>
-                          {st.flowVideoPrompt}
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    )}
 
-                  {/* الملاحظة والاستنتاج */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
-                    <div className="bg-amber-50 p-3.5 rounded-xl border border-amber-200 space-y-2">
-                      <span className="font-bold text-amber-900 block">👀 ماذا نلاحظ بالعين المجردة؟</span>
-                      <p className="text-amber-950 font-semibold">{exp.observations}</p>
-                      {exp.observationVideoPrompt && (
-                        <div className="pt-1 border-t border-amber-200">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[11px] font-bold text-purple-800">🎬 فيديو Flow للنتيجة:</span>
-                            <button
-                              onClick={() => copyText(exp.observationVideoPrompt!, `exp_obs_${eIdx}`)}
-                              className="text-[11px] bg-purple-600 text-white px-2 py-0.5 rounded cursor-pointer"
-                            >
-                              {copiedSection === `exp_obs_${eIdx}` ? "✅ تم" : "نسخ"}
-                            </button>
+                    {/* الخطوات المقسمة 1، 2، 3 */}
+                    {steps.length > 0 && (
+                      <div className="space-y-3">
+                        <span className="text-xs font-bold text-teal-950 block">
+                          🪜 خطوات التجربة بالتسلسل (مع كلام المعلمة وبرومبت فيديو Flow لكل خطوة):
+                        </span>
+                        
+                        {steps.map((st, sIdx) => (
+                          <div key={sIdx} className="bg-gray-50/80 p-4 rounded-xl border border-gray-200 space-y-2.5">
+                            <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 bg-teal-700 text-white rounded-full flex items-center justify-center font-black text-xs">
+                                  {st.stepNumber}
+                                </span>
+                                <span className="font-black text-xs sm:text-sm text-teal-950">
+                                  {st.stepTitle}
+                                </span>
+                              </div>
+
+                              <button
+                                onClick={() => copyText(st.flowVideoPrompt, `exp_step_${eIdx}_${sIdx}`)}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1 px-2.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>🎬</span>
+                                <span>{copiedSection === `exp_step_${eIdx}_${sIdx}` ? "✅ تم النسخ" : "نسخ فيديو الخطوة"}</span>
+                              </button>
+                            </div>
+
+                            <div className="text-xs space-y-1">
+                              <p className="text-gray-700">
+                                <span className="font-bold text-teal-900">ما نفعله ولماذا: </span>
+                                {st.actionDetails}
+                              </p>
+                              {st.teacherSpeech && (
+                                <p className="text-gray-900 bg-white p-2 rounded-lg border border-gray-200">
+                                  <span className="font-bold text-emerald-800">🎙️ كلام المعلمة: </span>
+                                  "{st.teacherSpeech}"
+                                </p>
+                              )}
+                            </div>
+
+                            {/* برومبت فيديو الخطوة */}
+                            <div className="bg-purple-50/80 p-2.5 rounded-lg border border-purple-200 text-left font-mono text-[11px] text-purple-950" dir="ltr">
+                              <span className="font-sans font-bold text-purple-800 text-[10px] block mb-0.5" dir="rtl">
+                                برومبت فيديو Flow لتنفيذ هذه الخطوة معملياً (3D Tabletop - بدون معلمة):
+                              </span>
+                              {st.flowVideoPrompt}
+                            </div>
                           </div>
-                          <p className="text-[10px] font-mono text-purple-950 bg-white p-1.5 rounded border border-purple-100" dir="ltr">
-                            {exp.observationVideoPrompt}
-                          </p>
-                        </div>
-                      )}
+                        ))}
+                      </div>
+                    )}
+
+                    {/* الملاحظة والاستنتاج */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+                      <div className="bg-amber-50 p-3.5 rounded-xl border border-amber-200 space-y-2">
+                        <span className="font-bold text-amber-900 block">👀 ماذا نلاحظ بالعين المجردة؟</span>
+                        <p className="text-amber-950 font-semibold">{exp.observations}</p>
+                        {exp.observationVideoPrompt && (
+                          <div className="pt-1 border-t border-amber-200">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[11px] font-bold text-purple-800">🎬 فيديو Flow للنتيجة:</span>
+                              <button
+                                onClick={() => copyText(exp.observationVideoPrompt!, `exp_obs_${eIdx}`)}
+                                className="text-[11px] bg-purple-600 text-white px-2 py-0.5 rounded cursor-pointer"
+                              >
+                                {copiedSection === `exp_obs_${eIdx}` ? "✅ تم" : "نسخ"}
+                              </button>
+                            </div>
+                            <p className="text-[10px] font-mono text-purple-950 bg-white p-1.5 rounded border border-purple-100" dir="ltr">
+                              {exp.observationVideoPrompt}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200">
+                        <span className="font-bold text-emerald-800 block mb-1">🏆 الاستنتاج العلمي النهائي:</span>
+                        <p className="text-emerald-950 font-bold leading-relaxed">{exp.finalConclusion}</p>
+                      </div>
                     </div>
 
-                    <div className="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200">
-                      <span className="font-bold text-emerald-800 block mb-1">🏆 الاستنتاج العلمي النهائي:</span>
-                      <p className="text-emerald-950 font-bold leading-relaxed">{exp.finalConclusion}</p>
-                    </div>
+                    {exp.safetyPrecautions && (
+                      <div className="bg-red-50 p-3 rounded-xl border border-red-200 text-xs text-red-900 font-semibold flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span>احتياطات الأمان بالمعمل: {exp.safetyPrecautions}</span>
+                      </div>
+                    )}
                   </div>
-
-                  {exp.safetyPrecautions && (
-                    <div className="bg-red-50 p-3 rounded-xl border border-red-200 text-xs text-red-900 font-semibold flex items-center gap-2">
-                      <span>⚠️</span>
-                      <span>احتياطات الأمان بالمعمل: {exp.safetyPrecautions}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -990,7 +1038,7 @@ export default function TeacherLessonGuide() {
             <div className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-white/10 font-mono text-emerald-100 space-y-5">
               <div className="text-center border-b border-white/10 pb-3">
                 <h4 className="text-lg sm:text-xl font-bold text-amber-300">
-                  {guideData.blackboardSummary.title}
+                  {blackboard.title}
                 </h4>
               </div>
 
@@ -1001,7 +1049,7 @@ export default function TeacherLessonGuide() {
                     📌 المصطلحات والكلمات الأساسية:
                   </h5>
                   <ul className="space-y-1.5 text-xs text-emerald-100">
-                    {guideData.blackboardSummary.keyVocabulary.map((v, vIdx) => (
+                    {(blackboard.keyVocabulary || []).map((v, vIdx) => (
                       <li key={vIdx} className="flex items-start gap-1.5">
                         <span className="text-amber-400">•</span>
                         <span>{v}</span>
@@ -1015,7 +1063,7 @@ export default function TeacherLessonGuide() {
                     📖 التعريفات والقوانين المركزة:
                   </h5>
                   <ul className="space-y-1.5 text-xs text-emerald-100">
-                    {guideData.blackboardSummary.definitions.map((d, dIdx) => (
+                    {(blackboard.definitions || []).map((d, dIdx) => (
                       <li key={dIdx} className="flex items-start gap-1.5">
                         <span className="text-emerald-400">✓</span>
                         <span>{d}</span>
@@ -1032,7 +1080,7 @@ export default function TeacherLessonGuide() {
                     ⚖️ المقارنات السريعة:
                   </h5>
                   <ul className="space-y-1.5 text-xs text-emerald-100">
-                    {guideData.blackboardSummary.comparisons.map((c, cIdx) => (
+                    {(blackboard.comparisons || []).map((c, cIdx) => (
                       <li key={cIdx} className="flex items-start gap-1.5">
                         <span className="text-cyan-400">⇄</span>
                         <span>{c}</span>
@@ -1046,7 +1094,7 @@ export default function TeacherLessonGuide() {
                     🏆 الاستنتاج النهائي:
                   </h5>
                   <ul className="space-y-1.5 text-xs text-emerald-100">
-                    {guideData.blackboardSummary.conclusions.map((cn, cnIdx) => (
+                    {(blackboard.conclusions || []).map((cn, cnIdx) => (
                       <li key={cnIdx} className="flex items-start gap-1.5">
                         <span className="text-yellow-400">★</span>
                         <span className="font-bold text-amber-200">{cn}</span>
@@ -1073,7 +1121,7 @@ export default function TeacherLessonGuide() {
 
               <button
                 onClick={() => {
-                  const qText = guideData.checkUnderstanding.map((q, i) => `س${i+1} (${q.questionType}): ${q.question}\nج: ${q.correctAnswer}`).join("\n\n");
+                  const qText = questionsToRender.map((q, i) => `س${i+1} (${q.questionType}): ${q.question}\nج: ${q.correctAnswer}`).join("\n\n");
                   copyText(qText, "questions");
                 }}
                 className="bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors border border-purple-200 flex items-center gap-1 cursor-pointer"
@@ -1083,7 +1131,7 @@ export default function TeacherLessonGuide() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-              {guideData.checkUnderstanding.map((q, idx) => (
+              {questionsToRender.map((q, idx) => (
                 <div key={idx} className="bg-gradient-to-b from-purple-50/50 to-white p-4 rounded-xl border border-purple-100 shadow-2xs space-y-2 text-xs flex flex-col justify-between">
                   <div className="space-y-1.5">
                     <span className="inline-block bg-purple-200/80 text-purple-950 font-bold text-[10px] px-2 py-0.5 rounded-full">
