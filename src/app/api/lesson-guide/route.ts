@@ -58,11 +58,12 @@ export async function POST(req: NextRequest) {
    - إذا تضمن كلام المعلمة أكثر من تشبيه أو مشهد، يتم توليد برومبت فيديو منفصل لكل تشبيه لتجمعه المعلمة في المونتاج فوق صوتها.
 
 ### بقية قواعد الشرح والدرس (ثابتة وممتازة):
-1. تقسيم الدرس إلى جزيئات صغيرة متتالية (من 8 إلى 14 جزئية علمية دقيقة).
+1. تقسيم الدرس إلى جزيئات صغيرة متتالية متصلة وشاملة (بين 6 إلى 10 جزئيات علمية دقيقة دون إغفال أي معلومة).
 2. كلام المعلمة بالعامية المصرية الصبورة والمفصلة، مع التمهيد وتوضيح الكيف واللماذا، وسؤال تفاعلي وإجابته المتوقعة، وذكر المصطلح والتعريف في الكتاب.
 3. التمهيد السلس والانتقال للتجربة العملية ("يلا بينا نجرب ونعمل كذا!").
 4. تفكيك التجربة إلى خطوات مرقمة (1، 2، 3) مع فيديو Flow لكل خطوة معملية.
 5. السبورة الذكية وأسئلة الفهم الشفوية.
+6. ⚠️ تنبيه تقني صارم: يجب أن يكون الناتج كائن JSON صالح تماماً (Strictly Valid JSON). تجنب وضع علامات تنصيص مزدوجة (") داخل نصوص الحوار إلا إذا كانت مسبوقة بـ backslash (\\") لتفادي أخطاء الـ JSON syntax.
 
 المطلوب: توليد كائن JSON دقيق ومفصل جداً وفق الهيكل التالي بالضبط:
 {
@@ -150,12 +151,11 @@ export async function POST(req: NextRequest) {
 
     const fallbackModels = [
       "gemini-3.5-flash",
-      "gemini-3.5-flash-lite",
-      "gemini-flash-latest"
+      "gemini-3.5-flash-lite"
     ];
 
     let resultText = "";
-    let lastError = null;
+    let lastError: any = null;
 
     for (const modelName of fallbackModels) {
       try {
@@ -175,15 +175,187 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!resultText) throw lastError || new Error("فشل توليد دليل المعلمة");
+    if (!resultText) throw lastError || new Error("فشل توليد دليل المعلمة من خدمة الذكاء الاصطناعي");
 
-    const jsonMatch = resultText.match(/```json\n([\s\S]*?)\n```/) || resultText.match(/\{[\s\S]*\}/);
-    const cleanedJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : resultText;
-    const guideData = JSON.parse(cleanedJson);
+    const guideData = repairAndParseJson(resultText);
+
+    // Ensure safe default structures so the client never crashes
+    if (!guideData.lessonTitle) {
+      guideData.lessonTitle = topic || "درس العلوم التفاعلي";
+    }
+    if (!Array.isArray(guideData.scientificBeats)) {
+      guideData.scientificBeats = [];
+    }
 
     return NextResponse.json({ success: true, guide: guideData });
   } catch (error: any) {
     console.error("Error in lesson-guide route:", error);
     return NextResponse.json({ error: error.message || "حدث خطأ أثناء إعداد دليل المعلمة" }, { status: 500 });
+  }
+}
+
+// ==========================================
+// Robust Multi-Stage JSON Repair & Recovery
+// ==========================================
+
+function sanitizeUnescapedQuotes(jsonStr: string): string {
+  let result = "";
+  let inString = false;
+  let isEscaped = false;
+
+  for (let i = 0; i < jsonStr.length; i++) {
+    const ch = jsonStr[i];
+
+    if (ch === '\\' && inString) {
+      isEscaped = !isEscaped;
+      result += ch;
+      continue;
+    }
+
+    if (ch === '"' && !isEscaped) {
+      if (!inString) {
+        inString = true;
+        result += ch;
+      } else {
+        // Look ahead to check if this quote is a structural closing quote
+        let nextChar: string | null = null;
+        for (let j = i + 1; j < jsonStr.length; j++) {
+          const next = jsonStr[j];
+          if (!/\s/.test(next)) {
+            nextChar = next;
+            break;
+          }
+        }
+
+        if (nextChar === ':' || nextChar === ',' || nextChar === '}' || nextChar === ']' || nextChar === null) {
+          inString = false;
+          result += ch;
+        } else {
+          // Interior quote inside string value -> escape it
+          result += '\\"';
+        }
+      }
+    } else {
+      result += ch;
+    }
+
+    isEscaped = false;
+  }
+
+  return result;
+}
+
+function closeIncompleteJson(str: string): string {
+  let s = str.trim();
+  let inString = false;
+  let isEscaped = false;
+  const stack: string[] = [];
+
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '\\' && inString) {
+      isEscaped = !isEscaped;
+      continue;
+    }
+    if (ch === '"' && !isEscaped) {
+      inString = !inString;
+    } else if (!inString) {
+      if (ch === '{') stack.push('}');
+      else if (ch === '[') stack.push(']');
+      else if (ch === '}' || ch === ']') {
+        if (stack.length && stack[stack.length - 1] === ch) {
+          stack.pop();
+        }
+      }
+    }
+    isEscaped = false;
+  }
+
+  if (inString) {
+    s += '"';
+  }
+
+  s = s.replace(/,\s*$/, "");
+  s = s.replace(/:\s*$/, ': ""');
+
+  while (stack.length > 0) {
+    s += stack.pop();
+  }
+
+  return s;
+}
+
+function truncateToLastValidObject(str: string): string {
+  const lastClose = str.lastIndexOf("}");
+  if (lastClose === -1) return str;
+  const sub = str.substring(0, lastClose + 1);
+  return closeIncompleteJson(sub);
+}
+
+function repairAndParseJson(rawText: string): any {
+  if (!rawText || !rawText.trim()) {
+    throw new Error("لم يتم استلام محتوى من خدمة الذكاء الاصطناعي");
+  }
+
+  let cleaned = rawText.trim();
+  const mdMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  if (mdMatch) {
+    cleaned = mdMatch[1].trim();
+  } else {
+    const startIdx = cleaned.indexOf("{");
+    const lastIdx = cleaned.lastIndexOf("}");
+    if (startIdx !== -1 && lastIdx !== -1 && lastIdx > startIdx) {
+      cleaned = cleaned.substring(startIdx, lastIdx + 1);
+    } else if (startIdx !== -1) {
+      cleaned = cleaned.substring(startIdx);
+    }
+  }
+
+  // Attempt 1: Direct JSON parse
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {}
+
+  // Attempt 2: Sanitize interior unescaped quotes
+  try {
+    const quoteSanitized = sanitizeUnescapedQuotes(cleaned);
+    return JSON.parse(quoteSanitized);
+  } catch (_) {}
+
+  // Attempt 3: Fix missing commas and trailing commas
+  const fixed = cleaned
+    .replace(/}\s*\{/g, "},{")
+    .replace(/\]\s*\[/g, "],[")
+    .replace(/,\s*([}\]])/g, "$1");
+
+  try {
+    return JSON.parse(fixed);
+  } catch (_) {}
+
+  // Attempt 4: Sanitize quotes on fixed comma string
+  try {
+    const quoteSanitizedFixed = sanitizeUnescapedQuotes(fixed);
+    return JSON.parse(quoteSanitizedFixed);
+  } catch (_) {}
+
+  // Attempt 5: Handle cut-off / incomplete JSON structure
+  try {
+    const closed = closeIncompleteJson(fixed);
+    return JSON.parse(closed);
+  } catch (_) {}
+
+  // Attempt 6: Truncate back to last complete JSON object
+  try {
+    const truncated = truncateToLastValidObject(fixed);
+    return JSON.parse(truncated);
+  } catch (_) {}
+
+  // Attempt 7: Truncate + sanitize quotes
+  try {
+    const truncatedWithQuotes = sanitizeUnescapedQuotes(truncateToLastValidObject(cleaned));
+    return JSON.parse(truncatedWithQuotes);
+  } catch (finalErr: any) {
+    console.error("All JSON repair attempts failed. Raw snippet:", rawText.slice(0, 300));
+    throw new Error("تعذر فك شفرة استجابة الذكاء الاصطناعي، يرجى المحاولة مرة أخرى.");
   }
 }
