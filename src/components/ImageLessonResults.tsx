@@ -39,6 +39,13 @@ export default function ImageLessonResults({
     }, 2000);
   };
 
+  const copyAllFlowPrompts = () => {
+    const all = scenes
+      .map((s, idx) => `SCENE ${(idx + 1).toString().padStart(2, "0")} - ${s.title}\nDURATION: ${s.duration}\nMOTION PROMPT:\n${s.motionPrompt}\n\nDIALOGUE:\nTeacher speaks in warm energetic Egyptian Arabic: "${s.lessonExplanation}"\n\nAUDIO:\nClear expressive female teacher voice speaking warmly in Egyptian Arabic, synchronized with animated movement.`)
+      .join("\n\n" + "=".repeat(40) + "\n\n");
+    copyText(all, "all_flow");
+  };
+
   const copyAllMotionPrompts = () => {
     const all = scenes
       .map((s, idx) => `SCENE ${(idx + 1).toString().padStart(2, "0")} - ${s.title}\nDURATION: ${s.duration}\nMOTION PROMPT:\n${s.motionPrompt}`)
@@ -162,10 +169,18 @@ export default function ImageLessonResults({
             </button>
 
             <button
+              onClick={copyAllFlowPrompts}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs py-2 px-3.5 rounded-lg transition-all flex items-center gap-1.5 shadow-md active:scale-95 cursor-pointer ring-1 ring-purple-300"
+              title="انسخي كل المشاهد مدمجة مع الصوت والحوار لتتحدث المعلمة في موقع Flow"
+            >
+              <span>{copiedId === "all_flow" ? "✅ تم نسخ البرومبتات بالصوت!" : "🎙️ نسخ الكل مع الصوت والكلام (Flow)"}</span>
+            </button>
+
+            <button
               onClick={copyAllMotionPrompts}
               className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2 px-3 rounded-lg transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
             >
-              <span>{copiedId === "all_motion" ? "✅ تم النسخ!" : "🎬 نسخ كل أوامر التحريك"}</span>
+              <span>{copiedId === "all_motion" ? "✅ تم النسخ!" : "🎬 نسخ أوامر التحريك (صامت)"}</span>
             </button>
 
             <button
@@ -315,12 +330,24 @@ export default function ImageLessonResults({
                           🚫 ممنوع أي كلام بالفيديو (NO TEXT)
                         </span>
                       </div>
-                      <button
-                        onClick={() => copyText(scene.motionPrompt, motionCopyId)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-1 px-3 rounded-md transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
-                      >
-                        <span>{copiedId === motionCopyId ? "✅ Copied" : "📋 نسخ أمر التحريك"}</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            const flowPrompt = `${scene.motionPrompt}\n\nDIALOGUE:\nTeacher speaks in warm Egyptian Arabic: "${scene.lessonExplanation}"\n\nAUDIO:\nClear, expressive female teacher voice in warm Egyptian Arabic, lively and synchronized with visual motion.`;
+                            copyText(flowPrompt, `${motionCopyId}_flow`);
+                          }}
+                          className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-1 px-3 rounded-md transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                          title="انسخي هذا البرومبت لتتحدث المعلمة بصوتها في موقع Flow"
+                        >
+                          <span>{copiedId === `${motionCopyId}_flow` ? "✅ تم النسخ بالصوت" : "🎙️ نسخ مع الصوت والكلام (Flow)"}</span>
+                        </button>
+                        <button
+                          onClick={() => copyText(scene.motionPrompt, motionCopyId)}
+                          className="bg-gray-700 hover:bg-gray-800 text-white font-bold text-xs py-1 px-3 rounded-md transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                        >
+                          <span>{copiedId === motionCopyId ? "✅ Copied" : "📋 تحريك صامت فقط"}</span>
+                        </button>
+                      </div>
                     </div>
                     <div className="bg-white p-3.5 rounded-lg border border-blue-100 font-mono text-xs text-blue-950 whitespace-pre-wrap leading-relaxed select-all">
                       {scene.motionPrompt}
