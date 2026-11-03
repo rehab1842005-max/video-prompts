@@ -3,27 +3,19 @@
 import React, { useState } from "react";
 import { PDFDocument } from "pdf-lib";
 
+export interface LessonBeat {
+  beatNumber: number;
+  conceptTitle: string;
+  teacherVoiceover: string;
+  analogyIdea: string;
+  analogyTitle: string;
+  flowVideoPrompt: string;
+}
+
 export interface LessonGuideData {
   lessonTitle: string;
   detectedTopic?: string;
-  opening: {
-    hookQuestion: string;
-    teacherOpeningDialogue: string;
-    openingAnalogyTitle?: string;
-    openingFlowVideoPrompt?: string;
-  };
-  sections: Array<{
-    partNumber: number;
-    title: string;
-    teacherSpeech: string;
-    realLifeAnalogy: string;
-    analogyTitle?: string;
-    flowVideoPrompt?: string;
-    conceptExplanation: string;
-    studentQuestion: string;
-    expectedAnswer: string;
-    transition: string;
-  }>;
+  beats: LessonBeat[];
   experiments?: Array<{
     experimentTitle: string;
     goal: string;
@@ -54,50 +46,64 @@ export interface LessonGuideData {
 }
 
 export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
-  lessonTitle: "كيف تصنع النباتات غذاءها؟ (عملية البناء الضوئي)",
-  detectedTopic: "البناء الضوئي وحاجة النبات للضوء والماء والهواء",
-  opening: {
-    hookQuestion: "يا أبطالي.. لو إنت جعت الصبح، ماما بتعمل إيه؟ بتدخل المطبخ تطبخ لنا أكل جميل صح؟ طب يا ترى النبتة اللي واقفة في البلكونة لما بتجوع.. بتروح تشتري ساندوتش؟ ولا بتعمل إيه؟",
-    teacherOpeningDialogue: "صباح الفل يا دكاترة المستقبل! كلنا لما بنجوع بنفتح التلاجة وناكل، لكن النبتة دي كائن حي زينا بالظبط، لا عندها رجلين تروح السوبر ماركت، ولا إيدين تطبخ! طب تفتكروا بتعيش إزاي؟ السر يا شطار إن النبتة عندها شيف عبقري ومطبخ سحري جواها بيطبخ لها أحلى أكل في الدنيا.. النهاردة هنلبس طاقية الشيف وندخل سوا مطبخ النبتة ونعرف بتطبخ أكلها إزاي!",
-    openingAnalogyTitle: "شخص جائع يفتح الثلاجة ليلاً ويأكل ساندوتش شهي (بدون معلمة)",
-    openingFlowVideoPrompt: "Cinematic 3D Pixar animation of a cozy modern kitchen at night. A hungry person opens the warmly lit refrigerator, smiles excitedly, and reaches inside to pick up a delicious fresh snack and takes a happy bite. Beautiful soft lighting, vibrant colors, gentle camera push-in. ABSOLUTELY NO teachers, NO classroom, pure lifestyle food scene."
-  },
-  sections: [
+  lessonTitle: "كيف تصنع النباتات غذاءها؟ (عملية البناء الضوئي ومطبخ النبتة)",
+  detectedTopic: "البناء الضوئي، حاجة النبات للماء والهواء والضوء، ونواتج التغذية",
+  beats: [
     {
-      partNumber: 1,
-      title: "أين يقع مطبخ النبتة؟ (الأوراق الخضراء ومادة الكلوروفيل)",
-      teacherSpeech: "بصوا معايا كده على النبتة.. النبتة عندها جذور تحت الأرض، وساق واقفة، وأوراق خضراء عريضة. مطبخ النبتة يا حلوين موجود تحديداً في 'الورقة الخضراء'! الورقة دي عاملة زي صينية الطبخ الشمسية، مفرودة في الهوا وبتستقبل النور.",
-      realLifeAnalogy: "الورقة الخضراء عاملة زي صينية الطبخ المفتوحة للشمس، وزي شباك المطبخ اللي بنفتحه عشان يدخل النور والهوا للطباخ.",
-      analogyTitle: "صينية طعام في مطبخ مشمس يدخله نور الشمس الساطع (بدون معلمة)",
-      flowVideoPrompt: "Cinematic 3D Pixar animation: Golden morning sunlight streaming through an open kitchen window onto a wooden rustic table, illuminating fresh green basil leaves and cooking ingredients, gentle dust motes dancing in the warm rays. Atmospheric warm lens flare, delicious cozy atmosphere. ABSOLUTELY NO teachers, NO school, pure scenic visual.",
-      conceptExplanation: "الورقة لونها أخضر عشان جواها مادة سحرية اسمها 'الكلوروفيل' داخل البلاستيدات الخضراء، هي اللي بتمتص أشعة الشمس وتبدأ طبخ الأكل.",
-      studentQuestion: "تفتكروا ليه الورقة مفرودة وعريضة مش ملفوفة؟",
-      expectedAnswer: "عشان تجمع أكبر قدر من أشعة الشمس وماتضيعش أي بصيص نور!",
-      transition: "عرفنا مكان المطبخ.. طب عشان نطبخ مش محتاجين مقادير ومكونات؟ تعالوا نشوف الشيف نبات بيحتاج إيه عشان يطبخ أكلته!"
+      beatNumber: 1,
+      conceptTitle: "فكرة البداية: كيف يأكل الكائن الحي عند الجوع؟",
+      teacherVoiceover: "صباح الفل يا دكاترة المستقبل! كلنا لما بنجوع بنفتح التلاجة وناكل أحلى أكل!",
+      analogyIdea: "شخص جائع يفتح ثلاجة مضيئة في مطبخ دافئ ويأكل ساندوتش شهي.",
+      analogyTitle: "شخص يفتح الثلاجة ويأكل ساندوتش شهي (بدون معلمة)",
+      flowVideoPrompt: "Cinematic 3D Pixar animation of a cozy modern kitchen at night. A hungry person opens a brightly glowing refrigerator, smiles happily, takes out a delicious fresh sandwich and takes a joyful bite. Beautiful soft volumetric lighting, warm cozy atmosphere, smooth camera push-in. ABSOLUTELY NO teachers, NO classroom, pure lifestyle food scene."
     },
     {
-      partNumber: 2,
-      title: "مقادير طبخة النبات الثلاثة (الماء، الهواء، وضوء الشمس)",
-      teacherSpeech: "الشيف نبات عشان يعمل وجبته اللذيذة محتاج 3 مقادير أساسية: أول حاجة 'المية والأملاح' من تحت الأرض، الجذور بتشفطهم زي الشفاطة، وتطلعهم في أنابيب اسمها 'أوعية الخشب' لحد الورقة! تاني حاجة 'الهواء'، الورقة عندها مسام صغيرة زي فتحات أنفنا اسمها 'الثغور' بتتنفس وتاخد غاز اسمه (ثاني أكسيد الكربون). تالت حاجة 'ضوء الشمس' اللي بيشغل البوتجاز والحرارة للتفاعل!",
-      realLifeAnalogy: "زي لما نعمل كيكة: محتاجين مية ودقيق وسكر وبوتجاز يسويها.. النبتة بتاخد مية من تحت، وهوا من الجنب، ونور الشمس يسوي الطبخة!",
-      analogyTitle: "شفاطة تشفط ماء وعصير منعش بحيوية من كوب زجاجي (بدون معلمة)",
-      flowVideoPrompt: "Macro close-up 3D Pixar animation of a colorful striped drinking straw smoothly and powerfully sipping up cool sparkling water and vibrant fruit juice from a clear glass with ice cubes, showing dynamic liquid suction and rising bubbly droplets. Clean bright aesthetic, dynamic macro camera motion. ABSOLUTELY NO teachers.",
-      conceptExplanation: "الماء (H2O) + ثاني أكسيد الكربون (CO2) في وجود طاقة ضوء الشمس = سكر الجلوكوز (طاقة النبات) + غاز الأكسجين (للتنفس).",
-      studentQuestion: "لو قفلنا النبتة في كرتونة مقفولة في الضلمة وماسقيناهاش، إيه اللي هيحصل وليه؟",
-      expectedAnswer: "هتدبل وتموت، لأن المطبخ بتاعها مفيش فيه مقادير ولا نور يطبخ بيه أكلها!",
-      transition: "طب بعد ما الطبخة استوت والعملية خلصت.. يا ترى إيه الهدية اللي النبتة بتطلعها لنا وللكون كله؟"
+      beatNumber: 2,
+      conceptTitle: "عجز النبات عن الحركة لشراء الطعام",
+      teacherVoiceover: "لكن النبتة دي كائن حي زينا بالظبط، لا عندها رجلين تروح السوبر ماركت تشتري خضار، ولا إيدين تطبخ!",
+      analogyIdea: "طفل أو شخص يتسوق في سوبر ماركت مليء بالخضار والفواكه الطازجة.",
+      analogyTitle: "التسوق في السوبر ماركت وشراء الأطعمة (بدون معلمة)",
+      flowVideoPrompt: "Vibrant 3D Pixar style tracking shot through a modern colorful supermarket aisle. A shopping cart is pushed along rows of fresh glowing apples, bread, and vegetables. Cheerful bright lighting, smooth dynamic camera motion. ABSOLUTELY NO teachers, NO school."
     },
     {
-      partNumber: 3,
-      title: "نواتج الطبخة السحرية (الأكسجين وسكر الجلوكوز)",
-      teacherSpeech: "بعد ما الشمس تطبخ المقادير جوا الورقة، بيطلع حاجتين في قمة الجمال: أول حاجة 'سكر الجلوكوز' وده أكل النبتة وغذائها اللي بيديها طاقة عشان تكبر وتبقى شجرة عملاقة! وتاني حاجة 'غاز الأكسجين'، وده بتخرجه في الهوا هدية لينا وللحيوانات عشان نتنفس ونعيش!",
-      realLifeAnalogy: "زي صينية البسبوسة لما تطلع من الفرن، بتدينا طاقة وحلاوة (زي سكر النبات)، وريحتها الجميلة بتملى البيت كله فرحة (زي الأكسجين الصافي اللي بيملى الجو).",
-      analogyTitle: "صينية حلوى ذهبية شهية يخرج منها البخار من الفرن (بدون معلمة)",
-      flowVideoPrompt: "Cinematic appetizing 3D Pixar animation of a freshly baked golden pastry coming out of a warm oven with glistening sweet syrup drizzled on top, delicious steam rising into the air, surrounded by sparkling clean kitchen ambiance. Warm, joyful, appetizing lighting. ABSOLUTELY NO teachers.",
-      conceptExplanation: "البناء الضوئي هو سر الحياة على كوكب الأرض: النبات هو الكائن الوحيد 'ذاتي التغذية' اللي بيصنع غذاءه بنفسه ويوفر الأكسجين لجميع الكائنات.",
-      studentQuestion: "ليه بنحب نقعد تحت الشجر في الحدائق الصبح؟",
-      expectedAnswer: "عشان الشجر بيعمل بناء ضوئي بالنهار وبيخرج لنا أكسجين نقي يخلينا نتنفس بانتعاش!",
-      transition: "يلا بقى نثبت المعلومات دي على السبورة زي المحترفين عشان نراجعها في ثانية!"
+      beatNumber: 3,
+      conceptTitle: "مطبخ النبتة السحري (الأوراق الخضراء)",
+      teacherVoiceover: "السر يا شطار إن النبتة عندها شيف عبقري ومطبخ سحري جواها بيطبخ لها أحلى أكل، ومطبخها موجود تحديداً في الورقة الخضراء!",
+      analogyIdea: "مطبخ كرتوني مشمس مبهج وناعم تتسلل إليه أشعة الشمس الذهبية من الشباك.",
+      analogyTitle: "مطبخ مشمس دافئ يتسلل إليه ضوء الصباح (بدون معلمة)",
+      flowVideoPrompt: "Charming 3D Pixar scene of a warm rustic kitchen counter flooded with bright morning sunbeams through a large window, illuminating fresh green basil leaves on a cutting board, delicate dust particles sparkling in the sun rays. Cinematic lens flare, cozy appetizing aesthetic. ABSOLUTELY NO teachers."
+    },
+    {
+      beatNumber: 4,
+      conceptTitle: "امتصاص الجذور للماء والأملاح كالمصاصة",
+      teacherVoiceover: "عشان تطبخ محتاجة مية، فالجذور تحت الأرض بتشفط المية والأملاح زي الشفاطة بالضبط، وتطلعها في أنابيب لحد الورقة!",
+      analogyIdea: "شفاطة ملونة تشفط مياهاً وعصيراً منعشاً بحيوية من كوب زجاجي مثلج.",
+      analogyTitle: "شفاطة تشفط ماء وعصير منعش من كوب مثلج (بدون معلمة)",
+      flowVideoPrompt: "Macro close-up 3D Pixar animation of a colorful striped drinking straw smoothly and powerfully sipping up cool sparkling water and vibrant fruit juice from a clear glass with ice cubes, showing dynamic liquid suction and rising bubbly droplets. Clean bright aesthetic, dynamic macro camera motion. ABSOLUTELY NO teachers."
+    },
+    {
+      beatNumber: 5,
+      conceptTitle: "تنفس الورقة ودخول غاز ثاني أكسيد الكربون عبر الثغور",
+      teacherVoiceover: "وتاني حاجة الهواء، الورقة عندها فتحات صغيرة زي مناخيرنا اسمها الثغور بتتنفس وتاخد غاز اسمه ثاني أكسيد الكربون!",
+      analogyIdea: "فتحات تهوية لطيفة أو نوافذ شرفة تفتح ليدخل منها نسيم هواء عليل ومتحرك.",
+      analogyTitle: "نوافذ تفتح لدخول نسيم هواء عليل ومنعش (بدون معلمة)",
+      flowVideoPrompt: "Artistic 3D animation of gentle sheer white curtains fluttering gracefully at an open window as a fresh summer breeze carrying soft glowing pollen swirls into a sunlit room. Soft depth of field, fluid air current visualization. ABSOLUTELY NO teachers."
+    },
+    {
+      beatNumber: 6,
+      conceptTitle: "طاقة الشمس والبوتجاز لتسوية الطبخة الكيميائية",
+      teacherVoiceover: "وتالت حاجة ضوء الشمس اللي بيشغل البوتجاز ويسوي الطبخة، فتتحد المية مع الهواء وتستوي الوجبة!",
+      analogyIdea: "صينية كيك شهية تنتفخ وتستوي داخل فرن مضيء ودافئ بحرارة الفرن.",
+      analogyTitle: "صينية كيكة تنتفخ وتستوي في فرن دافئ (بدون معلمة)",
+      flowVideoPrompt: "Appetizing close-up 3D animation through an oven glass door: A fluffy golden cake batter smoothly rises and bakes into perfection with gentle steam swirling under a warm amber heating glow. Mouthwatering cinematic render. ABSOLUTELY NO teachers."
+    },
+    {
+      beatNumber: 7,
+      conceptTitle: "النواتج: سكر الجلوكوز لطاقة النبات والأكسجين لتنفسنا",
+      teacherVoiceover: "وبعد ما تستوي الطبخة تطلع هديتين: سكر الجلوكوز عشان النبتة تكبر، وغاز الأكسجين النقي عشان كلنا نتنفس ونعيش!",
+      analogyIdea: "صينية حلويات ذهبية شهية يخرج منها البخار المعطر، وفقاعات شفافة نقية تتصاعد في حديقة خضراء.",
+      analogyTitle: "صينية حلوى ذهبية وفقاعات أكسجين منعشة في الهواء (بدون معلمة)",
+      flowVideoPrompt: "Magical 3D Pixar animation: Iridescent sparkling oxygen bubbles floating upwards into a crystal clear sunny blue sky over a vibrant garden, with golden sparkling glucose crystals glowing gently on green leaves. Uplifting, clean, joyful visual. ABSOLUTELY NO teachers."
     }
   ],
   experiments: [
@@ -209,13 +215,31 @@ export default function TeacherLessonGuide() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "فشل توليد دليل المعلمة");
+        throw new Error(err.error || "فشل تحليل وتقسيم الدرس");
       }
 
       const data = await res.json();
       if (data.guide) {
-        setGuideData(data.guide);
-        alert("🎉 تم إعداد دليل المعلمة وبرومبتات فيديوهات التشبيه بنجاح!");
+        // Normalize guide data if beats or sections format
+        let normalizedBeats: LessonBeat[] = [];
+        if (data.guide.beats && Array.isArray(data.guide.beats)) {
+          normalizedBeats = data.guide.beats;
+        } else if (data.guide.sections && Array.isArray(data.guide.sections)) {
+          normalizedBeats = data.guide.sections.map((sec: any, idx: number) => ({
+            beatNumber: idx + 1,
+            conceptTitle: sec.title || `جزئية ${idx + 1}`,
+            teacherVoiceover: sec.teacherSpeech || "",
+            analogyIdea: sec.realLifeAnalogy || "",
+            analogyTitle: sec.analogyTitle || `تشبيه الجزئية ${idx + 1}`,
+            flowVideoPrompt: sec.flowVideoPrompt || sec.analogyVideoMotionPrompt || ""
+          }));
+        }
+
+        setGuideData({
+          ...data.guide,
+          beats: normalizedBeats
+        });
+        alert("🎉 تم فهم الدرس أوتوماتيكياً وتقسيمه لجزئيات مع برومبت فيديو لكل تشبيه!");
       }
     } catch (e: any) {
       console.error(e);
@@ -225,42 +249,51 @@ export default function TeacherLessonGuide() {
     }
   };
 
+  // Copy All Voiceovers in sequential order for easy microphone recording
+  const copyAllVoiceoverScript = () => {
+    if (!guideData || !guideData.beats) return;
+    const script = guideData.beats
+      .map((b) => `المشهد ${String(b.beatNumber).padStart(2, "0")} (${b.conceptTitle}):\n${b.teacherVoiceover}`)
+      .join("\n\n---\n\n");
+    copyText(script, "all_voiceover");
+  };
+
+  // Copy All Flow Video Prompts sequentially
+  const copyAllFlowPrompts = () => {
+    if (!guideData || !guideData.beats) return;
+    const prompts = guideData.beats
+      .map((b) => `SCENE ${String(b.beatNumber).padStart(2, "0")} - ${b.analogyTitle}\nFLOW PROMPT:\n${b.flowVideoPrompt}`)
+      .join("\n\n" + "=".repeat(45) + "\n\n");
+    copyText(prompts, "all_flow_prompts");
+  };
+
+  // Download full formatted file to device (.txt)
   const downloadFullGuideTxt = () => {
     if (!guideData) return;
     let txt = `======================================================================\n`;
-    txt += `  دليل المعلمة لشرح العلوم بطريقة مبسطة وواقعية للأطفال بالفصل\n`;
-    txt += `  (كلام المعلمة الصوتي + برومبتات فيديوهات التشبيه لموقع Flow بدون معلمة)\n`;
+    txt += `  دليل المعلمة لشرح وتبسيط العلوم للأطفال بالمونتاج\n`;
+    txt += `  (سكريبت الشرح الصوتي + برومبتات فيديو Flow لكل تشبيه بدون معلمة)\n`;
     txt += `  إعداد: Sci.Rehab Elsibai Studio\n`;
     txt += `  عنوان الدرس: ${guideData.lessonTitle}\n`;
+    txt += `  الموضوع المكتشف: ${guideData.detectedTopic || "علمي مخصص"}\n`;
+    txt += `  عدد الجزئيات والمشاهد: ${guideData.beats?.length || 0} مشهد\n`;
     txt += `======================================================================\n\n`;
 
-    txt += `🎯 أولاً: بداية الدرس وسؤال جذب الانتباه:\n`;
-    txt += `* السؤال لجذب الانتباه: ${guideData.opening.hookQuestion}\n\n`;
-    txt += `* كلام المعلمة بالحرف بالعامية المصرية (السكريبت الصوتي للتسجيل):\n${guideData.opening.teacherOpeningDialogue}\n\n`;
-    if (guideData.opening.openingFlowVideoPrompt) {
-      txt += `🎬 فيديو تشبيه البداية لموقع Flow (${guideData.opening.openingAnalogyTitle || "بدون معلمة"}):\n`;
-      txt += `${guideData.opening.openingFlowVideoPrompt}\n\n`;
+    if (guideData.beats && guideData.beats.length > 0) {
+      txt += `🎬 مشاهد وسكريبت المونتاج مقسمة جزئية بجزئية مع فيديو التشبيه:\n\n`;
+      guideData.beats.forEach((b) => {
+        txt += `######################################################################\n`;
+        txt += `🎬 مشهد ${String(b.beatNumber).padStart(2, "0")}: ${b.conceptTitle}\n`;
+        txt += `🎙️ كلامكِ الصوتي للتسجيل في المونتاج:\n${b.teacherVoiceover}\n\n`;
+        txt += `💡 التشبيه من الحياة اليومية: ${b.analogyIdea}\n\n`;
+        txt += `🎬 برومبت فيديو Flow للتشبيه (بدون معلمة - ${b.analogyTitle}):\n`;
+        txt += `${b.flowVideoPrompt}\n\n`;
+      });
+      txt += `\n======================================================================\n\n`;
     }
-    txt += `----------------------------------------------------------------------\n\n`;
-
-    txt += `📖 ثانياً: سكريبت شرح الدرس وبرومبتات فيديو التشبيه لموقع Flow:\n\n`;
-    guideData.sections.forEach((s) => {
-      txt += `[جزء ${s.partNumber}: ${s.title}]\n`;
-      txt += `🗣️ كلام المعلمة الصوتي للتسجيل: ${s.teacherSpeech}\n\n`;
-      txt += `💡 التشبيه من الحياة اليومية: ${s.realLifeAnalogy}\n\n`;
-      if (s.flowVideoPrompt) {
-        txt += `🎬 فيديو التشبيه لموقع Flow (${s.analogyTitle || "B-Roll بدون معلمة"}):\n`;
-        txt += `${s.flowVideoPrompt}\n\n`;
-      }
-      txt += `🔬 الشرح والسبب العلمي: ${s.conceptExplanation}\n\n`;
-      txt += `❓ سؤال للطلاب: ${s.studentQuestion}\n`;
-      txt += `✅ الإجابة المتوقعة: ${s.expectedAnswer}\n`;
-      txt += `🔗 طريقة الانتقال: ${s.transition}\n`;
-      txt += `\n----------------------------------------------------------------------\n\n`;
-    });
 
     if (guideData.experiments && guideData.experiments.length > 0) {
-      txt += `🧪 ثالثاً: شرح التجارب العلمية بالتفصيل:\n\n`;
+      txt += `🧪 شرح التجارب العلمية بالتفصيل:\n\n`;
       guideData.experiments.forEach((exp, idx) => {
         txt += `[تجربة ${idx + 1}: ${exp.experimentTitle}]\n`;
         txt += `* الهدف: ${exp.goal}\n`;
@@ -280,7 +313,7 @@ export default function TeacherLessonGuide() {
       });
     }
 
-    txt += `📋 رابعاً: ما يُكتب على السبورة فقط:\n`;
+    txt += `📋 ما يُكتب على السبورة فقط:\n`;
     txt += `* العنوان: ${guideData.blackboardSummary.title}\n`;
     txt += `* الكلمات والمصطلحات الأساسية:\n`;
     guideData.blackboardSummary.keyVocabulary.forEach((v) => (txt += `  - ${v}\n`));
@@ -292,7 +325,7 @@ export default function TeacherLessonGuide() {
     guideData.blackboardSummary.conclusions.forEach((cn) => (txt += `  - ${cn}\n`));
     txt += `\n----------------------------------------------------------------------\n\n`;
 
-    txt += `❓ خامساً: أسئلة التأكد من الفهم وإجاباتها:\n\n`;
+    txt += `❓ أسئلة التأكد من الفهم وإجاباتها:\n\n`;
     guideData.checkUnderstanding.forEach((q, idx) => {
       txt += `سؤال ${idx + 1} (${q.questionType}): ${q.question}\n`;
       txt += `الإجابة النموذجية: ${q.correctAnswer}\n\n`;
@@ -302,7 +335,7 @@ export default function TeacherLessonGuide() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `سكريبت_شرح_وبرومبتات_فلو_${guideData.lessonTitle.replace(/[/\\?%*:|"<>]/g, "_")}.txt`;
+    a.download = `سكريبت_الشرح_وفيديوهات_فلو_${guideData.lessonTitle.replace(/[/\\?%*:|"<>]/g, "_")}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -328,14 +361,14 @@ export default function TeacherLessonGuide() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/10 pb-6">
           <div>
             <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 font-bold text-xs px-3.5 py-1.5 rounded-full border border-emerald-500/30 mb-2">
-              <span>🎬</span>
-              <span>شرح المعلمة + برومبت فيديو لكل تشبيه لموقع Flow (بدون معلمة للمونتاج)</span>
+              <span>✨</span>
+              <span>فهم تلقائي للدرس + تقسيم أوتوماتيكي لكل جزئية مع فيديو التشبيه لـ Flow</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white">
-              دليل شرح المعلمة وفيديوهات التشبيه لموقع Flow
+              تقسيم الدرس لجزئيات وفيديوهات التشبيه لموقع Flow
             </h2>
             <p className="text-emerald-200/90 text-sm sm:text-base mt-1 max-w-2xl">
-              كلام المعلمة بالعامية المصرية تسجليه بصوتك، وتحت كل تشبيه برومبت فيديو لموقع Flow يصور التشبيه بدقة (بدون معلمة) لتضعيه في المونتاج وأنتِ تتكلمين!
+              ارفعي أي درس؛ سيفهمه الذكاء الاصطناعي أوتوماتيكياً ويقسمه لجمل صغيرة، ولكل جملة تشبيه واقعي مع برومبت فيديو Flow (بدون معلمة) لتضعيه في المونتاج وأنتِ تتكلمين!
             </p>
           </div>
 
@@ -343,7 +376,7 @@ export default function TeacherLessonGuide() {
             <button
               onClick={() => {
                 setGuideData(PRESET_SAMPLE_GUIDE);
-                alert("تم تحميل النموذج الاسترشادي الجاهز (درس البناء الضوئي ومطبخ النبتة)!");
+                alert("تم تحميل النموذج الاسترشادي الجاهز (درس النبات ومطبخ الورقة)!");
               }}
               className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2 px-3.5 rounded-xl border border-white/20 transition-all cursor-pointer"
             >
@@ -369,13 +402,13 @@ export default function TeacherLessonGuide() {
 
           <div className="md:col-span-4">
             <label className="block text-xs font-bold text-emerald-300 mb-1.5">
-              2. أو اكتبي عنوان الدرس (اختياري لو تم رفع PDF):
+              2. أو اكتبي عنوان الدرس (سيفهمه أوتوماتيكياً):
             </label>
             <input
               type="text"
               value={topicInput}
               onChange={(e) => setTopicInput(e.target.value)}
-              placeholder="مثال: كيف يصنع النبات غذاءه؟ أو الجهاز الهضمي"
+              placeholder="مثال: رحلة داخل القلب، أو الجهاز الهضمي، أو القوى والحركة"
               className="w-full p-2.5 bg-black/20 text-white text-xs rounded-xl border border-emerald-600/40 placeholder-emerald-300/40 focus:ring-2 focus:ring-emerald-400 focus:outline-none"
             />
           </div>
@@ -408,7 +441,7 @@ export default function TeacherLessonGuide() {
                   : "bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-emerald-950 font-black"
               }`}
             >
-              {isLoading ? "جاري تجهيز الشرح وفيديوهات Flow..." : "🚀 ابتكار الشرح وفيديوهات التشبيه"}
+              {isLoading ? "جاري فهم الدرس والتقسيم وتوليد فيديوهات Flow..." : "🚀 فهم الدرس وتقسيم الفيديوهات أوتوماتيكياً"}
             </button>
           </div>
         </div>
@@ -419,218 +452,153 @@ export default function TeacherLessonGuide() {
         <div className="space-y-8">
           
           {/* Top Actions Bar */}
-          <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <span className="text-xs font-bold text-gray-500">الدرس الحالي:</span>
-              <h3 className="text-lg font-black text-emerald-900">{guideData.lessonTitle}</h3>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                ✨ تم فهم الدرس وتقسيمه إلى ({guideData.beats?.length || 0}) جزئية تشبيهية
+              </span>
+              <h3 className="text-lg font-black text-gray-900 mt-1">{guideData.lessonTitle}</h3>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+              <button
+                onClick={copyAllVoiceoverScript}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1"
+                title="نسخ جميع جمل المعلمة وراء بعضها للتسجيل الصوتي"
+              >
+                <span>🎙️</span> {copiedSection === "all_voiceover" ? "✅ تم نسخ السكريبت!" : "نسخ كامل السكريبت الصوتي"}
+              </button>
+
+              <button
+                onClick={copyAllFlowPrompts}
+                className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1"
+                title="نسخ جميع برومبتات Flow التشبيهية"
+              >
+                <span>🎬</span> {copiedSection === "all_flow_prompts" ? "✅ تم نسخ البرومبتات!" : "نسخ كل برومبتات Flow"}
+              </button>
+
               <button
                 onClick={downloadFullGuideTxt}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                className="bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs py-2 px-3 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1"
               >
-                <span>📥</span> حفظ وتنزيل السكريبت والبرومبتات (.txt)
+                <span>📥</span> حفظ ملف (.txt)
               </button>
 
               <button
                 onClick={copyBlackboardOnly}
-                className="bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                className="bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs py-2 px-3 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer flex items-center gap-1"
               >
-                <span>📋</span> {copiedSection === "blackboard_only" ? "✅ تم نسخ السبورة!" : "نسخ ما يُكتب على السبورة فقط"}
-              </button>
-
-              <button
-                onClick={() => window.print()}
-                className="bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs py-2 px-3.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
-              >
-                <span>🖨️</span> طباعة الدليل
+                <span>📋</span> {copiedSection === "blackboard_only" ? "✅ تم نسخ السبورة!" : "السبورة فقط"}
               </button>
             </div>
           </div>
 
-          {/* Section 1: بداية الدرس والتشبيه الافتتاحي */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-amber-200/60 pb-3">
-              <div className="flex items-center gap-2.5">
-                <span className="text-2xl p-2 bg-amber-100 text-amber-800 rounded-xl">🎯</span>
-                <div>
-                  <h3 className="text-base font-black text-amber-950">
-                    أولاً: بداية الدرس وسؤال جذب الانتباه من واقع الطلاب
-                  </h3>
-                  <p className="text-xs text-amber-800 font-medium">سؤال واقعي يقود لفكرة الدرس بدون مصطلحات صعبة</p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => copyText(`${guideData.opening.hookQuestion}\n\n${guideData.opening.teacherOpeningDialogue}`, "opening")}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-1.5 px-3 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
-              >
-                <span>{copiedSection === "opening" ? "✅ تم النسخ" : "📋 نسخ كلام البداية"}</span>
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div className="bg-white p-4 rounded-xl border border-amber-200 shadow-2xs">
-                <span className="text-xs font-bold text-amber-700 block mb-1">❓ سؤال جذب الانتباه للطلاب:</span>
-                <p className="text-sm font-semibold text-gray-900 leading-relaxed">
-                  "{guideData.opening.hookQuestion}"
-                </p>
-              </div>
-
-              <div className="bg-white p-4 rounded-xl border border-amber-200 shadow-2xs">
-                <span className="text-xs font-bold text-amber-700 block mb-1">
-                  🗣️ كلام المعلمة بالحرف بالعامية المصرية (السكريبت اللي هتقوليه بصوتك في المونتاج):
-                </span>
-                <p className="text-sm text-gray-800 leading-relaxed font-medium">
-                  "{guideData.opening.teacherOpeningDialogue}"
-                </p>
-              </div>
-
-              {/* NEW: برومبت فيديو تشبيه البداية (مثل فتح الثلاجة وتناول طعام - بدون معلمة) */}
-              {guideData.opening.openingFlowVideoPrompt && (
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-200 shadow-xs space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">🎬</span>
-                      <div>
-                        <span className="text-xs font-bold text-purple-900 block">
-                          فيديو تشبيه البداية لموقع Flow (بدون معلمة - B-Roll تحطيه في المونتاج):
-                        </span>
-                        <span className="text-[11px] text-purple-700 font-medium">
-                          {guideData.opening.openingAnalogyTitle || "شخص يفتح الثلاجة ويأكل طعام شهي"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => copyText(guideData.opening.openingFlowVideoPrompt || "", "opening_flow")}
-                      className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1.5 px-3.5 rounded-lg transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
-                    >
-                      <span>{copiedSection === "opening_flow" ? "✅ تم النسخ" : "📋 نسخ برومبت فيديو التشبيه (Flow)"}</span>
-                    </button>
-                  </div>
-
-                  <div className="bg-white p-3 rounded-lg border border-purple-200 text-left" dir="ltr">
-                    <p className="font-mono text-xs text-purple-950 leading-relaxed select-all">
-                      {guideData.opening.openingFlowVideoPrompt}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Section 2: شرح أجزاء الدرس بالتفصيل والتشبيهات والبرومبتات */}
+          {/* Section: الجزئيات الدقيقة والمشاهد المتتالية */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-2">
               <div className="flex items-center gap-2">
-                <span className="text-2xl p-2 bg-blue-100 text-blue-800 rounded-xl">📖</span>
-                <h3 className="text-lg font-black text-gray-900">
-                  ثانياً: سكريبت شرح الدرس + فيديو التشبيه لموقع Flow (بدون معلمة)
-                </h3>
+                <span className="text-2xl p-1.5 bg-purple-100 text-purple-800 rounded-xl">🎬</span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-gray-900">
+                    مشاهد المونتاج والتشبيهات المتتالية (كلامكِ الصوتي + فيديو Flow التشبيهي)
+                  </h3>
+                  <p className="text-xs text-gray-500">
+                    كل جزئية تحتوي على جملتكِ التي تسجلينها بصوتك، مع برومبت فيديو Flow للتشبيه (بدون معلمة) لتضعيه فوقها في المونتاج!
+                  </p>
+                </div>
               </div>
-              <span className="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full">
-                {guideData.sections.length} أجزاء تفصيلية
+
+              <span className="text-xs bg-purple-100 text-purple-900 font-bold px-3 py-1 rounded-full">
+                {guideData.beats?.length || 0} مشهد تفصيلي
               </span>
             </div>
 
-            <div className="space-y-6">
-              {guideData.sections.map((sec, idx) => (
-                <div key={idx} className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm hover:border-blue-300 transition-all space-y-4">
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 bg-blue-700 text-white rounded-full flex items-center justify-center font-bold text-xs">
-                        {sec.partNumber}
+            {/* List of Micro-Beats */}
+            <div className="space-y-5">
+              {guideData.beats?.map((beat, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm hover:border-purple-300 transition-all space-y-3.5"
+                >
+                  {/* Beat Header */}
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-7 h-7 bg-purple-700 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-xs">
+                        {beat.beatNumber}
                       </span>
-                      <h4 className="font-black text-base text-gray-900">{sec.title}</h4>
+                      <h4 className="font-black text-sm sm:text-base text-gray-900">
+                        {beat.conceptTitle}
+                      </h4>
                     </div>
 
-                    <button
-                      onClick={() => copyText(`[${sec.title}]\nكلام المعلمة: ${sec.teacherSpeech}\nالتشبيه: ${sec.realLifeAnalogy}\nالشرح: ${sec.conceptExplanation}`, `sec_${idx}`)}
-                      className="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors border border-blue-200 flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>{copiedSection === `sec_${idx}` ? "✅ تم النسخ" : "📋 نسخ نص الشرح"}</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => copyText(beat.teacherVoiceover, `voice_${idx}`)}
+                        className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs py-1 px-2.5 rounded-lg border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                        title="نسخ كلام المعلمة فقط"
+                      >
+                        <span>🎙️</span>
+                        <span>{copiedSection === `voice_${idx}` ? "✅ تم النسخ" : "نسخ جملة الشرح"}</span>
+                      </button>
+
+                      <button
+                        onClick={() => copyText(beat.flowVideoPrompt, `flow_${idx}`)}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1 px-3 rounded-lg transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                        title="نسخ برومبت Flow لمشهد التشبيه"
+                      >
+                        <span>🎬</span>
+                        <span>{copiedSection === `flow_${idx}` ? "✅ تم النسخ" : "نسخ برومبت Flow"}</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="space-y-3.5 text-sm">
-                    {/* كلام المعلمة الصوتي */}
-                    <div className="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100">
-                      <span className="text-xs font-bold text-emerald-800 flex items-center gap-1 mb-1">
-                        <span>🎙️</span> كلام المعلمة بالعامية المصرية (السكريبت الصوتي للتسجيل في المونتاج):
-                      </span>
-                      <p className="text-gray-900 font-medium leading-relaxed">
-                        {sec.teacherSpeech}
-                      </p>
-                    </div>
+                  {/* 1. كلامك الصوتي للتسجيل في المونتاج */}
+                  <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-100">
+                    <span className="text-xs font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                      <span>🎙️</span> كلامكِ الصوتي في المونتاج (اقرأي وسجلي بصوتكِ):
+                    </span>
+                    <p className="text-sm font-semibold text-gray-900 leading-relaxed">
+                      "{beat.teacherVoiceover}"
+                    </p>
+                  </div>
 
-                    {/* التشبيه الواقعي */}
-                    <div className="bg-amber-50/60 p-3.5 rounded-xl border border-amber-100">
-                      <span className="text-xs font-bold text-amber-800 flex items-center gap-1 mb-1">
-                        <span>💡</span> التشبيه من الحياة اليومية (أكل/مطبخ/لعب):
-                      </span>
-                      <p className="text-amber-950 font-medium leading-relaxed">
-                        {sec.realLifeAnalogy}
-                      </p>
-                    </div>
+                  {/* 2. فكرة التشبيه من الحياة اليومية */}
+                  <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-200 text-xs">
+                    <span className="font-bold text-amber-900 block mb-0.5">
+                      💡 فكرة التشبيه من الحياة اليومية (مطبخ/أكل/لعب):
+                    </span>
+                    <p className="text-amber-950 font-medium leading-relaxed">
+                      {beat.analogyIdea}
+                    </p>
+                  </div>
 
-                    {/* NEW: برومبت فيديو التشبيه لموقع Flow (بدون معلمة نهائياً) */}
-                    {sec.flowVideoPrompt && (
-                      <div className="bg-gradient-to-r from-purple-50/90 to-indigo-50/90 p-4 rounded-xl border border-purple-200 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">🎬</span>
-                            <div>
-                              <h5 className="font-bold text-purple-950 text-xs sm:text-sm">
-                                برومبت فيديو التشبيه لموقع Flow (B-Roll بدون معلمة - تحطيه في المونتاج وأنتِ بتتكلمي):
-                              </h5>
-                              <span className="text-[11px] text-purple-700 font-medium">
-                                {sec.analogyTitle || "مشهد واقعي يجسد التشبيه"}
-                              </span>
-                            </div>
-                          </div>
-
-                          <button
-                            onClick={() => copyText(sec.flowVideoPrompt || "", `flow_prompt_${idx}`)}
-                            className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1.5 px-3.5 rounded-lg transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
-                          >
-                            <span>{copiedSection === `flow_prompt_${idx}` ? "✅ تم النسخ" : "📋 نسخ برومبت Flow"}</span>
-                          </button>
-                        </div>
-
-                        <div className="bg-white p-3 rounded-lg border border-purple-100 text-left" dir="ltr">
-                          <p className="font-mono text-xs text-purple-950 leading-relaxed select-all">
-                            {sec.flowVideoPrompt}
-                          </p>
+                  {/* 3. برومبت فيديو Flow بدون معلمة (B-Roll تحطيه في المونتاج) */}
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-3.5 rounded-xl border border-purple-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-base">🎬</span>
+                        <div>
+                          <span className="text-xs font-bold text-purple-950 block">
+                            برومبت فيديو Flow للتشبيه (B-Roll بدون معلمة - ضعيه في المونتاج):
+                          </span>
+                          <span className="text-[11px] text-purple-700 font-medium">
+                            {beat.analogyTitle}
+                          </span>
                         </div>
                       </div>
-                    )}
 
-                    {/* التفسير العلمي */}
-                    <div className="bg-blue-50/60 p-3 rounded-xl border border-blue-100">
-                      <span className="text-xs font-bold text-blue-800 flex items-center gap-1 mb-1">
-                        <span>🔬</span> كيف ولماذا تحدث الظاهرة علمياً؟
-                      </span>
-                      <p className="text-blue-950 leading-relaxed">
-                        {sec.conceptExplanation}
-                      </p>
+                      <button
+                        onClick={() => copyText(beat.flowVideoPrompt, `flow_btn_${idx}`)}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-1 px-3 rounded-lg transition-colors shadow-2xs cursor-pointer flex items-center gap-1"
+                      >
+                        <span>{copiedSection === `flow_btn_${idx}` ? "✅ تم النسخ" : "📋 نسخ لـ Flow"}</span>
+                      </button>
                     </div>
 
-                    {/* سؤال وتوقع تفاعل وانتقال */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span className="text-xs font-bold text-gray-700 block mb-0.5">❓ سؤال تطرحه المعلمة:</span>
-                        <p className="text-xs font-semibold text-gray-800">{sec.studentQuestion}</p>
-                        <span className="text-[11px] text-emerald-700 font-medium block mt-1">
-                          الإجابة المتوقعة: {sec.expectedAnswer}
-                        </span>
-                      </div>
-
-                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                        <span className="text-xs font-bold text-gray-700 block mb-0.5">🔗 طريقة الانتقال للجزء التالي:</span>
-                        <p className="text-xs text-gray-700 leading-relaxed">{sec.transition}</p>
-                      </div>
+                    <div className="bg-white p-3 rounded-lg border border-purple-100 text-left" dir="ltr">
+                      <p className="font-mono text-xs text-purple-950 leading-relaxed select-all">
+                        {beat.flowVideoPrompt}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -638,14 +606,14 @@ export default function TeacherLessonGuide() {
             </div>
           </div>
 
-          {/* Section 3: التجارب والأنشطة العلمية (إن وجدت) */}
+          {/* Section: التجارب العلمية (إن وجدت) */}
           {guideData.experiments && guideData.experiments.length > 0 && (
             <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 border border-teal-200 shadow-sm space-y-4">
               <div className="flex items-center gap-2.5">
                 <span className="text-2xl p-2 bg-teal-100 text-teal-800 rounded-xl">🧪</span>
                 <div>
                   <h3 className="text-base font-black text-teal-950">
-                    ثالثاً: شرح التجارب العلمية خطوة بخطوة بالمنطق واحتياطات الأمان
+                    شرح التجارب العلمية خطوة بخطوة بالمنطق واحتياطات الأمان
                   </h3>
                   <p className="text-xs text-teal-800 font-medium">لماذا نفعل كل خطوة؟ وماذا نلاحظ؟ والاستنتاج النهائي</p>
                 </div>
@@ -709,7 +677,7 @@ export default function TeacherLessonGuide() {
             </div>
           )}
 
-          {/* Section 4: السبورة الذكية (ما يُكتب على السبورة فقط) */}
+          {/* Section: السبورة الذكية (ما يُكتب على السبورة فقط) */}
           <div className="bg-gradient-to-r from-emerald-900 via-teal-950 to-green-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-amber-600/60 relative overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/20 pb-4 mb-6">
               <div className="flex items-center gap-3">
@@ -803,14 +771,14 @@ export default function TeacherLessonGuide() {
             </div>
           </div>
 
-          {/* Section 5: التأكد من فهم الطلاب (Oral Questions) */}
+          {/* Section: التأكد من فهم الطلاب (Oral Questions) */}
           <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2.5">
                 <span className="text-2xl p-2 bg-purple-100 text-purple-800 rounded-xl">❓</span>
                 <div>
                   <h3 className="text-base font-black text-gray-900">
-                    خامساً: أسئلة التأكد من الفهم الشفوية مع الإجابات النموذجية للمعلمة
+                    أسئلة التأكد من الفهم الشفوية مع الإجابات النموذجية للمعلمة
                   </h3>
                   <p className="text-xs text-gray-500 font-medium">أسئلة من واقع الحياة، علل واستنتج، وعلى التجارب</p>
                 </div>
