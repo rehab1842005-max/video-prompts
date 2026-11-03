@@ -10,6 +10,7 @@ import ContentMapViewer, { ContentPart } from "@/components/ContentMapViewer";
 import PromptResultList, { VideoPrompt } from "@/components/PromptResultList";
 import { PRESET_PROGRESSIVE_KIDNEY_SCENES } from "@/data/progressiveKidneyPreset";
 import TeacherLessonGuide from "@/components/TeacherLessonGuide";
+import SceneAssemblerCanvas, { CanvasItem } from "@/components/SceneAssemblerCanvas";
 
 interface SavedProject {
   id: string;
@@ -23,7 +24,8 @@ interface SavedProject {
 
 export default function Home() {
   // Main Studio Mode: "image_lesson" (new requested flow) or "text_prompts" (classic PDF flow)
-  const [studioMode, setStudioMode] = useState<"image_lesson" | "text_prompts" | "lesson_guide">("image_lesson");
+  const [studioMode, setStudioMode] = useState<"image_lesson" | "text_prompts" | "lesson_guide" | "scene_assembler">("image_lesson");
+  const [assemblerItems, setAssemblerItems] = useState<CanvasItem[] | undefined>(undefined);
 
   // --- Image Lesson Mode State ---
   const [isAnalyzingImages, setIsAnalyzingImages] = useState(false);
@@ -515,6 +517,18 @@ export default function Home() {
                 <span>📖</span>
                 <span>دليل المعلمة لشرح الدرس والسبورة (تحضير كامل)</span>
               </button>
+
+              <button
+                onClick={() => setStudioMode("scene_assembler")}
+                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  studioMode === "scene_assembler"
+                    ? "bg-purple-700 text-white shadow-sm"
+                    : "text-gray-700 hover:text-gray-900"
+                }`}
+              >
+                <span>🎬</span>
+                <span>تجميع المشاهد والباوربوينت التفاعلي</span>
+              </button>
             </div>
           </header>
 
@@ -545,7 +559,19 @@ export default function Home() {
           {/* 3. LESSON GUIDE WORKFLOW: Classroom & Blackboard Teacher Guide */}
           {studioMode === "lesson_guide" && (
             <div className="space-y-6">
-              <TeacherLessonGuide />
+              <TeacherLessonGuide
+                onOpenSceneAssembler={(items) => {
+                  if (items) setAssemblerItems(items);
+                  setStudioMode("scene_assembler");
+                }}
+              />
+            </div>
+          )}
+
+          {/* 4. SCENE ASSEMBLER WORKFLOW: Interactive PowerPoint-like Click-to-Reveal Canvas */}
+          {studioMode === "scene_assembler" && (
+            <div className="space-y-6">
+              <SceneAssemblerCanvas initialItems={assemblerItems} />
             </div>
           )}
 
