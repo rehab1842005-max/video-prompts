@@ -91,15 +91,15 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
     videoPrompts: [
       {
         shotTitle: "فيديو 1: طفل جائع يفتح ثلاجة دافئة ومضيئة ويأكل ساندوتش شهي يستعيد به طاقته",
-        prompt: "Charming 3D Pixar style scene of a warm cozy home kitchen. A cheerful hungry boy opens a modern refrigerator glowing with warm bright light, takes out a fresh healthy colorful sandwich, smiles joyfully and takes an appetizing bite as glowing sparkles float around him symbolizing pure energy. Warm cinematic depth of field, vibrant textures. ABSOLUTELY NO teachers, NO school presentation."
+        prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. In a warm cozy home kitchen, a cheerful hungry boy opens a modern refrigerator glowing with warm bright light, takes out a fresh healthy colorful sandwich, smiles happily and takes an appetizing bite as glowing sparkles float around him symbolizing pure energy. Mute visual action only, strictly NO talking characters, NO mouth animation, NO speaking faces, NO lip sync. The human teacher narrates over this clip."
       },
       {
         shotTitle: "فيديو 2: نبتة جميلة في البلكونة تستمتع بأشعة الشمس الصباحية والنسيم العليل",
-        prompt: "Vibrant 3D Pixar animation of a sunny apartment balcony: A lovely potted green plant with lush healthy leaves sitting on the windowsill, basking in brilliant golden morning sunbeams and a gentle breeze, fluttering softly with life and vitality. Cinematic shallow depth of field. ABSOLUTELY NO teachers."
+        prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded cheerful aesthetic, warm joyful lighting. A lovely potted green plant with lush healthy leaves sitting on an apartment balcony windowsill, basking in brilliant golden morning sunbeams and a gentle breeze, fluttering softly with life and vitality. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
       },
       {
         shotTitle: "فيديو 3: مطبخ كرتوني سحري داخل ورقة نبات خضراء يعد طبقاً متلألئاً من السكريات",
-        prompt: "Magical 3D Pixar style interior of a translucent glowing green leaf, styled like an enchanting fairy-tale miniature kitchen counter. Golden sunbeams, crystalline water droplets, and floating air currents converge onto a delicate golden plate creating glowing sugar crystal cubes of pure energy. Wonderous, educational, sparkling render. ABSOLUTELY NO teachers."
+        prompt: "Cute friendly 3D cartoon Pixar style miniature fairy-tale kitchen inside a translucent glowing green leaf: Golden sunbeams, crystalline water droplets, and floating air currents converge onto a delicate golden plate creating glowing sugar crystal cubes of pure energy. Wonderous, educational, sparkling render. Mute visual action only, strictly NO talking characters, NO mouth animation, NO dialogue, NO lip sync."
       }
     ]
   },
@@ -116,11 +116,11 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: كائن مستهلك (أرنب كرتوني لطيف يتناول جزرة برتقالية مقرمشة)",
-          prompt: "Cute 3D Pixar style animation of a friendly fluffy rabbit happily munching on a crisp orange carrot in a lush meadow, illustrating a consumer living organism obtaining ready food. Bright sunny day, delightful details. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. A lovable fluffy cartoon bunny happily munching on a crisp bright orange carrot in a lush meadow, illustrating a consumer living organism obtaining ready food. Bright sunny day, delightful details. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync."
         },
         {
           shotTitle: "فيديو 2: كائن منتج ذاتي التغذية (زهرة مشمسة تشع بطاقة الحياة الحيوية)",
-          prompt: "Elegant 3D animation of a vibrant sunflower growing proudly in rich dark soil, glowing with soft warm internal biological energy radiating outward through its translucent petals and stem under brilliant morning sunlight. Pure nature, educational Pixar aesthetic. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded shapes, glowing vibrant nature. A vibrant cheerful sunflower growing proudly in rich dark soil, glowing with soft warm internal biological energy radiating outward through its translucent petals and stem under brilliant morning sunlight, illustrating an autotroph plant making its own food. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -136,7 +136,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: العناصر الثلاثة الأساسية (قطرة ماء، تيار هواء، وشعاع شمس) تجتمع حول نبتة",
-          prompt: "Enchanting 3D scientific visualization: A glowing clear blue water droplet rising from rich soil, a swirling cyan air current, and a beam of golden sunlight converging gracefully around a healthy green plant leaf. Pixar clean educational style. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style scientific visualization for children, soft rounded playful forms, vibrant glowing colors. Three essential ingredients meeting in harmony: a glowing clear blue water droplet rising from rich soil, a swirling cyan air current, and a beam of golden sunlight converging gracefully around a healthy green plant leaf. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         }
       ]
     },
@@ -152,7 +152,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: زووم مجهري للشعيرات الجذرية تمتص جزيئات الماء المتلألئة من حبيبات الطين",
-          prompt: "Macro 3D cross-section animation beneath the soil: Detailed view of translucent microscopic root hairs wrapped around moist dark soil particles, visibly drawing in shimmering glowing blue water molecules and sparkling mineral ions like tiny straws into the root cylinder. Crisp lighting. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style macro underground animation for children: Translucent microscopic root hairs styled like friendly tiny drinking straws wrapped around moist dark soil particles, visibly sipping shimmering glowing blue water molecules and sparkling mineral ions into the root cylinder. Crisp cheerful lighting. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -168,7 +168,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: شبكة أنابيب الخشب الشفافة تصعد فيها قطرات الماء الزرقاء كالأسانسير السريع",
-          prompt: "Spectacular 3D cutaway animation of a green plant stem: Showing microscopic vertical translucent pipes (xylem vessels) glowing with cool blue light, as sparkling streams of water droplets rapidly and smoothly rush upwards through the vessels against gravity toward the upper leaf petioles. Dynamic upward camera motion. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style educational cutaway animation inside a green plant stem: Microscopic vertical translucent pipes (xylem vessels) glowing with cool blue light, like a playful high-speed glass elevator carrying sparkling water droplets smoothly rushing upwards against gravity toward the upper leaf petioles. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
         }
       ]
     },
@@ -184,7 +184,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: زووم مجهري سينمائي يغوص داخل نسيج الورقة الخضراء ويكشف البلاستيدات",
-          prompt: "Super macro 3D zoom flying deep into the surface of a lush green leaf: Revealing the internal plant cell walls and showing hundreds of oval emerald-green chloroplast organelles floating harmoniously inside the cytoplasm, gently undulating with vitality. Pristine lighting, hyper-realistic Pixar-style scientific render. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style microscopic zoom animation for children: Smoothly diving deep into the surface of a lush green leaf, revealing soft rounded plant cell walls and showing hundreds of oval emerald-green chloroplast organelles floating happily like tiny cheerful jelly beans in crystal clear cytoplasm. Pristine lighting, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -200,7 +200,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: صبغة الكلوروفيل تمتص فوتونات الشمس الذهبية وتتوهج بالطاقة الحيوية",
-          prompt: "Artistic 3D macro animation inside a single chloroplast: Molecular-scale view of delicate green chlorophyll pigment clusters smoothly absorbing incoming golden photons of sunlight, instantly igniting with soft golden and emerald luminescence as solar energy is successfully trapped. Mesmerizing educational visual. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style molecular animation for children inside a single chloroplast: Delicate green chlorophyll pigment clusters smoothly absorbing incoming golden photons of sunlight like magical solar panels, softly igniting into a warm golden and emerald luminescence as solar energy is trapped. Mesmerizing visual, mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
         }
       ]
     },
@@ -216,7 +216,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: الخلايا الحارسة تنتفخ وتفتح مسام الثغر لامتصاص جزيئات ثاني أكسيد الكربون",
-          prompt: "Microscopic 3D cellular animation of leaf lower epidermis: Zooming onto dual kidney-shaped guard cells swelling with water pressure to smoothly open an oval pore (stoma), drawing in floating stylized purple/cyan carbon dioxide gas molecules from the atmosphere into the spongy leaf tissue beneath. Clean, fluid, educational animation. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar animation for children, microscopic cellular view of leaf lower surface: Two rounded kidney-shaped guard cells swelling gently with water to smoothly open an oval pore (stoma), drawing in floating stylized purple and cyan carbon dioxide gas bubbles from the atmosphere into the spongy leaf tissue. Clean, fluid, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -232,7 +232,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: جزيئات الماء وثاني أكسيد الكربون تندمج بطاقة الشمس لتوليد جزيء الجلوكوز المتلألئ",
-          prompt: "Magical 3D molecular animation inside the chloroplast stroma: Glowing blue water molecules and purple carbon dioxide molecules harmoniously merging under beams of golden solar light, rapidly assembling into a crystalline hexagonal glucose molecule glowing with warm amber energy. Dynamic macro view. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style magical molecular animation inside the chloroplast stroma: Playful glowing blue water molecules and purple carbon dioxide molecules harmoniously merging under radiant golden sunlight, rapidly assembling into a crystalline hexagonal glucose sugar molecule glowing with warm amber energy. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
         }
       ]
     },
@@ -248,7 +248,7 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: جزيئات الجلوكوز ترتبط معاً لتشكل حبيبات نشا لؤلؤية براقة مخزنة داخل الخلية",
-          prompt: "Detailed 3D macro animation inside a plant storage cell: Glowing glucose sugar units linking together into dense, pearlescent starch granules stacked neatly inside the amyloplast, storing reserve energy for the plant. Crisp lighting. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar animation for children inside a plant storage cell: Glowing glucose sugar units linking together into dense, pearlescent white starch pearls stacked neatly like shiny treasure inside the amyloplast, storing reserve energy. Crisp warm lighting, mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         }
       ]
     },
@@ -264,18 +264,18 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       videoPrompts: [
         {
           shotTitle: "فيديو 1: فقاعات أكسجين بلورية نقية تنطلق من ثغور الورقة في نسيم الصباح",
-          prompt: "Breathtaking 3D animation: Microscopic bubbles of pure glowing blue oxygen gas gracefully rising out of the leaf stomata into the fresh sunny atmosphere, drifting upwards over a thriving green forest bathed in morning light. Serene, vibrant, cinematic nature animation. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar animation for children: Microscopic bubbles of pure glowing blue oxygen gas gracefully popping out of the leaf stomata into the fresh sunny atmosphere, drifting upwards over a thriving green forest bathed in morning light. Serene, vibrant, mute visual action only, strictly NO talking characters, NO mouth movement, NO dialogue, NO lip sync."
         },
         {
           shotTitle: "فيديو 2: مشهد بانورامي لغابات الأرض العظيمة كرئة خضراء تمد الكوكب بالحياة",
-          prompt: "Cinematic sweeping aerial drone-style 3D animation over an immense, untouched emerald rainforest at sunrise. Gentle mists rise from the canopy under golden sunbeams, symbolizing oxygen production and global vitality. Epic and uplifting visual. ABSOLUTELY NO teachers."
+          prompt: "Cute friendly 3D cartoon Pixar style panoramic aerial view over an immense lush emerald green forest canopy at sunrise. Gentle mists rise from the canopy under golden sunbeams, symbolizing oxygen production and global vitality. Epic and uplifting visual, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     }
   ],
   experimentTransition: {
     teacherSpeech: "شفتوا يا شطار الجمال العلمي ده؟ طب تفتكروا إحنا في مادة العلوم بنصدق الكلام وخلاص من غير ما نتأكد بعنينا؟ لأ طبعاً! إحنا علماء المستقبل، والعلماء لازم يجربوا بنفسهم في المعمل عشان يتأكدوا من الحقيقة خطوة بخطوة. يلا بينا نلبس البالطو الأبيض وندخل المعمل سوا، ونعمل أحلى وأمتع تجربة عملية نتأكد بيها من المعجزة دي بعيوننا! جاهزين؟ يلا بينا نجرب ونشوف النشا بيتكون إزاي بالضوء!",
-    flowVideoPrompt: "Exciting 3D Pixar style tracking shot entering a clean, bright, and cheerful children's science lab: A polished lab bench with glass beakers, a metal magnifying glass, colorful test tubes, and a fresh potted green plant under warm golden morning light. Inspiring educational cinematic render. ABSOLUTELY NO teachers."
+    flowVideoPrompt: "Cute friendly 3D cartoon Pixar style shot entering a bright, colorful, and cheerful children's science lab: A polished wooden lab bench with sparkling rounded glass beakers, a shiny brass magnifying glass, playful colorful test tubes, and a healthy potted green plant under warm golden morning light. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
   },
   experiments: [
     {
@@ -295,32 +295,32 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
           stepTitle: "حجب جزء من ورقة النبات عن أشعة الشمس",
           actionDetails: "نختار ورقة خضراء سليمة على نبات سليم، ونغطي جزءاً محدداً من منتصفها بشريط من الورق الأسود المعتم من الجهتين (العلوية والسفلية) ونثبته جيداً بمشبك، ثم نترك النبات في مكان مشمس لعدة ساعات.",
           teacherSpeech: "هنمسك النبتة الحلوة دي، وننقي ورقة خضراء مصحصحة. هنجيب شريط ورق أسود معتم ما بيدخلش أي نور، ونغطي حتة في نص الورقة ونثبتها بالمشبك، ونسيب باقي الورقة مكشوفة للشمس.. كدا إحنا عملنا مقارنة عادلة: حتة هيوصلها شمس وحتة تانية محرومة من الشمس تماماً، ونسيب النبات في الشمس 4 أو 5 ساعات يشتغل براحته!",
-          flowVideoPrompt: "Crisp 3D animation in a bright clean science lab: A neat laboratory bench with a healthy potted plant. Gentle hands using a black opaque paper strip and a metal clip to cover the middle portion of a broad green leaf, while sunlight streams onto the exposed leaf areas. Clean Pixar educational aesthetic. ABSOLUTELY NO teachers, close-up hands and lab bench only."
+          flowVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: Close-up of a neat tabletop and a potted plant. Gentle hands using a black opaque paper strip and a metal clip to cover the middle portion of a broad green leaf, while sunlight streams onto the exposed leaf areas. Tabletop macro focus, mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         },
         {
           stepNumber: 2,
           stepTitle: "قطف الورقة وغليها بالماء الساخن لقتل الخلايا",
           actionDetails: "ننزع الشريط الأسود ونقطف الورقة، ثم نغمرها في كأس به ماء يغلي لمدة دقيقة واحدة، وذلك لقتل الأنسجة الحية وتليين الجدر الخلوية وتسهيل نفاذ المواد الكيميائية إلى داخل الخلايا.",
           teacherSpeech: "بعد ما عدت الساعات، هنفك المشبك الأسود ونقطف الورقة. أول خطوة معملية هنعملها: هنحط الورقة في كاسة فيها مية بتغلي لمدة دقيقة واحدة بس.. ليه بنعمل كدا يا شطار؟ علشان نوقف التفاعلات الحيوية ونلين جدار الخلية، فيبقى سهل على المحاليل تدخل جوة الخلايا بعد شوية.",
-          flowVideoPrompt: "Cinematic 3D lab animation: A transparent glass beaker with boiling bubbling water on a digital hotplate. Delicate metal forceps gently lowering a broad green leaf into the bubbling water; steam rises gently under focused lab lighting. High quality macro render. ABSOLUTELY NO teachers."
+          flowVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: A transparent glass beaker with boiling bubbling water on a digital hotplate. Delicate metal forceps gently lowering a broad green leaf into the bubbling water; steam rises gently under focused lab lighting. Tabletop macro focus, mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
         },
         {
           stepNumber: 3,
           stepTitle: "إزالة صبغة الكلوروفيل الخضراء بواسطة الكحول الإيثيلي",
           actionDetails: "نخرج الورقة ونضعها في أنبوبة اختبار بها كحول إيثيلي، ثم نضع الأنبوبة داخل حمام مائي ساخن حتى يذوب الكلوروفيل ويتحول لون الكحول إلى الأخضر وتصبح الورقة بيضاء شاحبة كلياً.",
           teacherSpeech: "دلوقتي الورقة لسه لونها أخضر، واللون الأخضر ده هيخلينا مانشوفش أي تغير لوني يحصل! فإحنا عايزين نسحب اللون الأخضر.. هنعمل إيه؟ هنحط الورقة في أنبوبة فيها كحول إيثيلي، والأنبوبة دي هنحطها جوة حمام مية سخنة.. هنلاحظ إن الكحول بقى لونه أخضر غامق، والورقة بقى لونها أبيض شاحب خالص وبقت جاهزة للاختبار!",
-          flowVideoPrompt: "Cinematic 3D lab shot: Inside a water bath beaker, a glass test tube contains clear ethyl alcohol holding the leaf. The vibrant green chlorophyll visibly leaches out of the leaf tissue into the alcohol, turning the liquid emerald green while the leaf becomes pale, bleached white and translucent. ABSOLUTELY NO teachers."
+          flowVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: Inside a water bath beaker, a glass test tube contains clear ethyl alcohol holding the leaf. The vibrant green chlorophyll visibly leaches out of the leaf tissue into the alcohol, turning the liquid emerald green while the leaf becomes pale, bleached white and translucent. Tabletop macro focus, mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         },
         {
           stepNumber: 4,
           stepTitle: "إضافة قطرات محلول اليود لاختبار وجود النشا",
           actionDetails: "نغسل الورقة في ماء بارد لتليينها، ثم نفردها في طبق بتري زجاجي مسطح، وننقط فوقها قطرات من محلول اليود الكاشف بواسطة القطارة وننتظر دقيقة لملاحظة الاستجابة اللونية.",
           teacherSpeech: "هنغسل الورقة البيضاء دي بمية باردة ونفردها بالراحة في طبق زجاجي. دلوقتي هنجيب كاشف سحري اسمه (محلول اليود).. اليود لونه الطبيعي بني برتقالي، بس اليود ده بيعشق النشا! أول ما يقابل جزيئات نشا وسكر بيتحول فوراً للون الأزرق الداكن القريب من الأسود! تعالوا ننقط بالقطارة ونشوف المفاجأة اللي هتحصل!",
-          flowVideoPrompt: "Macro 3D laboratory shot: A glass pipette dropping golden-amber droplets of iodine solution onto a pale flat leaf resting in a clean Petri dish. Crisp glass reflections, realistic liquid surface tension. ABSOLUTELY NO teachers, macro tabletop focus."
+          flowVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: A glass pipette dropping golden-amber droplets of iodine solution onto a pale flat leaf resting in a clean Petri dish. Crisp glass reflections, realistic liquid surface tension. Tabletop macro focus, mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
         }
       ],
       observations: "الجزء من الورقة الذي كان معرضاً للشمس المباشرة تلون بالكامل باللون الأزرق القاتم (الأزرق المسود)، بينما الجزء الأوسط الذي كان محجوباً بالشريط الأسود ظل بلون محلول اليود البرتقالي الباهت دون أي تغير لوني.",
-      observationVideoPrompt: "Splendid 3D macro animation of the leaf in the Petri dish: The sun-exposed sections of the leaf visibly and smoothly transform into deep dark blue/violet as iodine reacts with starch, while the covered rectangular center remains pale yellowish brown, showing a sharp clear contrast. ABSOLUTELY NO teachers.",
+      observationVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: Splendid macro view of the leaf in the Petri dish. The sun-exposed sections of the leaf visibly and smoothly transform into deep dark blue/violet as iodine reacts with starch, while the covered rectangular center remains pale yellowish brown, showing a sharp clear contrast. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync.",
       finalConclusion: "الجزء المعرض للشمس فقط هو الذي استطاع القيام بعملية البناء الضوئي وتكوين النشا، مما يثبت بشكل قاطع أن ضوء الشمس شرط أساسي لا غنى عنه لصنع غذاء النبات.",
       safetyPrecautions: "يُمنع منعاً باتاً تسخين أنبوبة الكحول الإيثيلي على اللهب المباشر لأن الكحول مادة شديدة وقابلة للاشتعال، ويجب تسخينه دائماً داخل حمام مائي ساخن فقط."
     }
@@ -377,7 +377,7 @@ function getSafeSteps(exp: any): ExperimentStep[] {
       stepTitle: typeof st === "string" ? st : (st.step || `الخطوة ${sIdx + 1}`),
       actionDetails: typeof st === "string" ? st : `${st.step || ""} ${st.whyWeDoIt ? "- لماذا: " + st.whyWeDoIt : ""}`.trim(),
       teacherSpeech: st.teacherSpeech || "",
-      flowVideoPrompt: "Detailed 3D laboratory animation of this step action. Clean Pixar educational style. ABSOLUTELY NO teachers."
+      flowVideoPrompt: "Cute friendly 3D cartoon Pixar style laboratory animation for children: Detailed macro tabletop action of this science step. Clean playful aesthetic. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO lip sync."
     }));
   }
   return [];
