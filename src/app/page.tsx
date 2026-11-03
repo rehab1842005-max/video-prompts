@@ -15,9 +15,10 @@ interface SavedProject {
   id: string;
   name: string;
   date: string;
-  type?: "video" | "image_lesson";
+  type?: "video" | "image_lesson" | "lesson_guide";
   prompts?: VideoPrompt[];
   imageScenes?: ImageLessonScene[];
+  guideData?: any;
   config?: CharacterConfig;
 }
 
@@ -113,7 +114,15 @@ export default function Home() {
     }
   };
 
+  const [activeGuideData, setActiveGuideData] = useState<any>(null);
+
   const loadProject = (project: SavedProject) => {
+    if (project.type === "lesson_guide" && project.guideData) {
+      setActiveGuideData(project.guideData);
+      setStudioMode("lesson_guide");
+      alert(`تم تحميل دليل الدرس: ${project.name}`);
+      return;
+    }
     if (project.type === "image_lesson" && project.imageScenes) {
       setImageLessonScenes(project.imageScenes);
       setCurrentProjectName(project.name);
@@ -447,7 +456,7 @@ export default function Home() {
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="text-xs font-bold text-indigo-700">
-                        {proj.type === "image_lesson" ? "📸 صور الدرس وتحريكها" : "🎬 فيديو كتاب"}
+                        {proj.type === "image_lesson" ? "📸 صور الدرس وتحريكها" : proj.type === "lesson_guide" ? "📖 دليل الشرح وفيديوهات Flow" : "🎬 فيديو كتاب"}
                       </span>
                     </div>
                     <p className="font-bold text-sm text-gray-800 truncate pl-6">{proj.name}</p>
@@ -547,7 +556,7 @@ export default function Home() {
           {/* 3. LESSON GUIDE WORKFLOW: Classroom & Blackboard Teacher Guide */}
           {studioMode === "lesson_guide" && (
             <div className="space-y-6">
-              <TeacherLessonGuide />
+              <TeacherLessonGuide initialGuideData={activeGuideData} />
             </div>
           )}
 
