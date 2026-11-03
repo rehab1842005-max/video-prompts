@@ -21,6 +21,8 @@ export interface ScientificBeat {
   conceptTitle: string;
   teacherScript: string;
   simpleExplanation: string;
+  studentQuestion?: string;
+  expectedAnswer?: string;
   textbookTerm: string;
   textbookDefinition: string;
   videoPrompts?: FlowVideoItem[];
@@ -80,23 +82,23 @@ export interface LessonGuideData {
 }
 
 export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
-  lessonTitle: "كيف تصنع النباتات غذاءها بالتفصيل؟ (عملية البناء الضوئي ومطبخ الورقة الخضراء)",
-  detectedTopic: "عملية البناء الضوئي، تركيب الورقة والبلاستيدات، امتصاص الماء والغازات، وإنتاج الجلوكوز والأكسجين",
+  lessonTitle: "كيف تصنع النباتات غذاءها بالتفصيل الشامل؟ (عملية البناء الضوئي خطوة بخطوة)",
+  detectedTopic: "البناء الضوئي، تركيب الورقة والبلاستيدات، امتصاص الماء والغازات، إنتاج الجلوكوز والنشا، وخروج الأكسجين",
   introHook: {
-    hookTitle: "مدخل الدرس: مطبخ النبات السحري ومقارنة طاقة الإنسان بالنبات",
-    teacherScript: "يا هلا بكل أبطال العلوم الصغار! قاعدين ومصحصحين معايا؟ بصوا كده في البيت لما ماما تدخل المطبخ تعمل لنا أحلى أكلة مغذية بنحبها، بتحتاج إيه؟ بتحتاج بوتاجاز وأواني ومكونات صح؟ أومال النبات بقى الجميل اللي محطوط في البلكونة ده، بيعمل أكله إزاي وهو ما عندهوش بوتاجاز ولا مطبخ؟ يا ترى بيقف إزاي في الشمس وينط ويجري؟ لا طبعاً النبات مش بيتحرك، بس هو عنده أشطر مطبخ في الدنيا! مطبخ بيشتغل بضوء الشمس والهواء والماء عشان يعمل أحلى طبق طاقة وهو (السكريات والنشا). تعالوا النهاردة ندخل جوه ورقة النبات ونشوف المعجزة دي بتحصل إزاي خطوة بخطوة وبكل بساطة!",
-    analogyStory: "تشبيه متكامل يجمع بين: ماما في المطبخ تحضر أشهى طعام على البوتاجاز والأواني، ونبتة جميلة في البلكونة تستمتع بالشمس، ومطبخ كرتوني سحري داخل الورقة يحول الضوء والماء إلى سكر ونشا.",
+    hookTitle: "مدخل الدرس: لغز الجوع وفتح الثلاجة ومقارنة طاقة الإنسان بالنبات",
+    teacherScript: "يا هلا بكل أبطال وعلماء المستقبل الصغار! قاعدين ومصحصحين ومركزين معايا؟ تعالوا كدا قبل ما نفتح أي كتاب أو نقول أي مصطلحات، نسأل نفسنا سؤال من حياتنا كل يوم وبنحسه كل لحظة: لما بنرجع من المدرسة بعد ما جرينا ولعبنا مع صحابنا، بنحس بإيه؟ بنحس إن جسمنا هبطان، بطننا بتصوصو، ومفيش فينا نفس نتحرك ولا نذاكر، صح؟ أول حاجة بنجري عليها هي المطبخ، نفتح التلاجة، ماما ربنا يبارك فيها تعمل لنا أحلى ساندوتش جبنة أو بيض أو طبق مكرونة دافي.. أول ما ناكل الوجبة دي بنحس إن روحنا ردت فينا فجأة، وبقى عندنا باور وطاقة نقوم ونجري ونذاكر! الأكل ده هو البنزين الحقيقي اللي بيشغل مكنة جسمنا. طب فكرتوا مرة في الشجرة العظيمة اللي واقفة في الشارع في الشمس، أو الوردة الرقيقة اللي في بلكونة بيتنا؟ الشجرة دي كائن حي بيتنفس ويكبر زينا بالظبط، بس عمركم شفتوا شجرة بتطلب دليفري أو بتمشي برجليها تروح السوبر ماركت تشتري خضار؟ لأ طبعاً! طب بتاكل منين وبتحيب طاقتها إزاي وهي ثابتة مكانها في الطين؟ ده السر العظيم والمعجزة الإلهية اللي هنكتشفها سوا النهاردة خطوة بخطوة وبالتفصيل الممل والممتع جداً!",
+    analogyStory: "تشبيه متكامل يربط بين: شعور الإنسان بالجوع وفتح الثلاجة للأكل، وعجز النبات عن الحركة لشراء الطعام، ومطبخ النبات السحري داخل الورقة الذي يحول الضوء والماء إلى غذاء كامل.",
     videoPrompts: [
       {
-        shotTitle: "فيديو 1: ماما في المطبخ والبوتجاز والأواني الشهية (تشبيه الأكل والطبخ)",
-        prompt: "Charming 3D Pixar style scene of a warm cozy home kitchen. A cheerful loving mom stands near a modern stove where shiny copper pots simmer with aromatic bubbling stew and fresh colorful vegetables. Soft warm volumetric steam, appetizing lighting, cozy family home feel. ABSOLUTELY NO teachers, pure lifestyle food preparation B-roll."
+        shotTitle: "فيديو 1: طفل جائع يفتح ثلاجة دافئة ومضيئة ويأكل ساندوتش شهي يستعيد به طاقته",
+        prompt: "Charming 3D Pixar style scene of a warm cozy home kitchen. A cheerful hungry boy opens a modern refrigerator glowing with warm bright light, takes out a fresh healthy colorful sandwich, smiles joyfully and takes an appetizing bite as glowing sparkles float around him symbolizing pure energy. Warm cinematic depth of field, vibrant textures. ABSOLUTELY NO teachers, NO school presentation."
       },
       {
-        shotTitle: "فيديو 2: النبات الجميل في البلكونة يستمتع بالشمس الصباحية والنسيم",
+        shotTitle: "فيديو 2: نبتة جميلة في البلكونة تستمتع بأشعة الشمس الصباحية والنسيم العليل",
         prompt: "Vibrant 3D Pixar animation of a sunny apartment balcony: A lovely potted green plant with lush healthy leaves sitting on the windowsill, basking in brilliant golden morning sunbeams and a gentle breeze, fluttering softly with life and vitality. Cinematic shallow depth of field. ABSOLUTELY NO teachers."
       },
       {
-        shotTitle: "فيديو 3: المطبخ السحري داخل الورقة وطبق سكر الجلوكوز المتلألئ",
+        shotTitle: "فيديو 3: مطبخ كرتوني سحري داخل ورقة نبات خضراء يعد طبقاً متلألئاً من السكريات",
         prompt: "Magical 3D Pixar style interior of a translucent glowing green leaf, styled like an enchanting fairy-tale miniature kitchen counter. Golden sunbeams, crystalline water droplets, and floating air currents converge onto a delicate golden plate creating glowing sugar crystal cubes of pure energy. Wonderous, educational, sparkling render. ABSOLUTELY NO teachers."
       }
     ]
@@ -104,144 +106,168 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
   scientificBeats: [
     {
       beatNumber: 1,
-      conceptTitle: "مفهوم التغذية: الكائنات المستهلكة مقابل الكائنات ذاتية التغذية",
-      teacherScript: "تعالوا نفهم أول نقطة بالراحة كدا يا شطار: في علم الأحياء، ربنا قسم الكائنات الحية لنوعين رئيسيين في طريقة الأكل. النوع الأول هو إحنا والحيوانات زي القطة والأسد والخروف.. إحنا اسمنا (كائنات مستهلكة). يعني إيه مستهلكة؟ يعني ما بنعرفش نصنع أكلنا جوة أجسامنا، لازم نروح ندور على كائن تاني ناكله، زي ما بناكل خضار أو لحمة. لكن بقى النباتات دي معجزة تانية خالص! النبات هو الكائن الوحيد على كوكب الأرض اللي ما بيعتمدش على غيره في أكله، بل بيصنع وجبته الغذائية بنفسه من الصفر جوة خلاياه، وعلشان كده في كتاب العلوم بنسميه (كائن ذاتي التغذية)! يعني بيغذي نفسه بنفسه دون مساعدة من أحد.",
-      simpleExplanation: "تنقسم الكائنات الحية وفق طريقة التغذية إلى: كائنات غير ذاتية التغذية (مستهلكة) تعتمد على غيرها للحصول على الغذاء العضوي الجاهز، وكائنات ذاتية التغذية (منتجة) تستطيع تحويل المواد غير العضوية البسيطة إلى مواد عضوية معقدة غنية بالطاقة.",
+      conceptTitle: "1. مفهوم التغذية: الكائنات المستهلكة مقابل الكائنات ذاتية التغذية",
+      teacherScript: "تعالوا نبدأ الحكاية من أول سطر بالراحة خالص: في علم الأحياء والعلوم، ربنا قسم كل الكائنات الحية اللي على كوكب الأرض لنوعين أساسيين في طريقة الأكل. النوع الأول هو إحنا والحيوانات زي القطة والأسد والحصان.. إحنا اسمنا العلمي (كائنات مستهلكة). يعني إيه مستهلكة يا شطار؟ يعني جسمنا ما بيعرفش يطبخ الأكل جواه، لازم نروح ندور على كائن تاني ناكله، بناكل فراخ أو لحمة أو خضار وفاكهة. لكن بقى النبات هو المعجزة الفريدة في الكون! النبات كائن ما بيعتمدش على أي حد في أكله، بل بيصنع وجبته الغذائية بنفسه من الصفر جوة خلاياه، وعلشان كده في كتاب المدرسة بنسميه: كائن ذاتي التغذية! يعني بيغذي نفسه بنفسه دون مساعدة من أي مخلوق.",
+      simpleExplanation: "تصنف الكائنات الحية تبعا لطريقة حصولها على الطاقة إلى: كائنات غير ذاتية التغذية (Heterotrophs / Consumers) تعتمد على التغذية الجاهزة على كائنات أخرى، وكائنات ذاتية التغذية (Autotrophs / Producers) تقوم ببناء مركباتها العضوية عالية الطاقة كالكربوهيدرات من مواد غير عضوية بسيطة من البيئة المحيطة.",
+      studentQuestion: "يا ترى لو حبسنا قطة وأرنب في أوضة مفيهاش أكل خالص، هيقدروا يصنعوا أكلهم بنفسهم؟",
+      expectedAnswer: "لأ طبعاً، لأنهم كائنات مستهلكة لازم ياكلوا كائنات تانية عشان يعيشوا.",
       textbookTerm: "كائنات ذاتية التغذية (Autotrophs)",
-      textbookDefinition: "الكائنات الحية التي تستطيع صنع غذائها بنفسها من خلال تحويل مواد غير عضوية أولية بسيطة إلى مواد غذائية عضوية معقدة غنية بالطاقة (مثل النباتات الخضراء وبعض أنواع البكتيريا).",
+      textbookDefinition: "الكائنات الحية التي تستطيع صنع غذائها بنفسها من خلال تحويل مواد غير عضوية أولية بسيطة إلى مواد غذائية عضوية معقدة غنية بالطاقة (مثل النباتات الخضراء).",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: كائن مستهلك يبحث عن طعامه (أرنب لطيف يتناول جزرة)",
+          shotTitle: "فيديو 1: كائن مستهلك (أرنب كرتوني لطيف يتناول جزرة برتقالية مقرمشة)",
           prompt: "Cute 3D Pixar style animation of a friendly fluffy rabbit happily munching on a crisp orange carrot in a lush meadow, illustrating a consumer living organism obtaining ready food. Bright sunny day, delightful details. ABSOLUTELY NO teachers."
         },
         {
-          shotTitle: "فيديو 2: كائن منتج ذاتي التغذية (زهرة مشمسة تشع بطاقة الحياة)",
+          shotTitle: "فيديو 2: كائن منتج ذاتي التغذية (زهرة مشمسة تشع بطاقة الحياة الحيوية)",
           prompt: "Elegant 3D animation of a vibrant sunflower growing proudly in rich dark soil, glowing with soft warm internal biological energy radiating outward through its translucent petals and stem under brilliant morning sunlight. Pure nature, educational Pixar aesthetic. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 2,
-      conceptTitle: "عالم الجذور تحت الأرض: امتصاص الماء والأملاح المعدنية كالمصاصة",
-      teacherScript: "عشان أي شيف في الدنيا يطبخ وجبة متكاملة، بيحتاج مكونات أساسية.. أول مكون النبات بيحتاجه هو (الماء والأملاح المعدنية). طب المية دي بتجيله منين وهو واقف مكانه؟ من تحت الأرض! النبات عنده شبكة جذور عبقرية متفرعة في الطين، الجذور دي مش بس بتثبته في الأرض عشان الهوا ما يطيروش، دي مليانة شعيرات مجهرية دقيقة جداً اسمها الشعيرات الجذرية بتشتغل زي ملايين الشفاطات الصغيرة! بتشفط جزيئات المية والأملاح الذائبة في التربة زي الكالسيوم والمغنيسيوم، وتبدأ تضخها لأعلى ضد الجاذبية الأرضية!",
-      simpleExplanation: "تمتلك الجذور آلاف الشعيرات الجذرية الدقيقة ذات الجدر الخلوية الرقيقة التي تزيد من مساحة سطح الامتصاص. تعمل هذه الشعيرات بالخاصية الأسموزية والانتشار لامتصاص الماء المحمل بالعناصر المعدنية الأساسية من حبيبات التربة الرطبة.",
-      textbookTerm: "الجذور والشعيرات الجذرية (Roots & Root Hairs)",
-      textbookDefinition: "الشعيرات الجذرية: امتدادات خلوية دقيقة من خلايا طبقة البشرة في جذر النبات، تعمل على زيادة مساحة السطح لامتصاص الماء والأملاح المعدنية من التربة.",
+      conceptTitle: "2. المكونات الأساسية الثلاثة التي يحتاجها النبات لصنع طعامه",
+      teacherScript: "أي شيف ماهر لما بيقرر يعمل كيكة أو صينية خضار في الفرن، بيكتب ورقة مقادير: دقيق وسكر ولبن وحرارة الفرن.. طب يا ترى شيف النبتة العبقري محتاج إيه عشان يطبخ الوجبة بتاعته؟ محتاج تلات مقادير رئيسية من الطبيعة مفيش غيرهم: أول حاجة المية والأملاح المعدنية من التربة، تاني حاجة غاز من الهواء اسمه ثاني أكسيد الكربون، وتالت حاجة هي الطاقة السحرية اللي بتسوي كل ده وهي ضوء الشمس! لو غاب مكون واحد بس من التلاتة دول، المطبخ يقف والطبخة تبوظ والنبات يجوع لحد ما يذبل ويموت!",
+      simpleExplanation: "تتطلب عملية التمثيل الغذائي في النبات توفر ثلاثة مدخلات أولية متكاملة: الماء والأملاح المعدنية (كمصدر للهيدروجين والإلكترونات)، غاز ثاني أكسيد الكربون (كمصدر لذرات الكربون والأكسجين العضوي)، وضوء الشمس (كمصدر للطاقة الحركية الكيميائية). غياب أي عنصر يوقف التفاعل الحيوي فورا.",
+      studentQuestion: "لو وفرنا للنبتة مية وهوا بس، وخبيناها في كرتونة مظلمة.. هل هتقدر تطبخ وتعيش؟",
+      expectedAnswer: "لأ، لأن ضوء الشمس هو بوتاجاز الطاقة اللي بيسوي الطبخة، ومن غيره مش هتقدر تصنع سكر.",
+      textbookTerm: "الاحتياجات الأساسية للنبات (Basic Plant Needs)",
+      textbookDefinition: "المواد الأولية والعوامل الطبيعية التي لا يستطيع النبات العيش أو بناء غذائه بدونها، وتشمل: الماء، الأملاح المعدنية، غاز ثاني أكسيد الكربون، وضوء الشمس المباشر.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: ملايين الشعيرات الجذرية تمتص الماء والأملاح كالمصاصات",
-          prompt: "Macro 3D cross-section animation beneath the soil: Detailed view of translucent microscopic root hairs wrapped around moist dark soil particles, visibly drawing in shimmering glowing blue water molecules and sparkling mineral ions like tiny straws into the root cylinder. Crisp lighting. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: تدفق قطرات الماء الزرقاء الصافية داخل أنسجة الجذر",
-          prompt: "Luminous 3D macro animation showing glistening clear blue water droplets flowing smoothly through the inner root cortex cells, converging toward the central vascular core. Educational, clean Pixar animation. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: العناصر الثلاثة الأساسية (قطرة ماء، تيار هواء، وشعاع شمس) تجتمع حول نبتة",
+          prompt: "Enchanting 3D scientific visualization: A glowing clear blue water droplet rising from rich soil, a swirling cyan air current, and a beam of golden sunlight converging gracefully around a healthy green plant leaf. Pixar clean educational style. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 3,
-      conceptTitle: "شبكة المواسير الناقلة: صعود الماء كالمصعد عبر أوعية الخشب",
-      teacherScript: "طب يا ترى يا أبطال، بعد ما المية دخلت في الجذر تحت في الطين.. إزاي بتطلع للشجرة العالية اللي طولها ممكن يوصل لـ 10 أمتار أو أكتر؟ سبحان الله! ساق النبات مش مجرد عصاية خشب، دي جواها شبكة مواسير وأنابيب دقيقة جداً ومفرغة اسمها (أوعية الخشب). الأنابيب دي عاملة زي المصعد أو شبكة مواسير المياه في العمارة، بتسحب المية والأملاح من الجذور وتفضل تطلعها للأعلى عبر الساق والفروع لحد ما توصلها بالظبط لباب المطبخ.. والمطبخ هنا هو الورقة الخضراء!",
-      simpleExplanation: "ينتقل الماء والأملاح المعدنية في اتجاه واحد من الأسفل إلى الأعلى داخل نسيج وعائي متخصص يُعرف بنسيج الخشب (Xylem). يتكون هذا النسيج من أوعية وقصيبات دقيقة تعمل كأنابيب شعرية تنقل العصارة النيئة بقوى الشد الناتجة عن عملية النتح والضغط الجذري.",
-      textbookTerm: "أوعية الخشب (Xylem Vessels)",
-      textbookDefinition: "أوعية الخشب: أنابيب وعائية دقيقة ميتة ومجوفة تمتد من الجذور عبر الساق إلى الأوراق لنقل الماء والأملاح المعدنية الذائبة في اتجاه واحد نحو الأعلى.",
+      conceptTitle: "3. عالم الجذور تحت الأرض: امتصاص الماء والأملاح كالمصاصات الدقيقة",
+      teacherScript: "تعالوا بقى ننزل تحت الأرض في الظلمة والطين نشوف أول خطوة بتحصل إزاي: النبتة عندها شبكة جذور قوية متفرعة تحت الطين.. الجذور دي مش بس بتثبت الشجرة عشان الرياح ما تقلعهاش، دي مليانة شعيرات مجهرية دقيقة جداً جداً اسمها (الشعيرات الجذرية). الشعيرات دي عاملة زي ملايين الشفاطات أو المصاصات الصغيرة، جدارها رقيق خالص علشان تقدر تشفط جزيئات المية المحشورة بين حبيبات الطين، ومع المية بتسحب كمان أملاح معدنية مهمة زي الكالسيوم والمغنيسيوم اللي بيقووا جسم النبتة ويخلوها مصحصحة!",
+      simpleExplanation: "تعتبر الشعيرات الجذرية (Root Hairs) امتدادات سيتوبلازمية دقيقة لخلايا طبقة البشرة في الجذر، وتتميز بغشاء شبه منفذ ذي مساحة سطح شاسعة. تقوم بامتصاص الماء بالخاصية الأسموزية (Osmosis) نتيجة زيادة تركيز الأملاح داخل الفجوة العصارية عن التربة، مصحوبا بامتصاص الأيونات المعدنية بالانتشار والنقل النشط.",
+      studentQuestion: "ليه ربنا خلق للشعيرات الجذرية جدار رقيق جداً ومش سميك زي الخشب؟",
+      expectedAnswer: "عشان المية والأملاح يقدروا يعدوا ويدخلوا منها بسهولة وسرعة.",
+      textbookTerm: "الشعيرات الجذرية (Root Hairs)",
+      textbookDefinition: "امتدادات خلوية أنبوبية دقيقة ورقيقة الجدر تخرج من بشرة جذر النبات، تعمل على زيادة مساحة سطح امتصاص الماء والأملاح المعدنية من حبيبات التربة.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: شبكة مواسير الخشب الشفافة كالأسانسير السريع للأعلى",
-          prompt: "Spectacular 3D cutaway animation of a green plant stem: Showing microscopic vertical translucent pipes (xylem vessels) glowing with cool blue light, as sparkling streams of water droplets rapidly and smoothly rush upwards through the vessels against gravity toward the upper leaf petioles. Dynamic upward camera motion. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: خروج قطرات الماء المتلألئة من عروق الورقة الخضراء",
-          prompt: "Close-up 3D animation of the intricate network of leaf veins glowing as fresh water pulses through them, branching into microscopic capillary networks nourishing millions of green leaf cells. High-end scientific render. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: زووم مجهري للشعيرات الجذرية تمتص جزيئات الماء المتلألئة من حبيبات الطين",
+          prompt: "Macro 3D cross-section animation beneath the soil: Detailed view of translucent microscopic root hairs wrapped around moist dark soil particles, visibly drawing in shimmering glowing blue water molecules and sparkling mineral ions like tiny straws into the root cylinder. Crisp lighting. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 4,
-      conceptTitle: "الورقة الخضراء ومصنع البلاستيدات الخضراء العجيب",
-      teacherScript: "تعالوا بقى نروح لأهم بطل في القصة كلها: الورقة الخضراء! اشمعنى النبات بيطبخ أكله في الورقة ومش في الساق أو الجذر؟ لأن الورقة مسطحة وعريضة ومرتفعة في الهواء، فتقدر تستقبل أكبر كمية من ضوء الشمس والهواء. ولما نقرب بالميكروسكوب وندخل جوة خلايا الورقة، هنلاقي جواها مصانع صغيورة ولطيفة جداً لونها أخضر اسمها (البلاستيدات الخضراء). البلاستيدات دي هي المطبخ الفعلي للنبات، وجواها كل المعدات اللي هتحول المية والهواء لغذاء مسكر يدي طاقة!",
-      simpleExplanation: "تعتبر الأوراق الأعضاء الأساسية المسؤولة عن عملية البناء الضوئي في النبات. يتميز نسيج الورقة بوجود النسيج العمادي المليء بالبلاستيدات الخضراء (Chloroplasts)، وهي عضيات خلوية متخصصة تحتوي على أغشية الثايلاكويد ومادة الستروما حيث تجري التفاعلات الضوئية واللاضوئية.",
-      textbookTerm: "البلاستيدات الخضراء (Chloroplasts)",
-      textbookDefinition: "البلاستيدات الخضراء: عضيات خلوية متخصصة توجد بكثرة في خلايا أوراق النبات الخضراء، وتعتبر الموقع الرئيسي لحدوث تفاعلات عملية البناء الضوئي.",
+      conceptTitle: "4. شبكة المواسير الناقلة: صعود الماء كالمصعد عبر أوعية الخشب",
+      teacherScript: "طب يا دكاترة المستقبل، المية دخلت في الجذر تحت في الطين.. إزاي بقى هتطلع للشجرة اللي طولها 10 متر في السماء؟ سبحان الله العظيم! ساق النبات مش عصاية مصمتة، دي مليانة شبكة مواسير وأنابيب دقيقة جداً مفرغة اسمها (أوعية الخشب). الأوعية دي عاملة زي مواسير المياه في العمارة أو زي أسانسير سريع في اتجاه واحد من تحت لفوق! بتسحب المية والأملاح وتفضل تضخها للأعلى عبر الساق والفروع لحد ما توصلها بالظبط لباب المطبخ في الورقة الخضراء!",
+      simpleExplanation: "ينتقل الماء والأملاح الممتصة للأعلى عبر نسيج الخشب (Xylem)، وهو نسيج ناقل يتكون من أوعية أسطوانية مجوفة متصلة وخالية من البروتوبلازم ومدعمة بمادة اللجنين. يعتمد صعود الماء ضد الجاذبية على قوى التماسك والتلاصق بين جزيئات الماء وقوة الشد الناتجة عن عملية النتح بالأوراق.",
+      studentQuestion: "أوعية الخشب دي بتنقل المية في أنهي اتجاه؟ من فوق لتحت ولا من تحت لفوق؟",
+      expectedAnswer: "من تحت لفوق، من الجذور لحد الأوراق في اتجاه واحد.",
+      textbookTerm: "أوعية الخشب (Xylem Vessels)",
+      textbookDefinition: "أنابيب وعائية مجوفة تمتد بطول النبات من الجذور عبر الساق إلى الأوراق، وظيفتها نقل الماء والأملاح المعدنية الذائبة في اتجاه واحد نحو الأعلى.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: زووم مجهري فائق الدقة يغوص داخل خلايا الورقة الخضراء",
-          prompt: "Super macro 3D zoom flying deep into the surface of a lush green leaf: Revealing the internal plant cell walls and showing hundreds of oval emerald-green chloroplast organelles floating harmoniously inside the cytoplasm, gently undulating with vitality. Pristine lighting, hyper-realistic Pixar-style scientific render. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: البلاستيدات الخضراء كورش عمل مصغرة ومبهجة للأطفال",
-          prompt: "Enchanting 3D visualization of a single chloroplast organelle cut open to reveal neat stacked coin-like thylakoids (grana) glowing with soft green bioluminescence, bathing in microscopic crystalline fluids. Clean educational 3D visual. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: شبكة أنابيب الخشب الشفافة تصعد فيها قطرات الماء الزرقاء كالأسانسير السريع",
+          prompt: "Spectacular 3D cutaway animation of a green plant stem: Showing microscopic vertical translucent pipes (xylem vessels) glowing with cool blue light, as sparkling streams of water droplets rapidly and smoothly rush upwards through the vessels against gravity toward the upper leaf petioles. Dynamic upward camera motion. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 5,
-      conceptTitle: "الكلوروفيل صائد الضوء: ألواح الطاقة الشمسية للنبات",
-      teacherScript: "طب ليه الورقة لونها أخضر وليه البلاستيدات لونها أخضر؟ علشان ربنا حط جواها صبغة سحرية عجيبة اسمها (الكلوروفيل). الكلوروفيل ده عامل زي ألواح الطاقة الشمسية اللي بنشوفها على أسطح العمارات النظيفة! وظيفته الأولى والأساسية إنه يصطاد أشعة الشمس الذهبية وفوتونات الضوء اللي نازلة من السماء، ويحبس طاقتها جواه. بدون الكلوروفيل، ضوء الشمس هيعدي من الورقة ولا كأن حاجة حصلت، ومش هنعرف نشغل البوتجاز ونسوي الطبخة الكيميائية!",
-      simpleExplanation: "الكلوروفيل هو صبغة بيولوجية أساسية قادرة على امتصاص الأطوال الموجية للضوء (خاصة الأزرق والأحمر)، بينما تعكس اللون الأخضر وهو ما يمنح النبات لونه المميز. تعمل الطاقة الضوئية الممتصة على إثارة إلكترونات جزيئات الكلوروفيل مما يطلق سلسلة تفاعلات كيميائية حيوية لتحويل الطاقة الضوئية إلى طاقة كيميائية مخزنة.",
-      textbookTerm: "صبغة الكلوروفيل (Chlorophyll Pigment)",
-      textbookDefinition: "الكلوروفيل: الصبغة الخضراء الأساسية الموجودة داخل أقراص البلاستيدات الخضراء، والتي تمتص الطاقة الضوئية من أشعة الشمس لتحويلها إلى طاقة كيميائية لازمة لعملية البناء الضوئي.",
+      conceptTitle: "5. الورقة الخضراء: تشريح مصنع الغذاء ومطبخ النبتة",
+      teacherScript: "تعالوا بقى نروح لبطل الحكاية كلها: الورقة الخضراء! اشمعنى النبات بيطبخ أكله في الورقة ومش في الجذع أو الوردة؟ لأن الورقة مسطحة ورقيقة وعريضة ومفروشة في الهوا زي الصينية، فتقدر تجمع أكبر قدر من الشمس والهواء. ولما ناخد قطاع في الورقة ونبص بالميكروسكوب، هنلاقي جواها خلايا منظمة فيها معامل صغيورة لونها أخضر زاهي اسمها (البلاستيدات الخضراء). البلاستيدات دي هي أفران ومطابخ النبتة اللي بيتم فيها تحضير الوجبة كلها!",
+      simpleExplanation: "تعد الورقة العضو الأساسي للتمثيل الضوئي بفضل شكلها المنبسط الذي يعظم امتصاص الضوء وتبادل الغازات. تتركب الورقة داخليا من بشرة علوية وسفلية يتوسطهما نسيج متوسط (Mesophyll) يضم النسيج العمادي المكتظ بالبلاستيدات الخضراء (Chloroplasts) المسؤولة عن التفاعل.",
+      studentQuestion: "ليه أوراق الشجر عريضة ومفرودة في الهواء؟",
+      expectedAnswer: "عشان تستقبل أكبر كمية من ضوء الشمس والهواء اللازمين لصناعة الغذاء.",
+      textbookTerm: "البلاستيدات الخضراء (Chloroplasts)",
+      textbookDefinition: "عضيات خلوية متخصصة تنتشر بكثافة داخل خلايا أوراق النبات الخضراء، وتعد الموقع الرئيسي الذي تحدث بداخله جميع تفاعلات عملية البناء الضوئي.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: فوتونات الضوء الذهبية تمتصها صبغة الكلوروفيل الخضراء",
-          prompt: "Artistic 3D macro animation inside a single chloroplast: Molecular-scale view of delicate green chlorophyll pigment clusters smoothly absorbing incoming golden photons of sunlight, instantly igniting with soft golden and emerald luminescence as solar energy is successfully trapped. Mesmerizing and clear educational visual. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: مقارنة ألواح الطاقة الشمسية الحديثة بأوراق النبات",
-          prompt: "Stylized split-screen 3D visual: On one side, sleek modern solar panels glistening under bright blue sky capturing sunlight. On the other side, an emerald green leaf absorbing the same warm sunlight beams in complete harmony. Clean cinematic lighting. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: زووم مجهري سينمائي يغوص داخل نسيج الورقة الخضراء ويكشف البلاستيدات",
+          prompt: "Super macro 3D zoom flying deep into the surface of a lush green leaf: Revealing the internal plant cell walls and showing hundreds of oval emerald-green chloroplast organelles floating harmoniously inside the cytoplasm, gently undulating with vitality. Pristine lighting, hyper-realistic Pixar-style scientific render. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 6,
-      conceptTitle: "تنفس الورقة: الثغور الميكروسكوبية ودخول غاز ثاني أكسيد الكربون",
-      teacherScript: "دلوقتي بقى عندنا المية من الجذور وطاقة الشمس في الكلوروفيل.. ناقص مكون تالت مهم جداً: الهواء! الورقة محتاجة غاز معين من الهوا اسمه (غاز ثاني أكسيد الكربون). طب الهوا بيدخل إزاي للورقة؟ لو قلبنا الورقة وبصينا على سطحها السفلي بالمجهر، هنلاقي فتحات ومسام دقيقة جداً اسمها (الثغور). كل فتحة ثغر عليها حارسين شطار اسمهم (الخلايا الحارسة). الخلايا الحارسة دي بتفتح الباب في الصباح لما يكون في شمس ومية، فيدخل غاز ثاني أكسيد الكربون للورقة، وتقفل الباب لما الجو يبقى حر أوي عشان النبتة ما تفقدش المية بتاعتها وتعطش!",
-      simpleExplanation: "تنتشر الثغور (Stomata) بكثافة على السطح السفلي للورقة لتقليل فقد الماء بفعل أشعة الشمس المباشرة. تُحاط كل فتحة ثغر بزوج من الخلايا الحارسة (Guard Cells) المتخصصة التي تنظم فتح وغلق الثغور استجابةً للضوء ومستوى رطوبة النبات، مما يسمح بدخول غاز ثاني أكسيد الكربون اللازم للتفاعل وخروج بخار الماء والأكسجين.",
-      textbookTerm: "الثغور والخلايا الحارسة (Stomata & Guard Cells)",
-      textbookDefinition: "الثغور: فتحات ميكروسكوبية تنتشر على أسطح أوراق النبات وتتحكم في فتحها وغلقها خلايا حارسة، لتسمح بتبادل الغازات بين النبات والبيئة المحيطة وخروج بخار الماء في عملية النتح.",
+      conceptTitle: "6. الكلوروفيل صائد الضوء: ألواح الطاقة الشمسية للنبات",
+      teacherScript: "طب ليه الورقة والبلاستيدات لونهم أخضر؟ لأن ربنا حط جواها صبغة كيميائية سحرية اسمها (الكلوروفيل). الكلوروفيل ده عامل بالظبط زي ألواح الطاقة الشمسية السوداء اللي بنشوفها على أسطح العمارات النظيفة! وظيفته الأولى إنه يصطاد فوتونات وأشعة الشمس الذهبية ويحبس طاقتها جواه. ضوء الشمس ده هو البوتجاز اللي هيسخن ويدمج المكونات مع بعضها.. ومن غير الكلوروفيل، الضوء هيمر كأنه مفيش حاجة والنبات مش هيقدر يطبخ نهائياً!",
+      simpleExplanation: "الكلوروفيل (Chlorophyll) هو الصبغة الرئيسية الممتصة للضوء داخل أغشية الثايلاكويد، حيث يمتص بكفاءة الفوتونات ذات الأطوال الموجية الزرقاء والحمراء ويعكس الطول الموجي الأخضر. تعمل الطاقة الضوئية الممتصة على تنشيط الإلكترونات لبدء التفاعلات الضوئية وشطر جزيئات الماء.",
+      studentQuestion: "الكلوروفيل بيمتص طاقة إيه عشان يسوي بيها الأكل؟",
+      expectedAnswer: "بيمتص الطاقة الضوئية من أشعة الشمس.",
+      textbookTerm: "صبغة الكلوروفيل (Chlorophyll)",
+      textbookDefinition: "الصبغة الخضراء الأساسية الموجودة داخل البلاستيدات الخضراء في أوراق النبات، وظيفتها امتصاص الطاقة الضوئية من الشمس لتحويلها إلى طاقة كيميائية.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: الخلايا الحارسة تفتح مسام الثغر لامتصاص ثاني أكسيد الكربون",
-          prompt: "Microscopic 3D cellular animation of leaf lower epidermis: Zooming onto dual kidney-shaped guard cells swelling with water pressure to smoothly open an oval pore (stoma), drawing in floating stylized purple/cyan carbon dioxide gas molecules from the atmosphere into the spongy leaf tissue beneath. Clean, fluid, educational animation. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: انتشار جزيئات ثاني أكسيد الكربون بين الخلايا الإسفنجية",
-          prompt: "Internal 3D cutaway of spongy mesophyll leaf tissue: Stylized purple molecules of carbon dioxide gracefully drifting through airy intercellular spaces, entering the moist walls of photosynthetic cells. Soft glowing lighting. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: صبغة الكلوروفيل تمتص فوتونات الشمس الذهبية وتتوهج بالطاقة الحيوية",
+          prompt: "Artistic 3D macro animation inside a single chloroplast: Molecular-scale view of delicate green chlorophyll pigment clusters smoothly absorbing incoming golden photons of sunlight, instantly igniting with soft golden and emerald luminescence as solar energy is successfully trapped. Mesmerizing educational visual. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 7,
-      conceptTitle: "الطبخة الكيميائية الكبرى: إنتاج سكر الجلوكوز وتخزين النشا",
-      teacherScript: "تعالوا بقى نجمع الوجبة العظيمة دي مع بعض يا شطار: المية وصلت من الجذور عبر الخشب، وثاني أكسيد الكربون دخل من الثغور في الورقة، والكلوروفيل سخن الموضوع بطاقة الشمس! جوة البلاستيدة بيحصل تفاعل كيميائي بديع: ذرات المية بتتفكك وتتحد مع ذرات الكربون والأكسجين، وتطلع لنا الناتج الأساسي اللي النبتة كانت بتجري علشانه: سكر مسكر اسمه (سكر الجلوكوز)! سكر الجلوكوز ده هو غذاء النبات وطاقته، بينقله في أنابيب تانية اسمها اللحاء لباقي أجزاء النبات عشان يكبر ويعمل جذوع وأوراق وأزهار، واللي بيزيد منه النبات بيخزنه في صورة (نشا) عشان لما يجي الليل ومفيش شمس يلاقي أكل ياكله!",
-      simpleExplanation: "تكتمل عملية البناء الضوئي بتثبيت ثاني أكسيد الكربون في دورة كالفن لتكوين سكر الجلوكوز (C₆H₁₂O₆). يمثل الجلوكوز المصدر المباشر للطاقة الكيميائية التي تستهلكها خلايا النبات في التنفس الخلوي وبناء السيليلوز، بينما يُخزن الفائض منه في صورة جزيئات نشا معقدة في البلاستيدات والجذور والثمار.",
-      textbookTerm: "عملية البناء الضوئي وسكر الجلوكوز (Photosynthesis & Glucose)",
-      textbookDefinition: "عملية البناء الضوئي: عملية حيوية كيميائية تقوم بها النباتات الخضراء داخل البلاستيدات، تتحد فيها جزيئات الماء وغاز ثاني أكسيد الكربون باستخدام طاقة ضوء الشمس لإنتاج سكر الجلوكوز الغني بالطاقة وانطلاق غاز الأكسجين.",
+      conceptTitle: "7. تنفس الورقة: الثغور الميكروسكوبية ودخول غاز ثاني أكسيد الكربون",
+      teacherScript: "دلوقتي المية وصلت، والشمس محبوسة في الكلوروفيل.. ناقص المكون التالت: الهواء! الورقة محتاجة غاز معين اسمه (غاز ثاني أكسيد الكربون). طب الهوا بيدخل منين للورقة؟ لو قلبنا الورقة وبصينا على سطحها السفلي بالميكروسكوب، هنلاقي فتحات ومسام دقيقة جداً جداً اسمها (الثغور). كل فتحة ثغر عليها حارسين شطار اسمهم (الخلايا الحارسة). الخلايا الحارسة دي بتفتح الباب أول ما تطلع شمس الصباح عشان يدخل غاز ثاني أكسيد الكربون، وتقفل الباب في عز الحر عشان النبتة ما تطلعش ميتها وتتبخر وتعطش!",
+      simpleExplanation: "تنتشر الثغور (Stomata) بكثافة على البشرة السفلية للورقة لتقليل التبخر الزائد. تُحاط كل فتحة بزوج من الخلايا الحارسة (Guard Cells) المتخصصة التي تنظم فتح وغلق الثغر بواسطة التغير في الضغط الامتلائي، مما يتيح دخول CO₂ من الهواء الجوي وخروج O₂ وبخار الماء.",
+      studentQuestion: "إيه اسم الفتحات الصغيرة اللي في الورقة اللي بتتنفس وتدخل الهواء؟",
+      expectedAnswer: "اسمها الثغور، وبيحرسها الخلايا الحارسة.",
+      textbookTerm: "الثغور والخلايا الحارسة (Stomata & Guard Cells)",
+      textbookDefinition: "الثغور: فتحات ميكروسكوبية دقيقة تنتشر على أسطح أوراق النبات وتتحكم في فتحها وغلقها خلايا حارسة لتنظيم تبادل الغازات وخروج بخار الماء.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: اندماج جزيئات الماء وثاني أكسيد الكربون بطاقة الشمس لتوليد الجلوكوز",
-          prompt: "Magical 3D molecular animation inside the chloroplast stroma: Glowing blue water molecules and purple carbon dioxide molecules harmoniously merging under beams of golden solar light, rapidly assembling into a crystalline hexagonal glucose molecule glowing with warm amber energy. Dynamic macro view. ABSOLUTELY NO teachers."
-        },
-        {
-          shotTitle: "فيديو 2: تخزين سكر الجلوكوز الفائض في صورة حبيبات نشا براقة",
-          prompt: "Detailed 3D macro animation inside a plant storage cell: Glowing glucose sugar units linking together into dense, pearlescent starch granules stacked neatly inside the amyloplast, storing reserve energy for the plant. Crisp lighting. ABSOLUTELY NO teachers."
+          shotTitle: "فيديو 1: الخلايا الحارسة تنتفخ وتفتح مسام الثغر لامتصاص جزيئات ثاني أكسيد الكربون",
+          prompt: "Microscopic 3D cellular animation of leaf lower epidermis: Zooming onto dual kidney-shaped guard cells swelling with water pressure to smoothly open an oval pore (stoma), drawing in floating stylized purple/cyan carbon dioxide gas molecules from the atmosphere into the spongy leaf tissue beneath. Clean, fluid, educational animation. ABSOLUTELY NO teachers."
         }
       ]
     },
     {
       beatNumber: 8,
-      conceptTitle: "الهدية العظمى للعالم: انطلاق غاز الأكسجين ورئة كوكب الأرض",
-      teacherScript: "طب يا ترى في حاجة تانية بتطلع من التفاعل ده؟ أيوة يا أحبابي، أعظم هدية لكوكب الأرض كله! لما جزيئات المية اتفككت عشان ناخد منها الهيدروجين للطبخة، اتبقى غاز مهم جداً وهو (غاز الأكسجين). النبات مش محتاج كل الأكسجين ده، فبيطلعه ويطرده برة عبر الثغور في الهواء الجوي. الأكسجين النقي ده هو اللي إحنا وكل حيوان وطير على كوكب الأرض بنتنفسه علشان نفضل عايشين! علشان كده بنقول دايماً إن الغابات والنباتات هي (رئة كوكب الأرض) الحقيقية اللي بتنقي الهوا وتدينا النفس النظيف اللي بنعيش بيه!",
-      simpleExplanation: "أثناء التفاعلات الضوئية للبناء الضوئي، يحدث شطر ضوئي لجزيء الماء (Photolysis of water)، مما يحرر غاز الأكسجين (O₂) كناتج ثانوي ينطلق عبر الثغور إلى الهواء الجوي. هذه العملية مسؤولة عن تجديد مخزون الأكسجين في الغلاف الجوي واستقرار نسبة الغازات اللازمة لتنفس جميع الكائنات الهوائية.",
-      textbookTerm: "غاز الأكسجين (Oxygen Gas - O₂)",
-      textbookDefinition: "غاز الأكسجين: الغاز الناتج كناتج ثانوي من انشطار جزيئات الماء أثناء عملية البناء الضوئي، والذي ينطلق إلى الهواء الجوي ويعد أساسياً لاستمرار عملية التنفس لكافة الكائنات الحية الهوائية.",
+      conceptTitle: "8. التفاعل الكيميائي وطبخ سكر الجلوكوز (غذاء النبات وطاقته)",
+      teacherScript: "وصلنا للحظة السحرية والطبخة الكبرى! المية جت من الجذور، وثاني أكسيد الكربون دخل من الثغور، والكلوروفيل سخن بالضوء.. جوة البلاستيدة بيحصل تفاعل كيميائي معجز: ذرات المية بتتفكك وتتحد مع ذرات الكربون، وتكون الناتج الأساسي اللي النبتة كانت بتجري علشانه: سكر اسمه (سكر الجلوكوز)! سكر الجلوكوز ده هو وجبة النبات وطاقته، بينقله في أنابيب اسمها أوعية اللحاء لكل حتة في النبات عشان يكبر ويطلع ورق وفروع وأزهار!",
+      simpleExplanation: "تتحد جزيئات الماء وثاني أكسيد الكربون في تفاعلات البناء الضوئي (تفاعلات الضوء ودورة كالفن) لإنتاج مركب الجلوكوز عالي الطاقة (C₆H₁₂O₆). يمثل الجلوكوز الوقود الخلوي المباشر لبناء خلايا النبات وجدرانها السيليلوزية وتغذية العمليات الحيوية.",
+      studentQuestion: "إيه اسم السكر اللي بيصنعه النبات كغذاء أساسي لنفسه؟",
+      expectedAnswer: "سكر الجلوكوز.",
+      textbookTerm: "سكر الجلوكوز (Glucose Sugar - C₆H₁₂O₆)",
+      textbookDefinition: "سكر بسيط غني بالطاقة الكيميائية تصنعه النباتات الخضراء أثناء عملية البناء الضوئي، ويمثل الغذاء الأساسي والوقود اللازم لنمو النبات وتكاثره.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: فقاعات غاز الأكسجين الكريستالية النقية تنطلق من ثغور الورقة",
+          shotTitle: "فيديو 1: جزيئات الماء وثاني أكسيد الكربون تندمج بطاقة الشمس لتوليد جزيء الجلوكوز المتلألئ",
+          prompt: "Magical 3D molecular animation inside the chloroplast stroma: Glowing blue water molecules and purple carbon dioxide molecules harmoniously merging under beams of golden solar light, rapidly assembling into a crystalline hexagonal glucose molecule glowing with warm amber energy. Dynamic macro view. ABSOLUTELY NO teachers."
+        }
+      ]
+    },
+    {
+      beatNumber: 9,
+      conceptTitle: "9. تخزين الفائض: كيف يحول النبات الجلوكوز إلى نشا؟",
+      teacherScript: "طب يا ترى لو النبتة شاطرة وطبخت كمية كبيرة من سكر الجلوكوز وزادت عن حاجتها اليومية، هترميها؟ لأ طبعاً! ربنا علمها تشيل الفائض في الحصالة.. فبتاخد جزيئات الجلوكوز وتربطها في سلاسل معقدة وتخزنها في صورة (نشا) في الأوراق والجذور والثمار زي البطاطس والقمح! ولما يجي الليل والشمس تغيب أو الجو يمطر ومفيش شمس، النبتة تفتح حصالة النشا وتفككها وتاكل منها عشان تفضل عايشة!",
+      simpleExplanation: "يقوم النبات ببلمرة جزيئات الجلوكوز الزائدة عن حاجته الفورية في صورة جزيئات نشا (Starch) غير ذائبة في الماء داخل بلاستيدات متخصصة (Amyloplasts). تضمن هذه الآلية عدم زيادة الضغط الأسموزي للخلية وتوفر مخزونا استراتيجيا من الطاقة أثناء فترات الظلام وغياب الضوء.",
+      studentQuestion: "النبات بيخزن السكر الزيادة عن حاجته في صورة إيه؟",
+      expectedAnswer: "في صورة نشا، زي اللي موجود في البطاطس والرز والقمح.",
+      textbookTerm: "النشا النباتي (Plant Starch)",
+      textbookDefinition: "كربوهيدرات معقدة غير ذائبة يخزن فيها النبات سكر الجلوكوز الفائض عن استهلاكه المباشر في خلايا الأوراق والجذور والدرنات لاستخدامه وقت الحاجة.",
+      videoPrompts: [
+        {
+          shotTitle: "فيديو 1: جزيئات الجلوكوز ترتبط معاً لتشكل حبيبات نشا لؤلؤية براقة مخزنة داخل الخلية",
+          prompt: "Detailed 3D macro animation inside a plant storage cell: Glowing glucose sugar units linking together into dense, pearlescent starch granules stacked neatly inside the amyloplast, storing reserve energy for the plant. Crisp lighting. ABSOLUTELY NO teachers."
+        }
+      ]
+    },
+    {
+      beatNumber: 10,
+      conceptTitle: "10. الهدية العظمى للعالم: انطلاق غاز الأكسجين ورئة كوكب الأرض",
+      teacherScript: "طب في حاجة تانية بتطلع من الطبخة دي يا شطار؟ أيوة، أعظم هدية لكوكب الأرض كله! لما جزيء المية اتفكك عشان ناخد منه الهيدروجين، اتبقى غاز عظيم اسمه (غاز الأكسجين). النبات مش محتاج كل الأكسجين ده، فبيطلعه ويطرده برة في الهواء عبر الثغور. غاز الأكسجين النقي ده هو اللي إحنا وكل إنسان وحيوان وطير بنتنفسه علشان نفضل عايشين! علشان كده بنقول دايماً إن النباتات هي (رئة كوكب الأرض) اللي بتنقي الجو وتسحب الغاز الضار وتدينا النفس النظيف اللي بنعيش بيه!",
+      simpleExplanation: "ينطلق غاز الأكسجين (O₂) كناتج عرضي وثانوي من تفاعلات الشطر الضوئي للماء في عملية البناء الضوئي. يتحرر الأكسجين إلى الغلاف الجوي عبر الثغور، وهو ما يضمن الحفاظ على نسبة الأكسجين الحيوية (21%) الضرورية لتنفس جميع الكائنات الحية الهوائية واستمرار الحياة على الأرض.",
+      studentQuestion: "إيه هو الغاز العظيم اللي النبات بيطلعه هدية لينا في الهواء عشان نتنفسه؟",
+      expectedAnswer: "غاز الأكسجين النقي (O₂).",
+      textbookTerm: "غاز الأكسجين (Oxygen Gas - O₂)",
+      textbookDefinition: "غاز حيوي ينتج كناتج ثانوي عن عملية البناء الضوئي وينطلق عبر الثغور إلى الهواء الجوي، ويعد ضرورياً لاستمرار تنفس جميع الكائنات الحية الهوائية.",
+      videoPrompts: [
+        {
+          shotTitle: "فيديو 1: فقاعات أكسجين بلورية نقية تنطلق من ثغور الورقة في نسيم الصباح",
           prompt: "Breathtaking 3D animation: Microscopic bubbles of pure glowing blue oxygen gas gracefully rising out of the leaf stomata into the fresh sunny atmosphere, drifting upwards over a thriving green forest bathed in morning light. Serene, vibrant, cinematic nature animation. ABSOLUTELY NO teachers."
         },
         {
-          shotTitle: "فيديو 2: مشهد بانورامي لغابات الأرض العظيمة كرئة خضراء تتنفس بالحياة",
+          shotTitle: "فيديو 2: مشهد بانورامي لغابات الأرض العظيمة كرئة خضراء تمد الكوكب بالحياة",
           prompt: "Cinematic sweeping aerial drone-style 3D animation over an immense, untouched emerald rainforest at sunrise. Gentle mists rise from the canopy under golden sunbeams, symbolizing oxygen production and global vitality. Epic and uplifting visual. ABSOLUTELY NO teachers."
         }
       ]
@@ -554,7 +580,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
           scientificBeats: normalizedBeats,
           experiments: normalizedExperiments
         });
-        alert("🎉 تم إعداد الشرح العلمي المفصل مع كل برومبتات الفيديو والتمهيد للتجربة!");
+        alert("🎉 تم إعداد الشرح العلمي المفصل والشامل بدون أي اختصار!");
       }
     } catch (e: any) {
       console.error(e);
@@ -590,6 +616,9 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
       beatsToRender.forEach((b) => {
         script += `[المشهد ${String(b.beatNumber).padStart(2, "0")} - ${b.conceptTitle}]:\n`;
         script += `${b.teacherScript}\n\n`;
+        if (b.studentQuestion) {
+          script += `❓ سؤال تفاعلي: ${b.studentQuestion}\n💡 إجابة متوقعة: ${b.expectedAnswer}\n\n`;
+        }
         script += `(المصطلح في الكتاب: ${b.textbookTerm} | تعريفه: ${b.textbookDefinition})\n\n---\n\n`;
       });
     }
@@ -672,10 +701,11 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
     if (!guideData) return;
     let txt = `======================================================================\n`;
     txt += `  دليل المعلمة المفصل لشرح وتبسيط العلوم للأطفال\n`;
-    txt += `  (الشرح المفصل + فيديوهات Flow لكل تشبيه + تمهيد التجربة والتجارب)\n`;
+    txt += `  (الشرح المفصل المستفيض + فيديوهات Flow لكل تشبيه + تمهيد التجربة)\n`;
     txt += `  إعداد: Sci.Rehab Elsibai Studio\n`;
     txt += `  عنوان الدرس: ${guideData.lessonTitle}\n`;
     txt += `  المجال: ${guideData.detectedTopic || "علمي مخصص"}\n`;
+    txt += `  عدد الجزئيات التفصيلية: ${beatsToRender.length} جزئية\n`;
     txt += `======================================================================\n\n`;
 
     if (guideData.introHook) {
@@ -696,6 +726,10 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
         txt += `######################################################################\n`;
         txt += `مشهد ${String(b.beatNumber).padStart(2, "0")}: ${b.conceptTitle}\n`;
         txt += `🎙️ كلامكِ الصوتي في المونتاج (المفصل):\n${b.teacherScript}\n\n`;
+        if (b.studentQuestion) {
+          txt += `❓ سؤال تفاعلي تطرحه المعلمة: ${b.studentQuestion}\n`;
+          txt += `💡 الإجابة المتوقعة من الطلاب: ${b.expectedAnswer}\n\n`;
+        }
         txt += `📖 المصطلح في كتاب المدرسة: ${b.textbookTerm}\n`;
         txt += `📝 التعريف المكتوب في الكتاب: ${b.textbookDefinition}\n\n`;
         txt += `💡 الشرح العلمي الموسع: ${b.simpleExplanation}\n\n`;
@@ -787,14 +821,14 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/10 pb-6">
           <div>
             <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 font-bold text-xs px-3.5 py-1.5 rounded-full border border-emerald-500/30 mb-2">
-              <span>🎬</span>
-              <span>فيديوهات Flow لكل تشبيه في كلام المعلمة + تمهيد للتجربة (يلا بينا نجرب) + حفظ المشاريع</span>
+              <span>📖</span>
+              <span>شرح علمي مفصل مستفيض نقطة بنقطة (بدون أي اختصار) + فيديوهات Flow لكل تشبيه</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white">
-              دليل الشرح المفصل وفيديوهات Flow لكل تشبيه
+              دليل الشرح المفصل من الصفر للأطفال وفيديوهات Flow
             </h2>
             <p className="text-emerald-200/90 text-sm sm:text-base mt-1 max-w-2xl leading-relaxed">
-              شرح مبسط وممتع أوتوماتيكياً، مع توليد كذا برومبت فيديو تحت كلام المعلمة يغطي كل تشبيه قالته، وتمهيد متناسق للتجربة دون أي قفز، مع حفظ واسترجاع مشاريعكِ في أي وقت!
+              تفكيك الدرس لكل جزئية وفكرة صغيرة بالتفصيل الممل والممتع، مع حوار كامل للمعلمة بالعامية، وتوضيح كيف ولماذا، وبرومبتات Flow لكل تشبيه، وتمهيد للتجربة وحفظ المشاريع!
             </p>
           </div>
 
@@ -802,11 +836,11 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
             <button
               onClick={() => {
                 setGuideData(PRESET_SAMPLE_GUIDE);
-                alert("تم تحميل النموذج الاسترشادي الموسع (تشبيهات فيديو متعددة + تمهيد التجربة)!");
+                alert("تم تحميل النموذج الاسترشادي المفصل جداً (10 جزئيات تفصيلية + تجربة النشا الكاملة)!");
               }}
               className="bg-white/10 hover:bg-white/20 text-white font-bold text-xs py-2 px-3.5 rounded-xl border border-white/20 transition-all cursor-pointer"
             >
-              🔄 عرض النموذج الاسترشادي
+              🔄 عرض النموذج المفصل جداً
             </button>
 
             <button
@@ -836,7 +870,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
 
           <div className="md:col-span-4">
             <label className="block text-xs font-bold text-emerald-300 mb-1.5">
-              2. أو اكتبي عنوان الدرس (سيفهمه ويشرحه أوتوماتيكياً):
+              2. أو اكتبي عنوان الدرس (سيشرحه بالتفصيل الكامل نقطة بنقطة):
             </label>
             <input
               type="text"
@@ -875,7 +909,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                   : "bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-emerald-950 font-black"
               }`}
             >
-              {isLoading ? "جاري فهم الدرس وصياغة الفيديوهات..." : "🚀 فهم الدرس وصياغة الشرح وكل فيديوهات التشبيه"}
+              {isLoading ? "جاري صياغة الشرح المفصل نقطة بنقطة..." : "🚀 فهم الدرس وصياغة الشرح المفصل كاملاً"}
             </button>
           </div>
         </div>
@@ -889,7 +923,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
           <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                ✨ تم إعداد الشرح العلمي المفصل ({beatsToRender.length} جزئية تفصيلية)
+                ✨ تم إعداد الشرح العلمي المفصل ({beatsToRender.length} جزئية تفصيلية مستفيضة)
               </span>
               <h3 className="text-lg font-black text-gray-900 mt-1">{guideData.lessonTitle}</h3>
             </div>
@@ -975,11 +1009,11 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
               </div>
 
               {/* كلام المعلمة في الدخلة */}
-              <div className="bg-white/95 p-4 rounded-xl border border-amber-200 shadow-2xs">
-                <span className="text-xs font-bold text-amber-900 flex items-center gap-1 mb-1.5">
-                  <span>🎙️</span> كلامكِ الصوتي في بداية الفيديو (مفصل ومشوق لفتح شهية الأطفال للتفكير):
+              <div className="bg-white/95 p-4 sm:p-5 rounded-xl border border-amber-200 shadow-2xs">
+                <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-2">
+                  <span>🎙️</span> كلامكِ الصوتي في بداية الفيديو (حوار دافئ مفصل لفتح شهية الأطفال للتفكير):
                 </span>
-                <p className="text-sm font-semibold text-gray-900 leading-relaxed whitespace-pre-line">
+                <p className="text-sm sm:text-[15px] font-semibold text-gray-900 leading-relaxed whitespace-pre-line">
                   "{guideData.introHook.teacherScript}"
                 </p>
               </div>
@@ -1043,10 +1077,10 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                 <span className="text-2xl p-1.5 bg-blue-100 text-blue-800 rounded-xl">🔬</span>
                 <div>
                   <h3 className="text-base sm:text-lg font-black text-gray-900">
-                    الشرح العلمي المفصل المستفيض + فيديوهات Flow المتتالية لكل جزئية
+                    الشرح العلمي المفصل نقطة بنقطة + فيديوهات Flow المتتالية لكل جزئية
                   </h3>
                   <p className="text-xs text-gray-500">
-                    شرح وافٍ بدون أي اختصار، مع توليد فيديوهات Flow لكل مشهد أو تشبيه ورد في كلام المعلمة لتجمعيها في المونتاج!
+                    شرح وافٍ بدون أي اختصار أو دمج للمفاهيم، مع سؤال تفاعلي، وتوضيح كيف ولماذا، وبرومبتات Flow لكل تشبيه!
                   </p>
                 </div>
               </div>
@@ -1090,16 +1124,30 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                     </div>
 
                     {/* 1. كلام المعلمة المفصل والمستفيض بالعامية المصرية */}
-                    <div className="bg-emerald-50/80 p-4 sm:p-5 rounded-xl border border-emerald-200">
-                      <span className="text-xs font-bold text-emerald-800 flex items-center gap-1.5 mb-2">
-                        <span>🎙️</span> كلامكِ الصوتي الكامل للتسجيل في المونتاج (اشرحي بالراحة بهدوء وتفصيل مستفيض للأطفال):
+                    <div className="bg-emerald-50/80 p-4 sm:p-5 rounded-xl border border-emerald-200 space-y-1.5">
+                      <span className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                        <span>🎙️</span> كلامكِ الصوتي الكامل للتسجيل في المونتاج (حوار هادئ مفصل خطوة بخطوة للأطفال):
                       </span>
                       <p className="text-sm sm:text-[15px] font-semibold text-gray-900 leading-relaxed whitespace-pre-line">
                         "{beat.teacherScript}"
                       </p>
                     </div>
 
-                    {/* 2. بطاقة المصطلح والتعريف في كتاب المدرسة */}
+                    {/* 2. سؤال تفاعلي تطرحه المعلمة وإجابة الطلاب */}
+                    {beat.studentQuestion && (
+                      <div className="bg-blue-50/80 p-3.5 rounded-xl border border-blue-200 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <span className="font-bold text-blue-900 block mb-0.5">❓ سؤال تفاعلي تطرحينه على الطلاب:</span>
+                          <p className="text-blue-950 font-semibold">{beat.studentQuestion}</p>
+                        </div>
+                        <div>
+                          <span className="font-bold text-emerald-800 block mb-0.5">💡 الإجابة المتوقعة من الطلاب:</span>
+                          <p className="text-emerald-950 font-semibold">{beat.expectedAnswer}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3. بطاقة المصطلح والتعريف في كتاب المدرسة */}
                     <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-300 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                       <div className="md:col-span-5 border-l-0 md:border-l border-amber-200 md:pl-3">
                         <span className="text-[11px] font-black text-amber-800 uppercase block mb-1">
@@ -1120,15 +1168,15 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                       </div>
                     </div>
 
-                    {/* 3. الشرح العلمي المفصل والموسع */}
+                    {/* 4. الشرح العلمي المفصل والموسع */}
                     <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs text-gray-700 space-y-1">
                       <span className="font-bold text-gray-900 block">
-                        💡 الشرح العلمي المفصل والموسع للظاهرة (الآلية والسبب والأهمية):
+                        💡 الشرح والتحليل العلمي الدقيق للظاهرة (الآلية والسبب والأهمية بالمنطق):
                       </span>
                       <p className="leading-relaxed leading-6">{beat.simpleExplanation}</p>
                     </div>
 
-                    {/* 4. قائمة برومبتات فيديو Flow لكل تشبيه/مشهد في كلام المعلمة */}
+                    {/* 5. قائمة برومبتات فيديو Flow لكل تشبيه/مشهد في كلام المعلمة */}
                     <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-200 space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
@@ -1302,7 +1350,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                                 <div className="flex items-center gap-2.5">
                                   <span className="w-7 h-7 bg-teal-700 text-white rounded-full flex items-center justify-center font-black text-xs">
-                                    {st.stepNumber}
+                                  {st.stepNumber}
                                   </span>
                                   <span className="font-black text-xs sm:text-sm text-teal-950">
                                     {st.stepTitle}
