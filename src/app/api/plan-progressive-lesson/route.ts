@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
 
     const promptText = `
 أنت كبير مخرجي الفيديوهات التعليمية ورسامي الرسوم المتحركة 3D Pixar للمنصة التعليمية (المعلمة رحاب - Sci.Rehab Elsibai).
-الموضوع المطلوب: ${topic || "محتوى صفحات الكتاب المرفقة"}.
+${pdfFile ? "مهمتك الأولى والأساسية: قراءة صفحات كتاب المدرسة المرفقة، وفهم موضوع الدرس أوتوماتيكياً بدقة 100% (سواء كان عن النباتات وأجزائها والبناء الضوئي، أو جسم الإنسان وأجهزته، أو الفضاء والكواكب، أو الكيمياء والفيزياء، أو الحيوانات والبيئة). استخرج موضوع ومفاهيم الدرس الحقيقية بدقة تامة دون أي تخمين أو خلط بالمواضيع السابقة." : ""}
+الموضوع المطلوب: ${topic ? topic : "افهم واستخرج موضوع الدرس أوتوماتيكياً من ملف الكتاب المرفق"}.
 
 ### الفلسفة البصرية الإجبارية (اللوحة الأساسية المتصلة ذات الكشف التدريجي - Progressive Cumulative Canvas):
 المستخدمة طلبت صراحة:
@@ -36,10 +37,10 @@ export async function POST(req: NextRequest) {
 قواعد التطبيق الصارمة:
 1. **التطابق التام مع موضوع الدرس (Strict Topic Context Adaptation - قاعدة مقدسة):**
    - **إذا كان الدرس عن النباتات (Plants / Botany):**
-     المجسم الأساسي هو **نبتة لطيفة متكاملة 3D Pixar** (جذور في تربة شفافة، ساق خضراء، أوراق نضرة، براعم زهور). **يُمنع منعاً باتاً رسم جسم إنسان أو أعضاء بشرية في درس النبات!**
+     المجسم الأساسي هو **نبتة لطيفة متكاملة 3D Pixar** (جذور في تربة شفافة، ساق خضراء، أوراق نضرة، براعم زهور). **يُمنع منعاً باتاً رسم جسم إنسان أو أعضاء بشرية أو أطفال في درس النبات!**
    - **إذا كان الدرس عن جسم الإنسان (Human Anatomy / Biology):**
-     المجسم مجسم بشري أو جهاز/عضو بشري ملائم لموضوع الدرس.
-   - **إذا كان الدرس عن الفضاء أو الجمادات أو الفيزياء:**
+     المجسم مجسم بشري أو جهاز/عضو بشري ملائم لموضوع الدرس فقط.
+   - **إذا كان الدرس عن الفضاء أو الجمادات أو الفيزياء أو الكيمياء:**
      المجسم نموذج علمي 3D مطابق للموضوع تماماً (كواكب، ذرات، دوائر كهربائية...).
 2. **اللوحة الأساسية الموحدة (Base Visual Anchor):**
    كل المشاهد تدور حول نفس المجسم العلمي 3D Pixar المطابق للدرس ونفس زاوية الرؤية ونفس الاستوديو العلمي (منصة زجاجية مضيئة، إضاءة سيان وبنفسجية هادئة). لا يتغير شكل المجسم الأساسي ولا البيئة نهائياً!
@@ -50,27 +51,30 @@ export async function POST(req: NextRequest) {
    - الخطوة 3: نفس المجسم بالضبط + قطاع مجهري أو زوم دقيق يوضح التفاعل الداخلي (مثل البناء الضوئي داخل البلاستيدات الخضراء بالورقة وامتصاص أشعة الشمس وثاني أكسيد الكربون).
    - الخطوة 4: نفس المجسم بالضبط + خروج النواتج وتوزيعها (مثل انطلاق فقاعات الأكسجين وتوزيع سكر الجلوكوز لغذاء النبات).
    - الخطوة 5: اللوحة المكتملة بنفس المجسم تجمع كافة المسارات والعناصر المكتملة في سيمفونية واحدة مبهجة.
-3. **لافتة الاسم الحصرية ومنع أي نصوص أخرى في الفيديو:**
+4. **لافتة الاسم الحصرية ومنع أي نصوص أخرى في الفيديو:**
    في برومبت توليد الصورة (imageGenerationPrompt): اكتب دائماً في خلفية الاستوديو العلمي وجود لافتة نيون مضيئة أنيقة تحمل نص "Sci.Rehab Elsibai" حصراً: (Mounted prominently in the upper center background wall, a glowing 3D neon holographic sign clearly displays the exact typographic text "Sci.Rehab Elsibai". The full text "Sci.Rehab Elsibai" must be completely clear and beautifully illuminated).
    في كل برومبت تحريك (motionPrompt)، يجب إجبارياً إضافة التعليمة الصارمة:
    (The glowing neon sign "Sci.Rehab Elsibai" remains static and beautifully illuminated in the upper background wall throughout the video. NEGATIVE EXCLUSION: Absolutely NO other text, NO words, NO letters, NO subtitles, NO typography, NO captions, NO watermark, NO floating labels in the video. Ignore any text in the source image and do not morph or animate words. Pure visual motion only).
-4. **كلام الشرح الصوتي للدرس (lessonExplanation):**
+5. **كلام الشرح الصوتي للدرس (lessonExplanation):**
    بصوت المعلمة رحاب بالعامية المصرية الدافئة والممتعة للأطفال ("بصوا معايا على نفس الصورة.. شايفين إيه اللي زاد هنا؟...").
 
 المطلوب: توليد 4 إلى 5 محطات متناسقة بصيغة JSON صالح فقط:
-[
-  {
-    "stepNumber": 1,
-    "title": "عنوان المحطة التعليمية",
-    "visualAddition": "ما هو الجزء الجديد المضاف في هذه الصورة فقط",
-    "lessonExplanation": "كلام الشرح الصوتي للمعلمة رحاب...",
-    "motionPrompt": "Detailed English Image-to-Video motion prompt for Kling/Runway... (NEGATIVE EXCLUSION: Absolutely NO text, NO words, NO letters, NO subtitles, NO typography, NO captions, NO watermark, NO floating labels in the video. Ignore any text in the source image and do not morph or animate words. Pure visual motion only).",
-    "imageGenerationPrompt": "Detailed 3D Pixar image generation prompt with identical base anchor and progressive element (NO text, NO words)...",
-    "montageText": ["نص مونتاج 1", "نص مونتاج 2"],
-    "duration": "8 seconds",
-    "continuityNote": "كيف تكمل هذه الصورة اللقطة التالية..."
-  }
-]
+{
+  "detectedTopic": "عنوان وموضوع الدرس الدقيق المستخرج أوتوماتيكياً",
+  "scenes": [
+    {
+      "stepNumber": 1,
+      "title": "عنوان المحطة التعليمية",
+      "visualAddition": "ما هو الجزء الجديد المضاف في هذه الصورة فقط",
+      "lessonExplanation": "كلام الشرح الصوتي للمعلمة رحاب...",
+      "motionPrompt": "Detailed English Image-to-Video motion prompt for Kling/Runway... (The glowing neon sign 'Sci.Rehab Elsibai' remains static. NEGATIVE EXCLUSION: Absolutely NO other text, NO words, NO letters, NO subtitles, NO typography, NO captions, NO watermark, NO floating labels in the video. Ignore any text in the source image and do not morph or animate words. Pure visual motion only).",
+      "imageGenerationPrompt": "Detailed 3D Pixar image generation prompt with identical base anchor and progressive element matching the lesson topic (Mounted prominently in the upper center background wall, a glowing 3D neon holographic sign clearly displays 'Sci.Rehab Elsibai')...",
+      "montageText": ["نص مونتاج 1", "نص مونتاج 2"],
+      "duration": "8 seconds",
+      "continuityNote": "كيف تكمل هذه الصورة اللقطة التالية..."
+    }
+  ]
+}
 `;
 
     parts.push({ text: promptText });
@@ -103,21 +107,45 @@ export async function POST(req: NextRequest) {
 
     if (!resultText) throw lastError || new Error("فشل توليد الخطة");
 
-    const jsonMatch = resultText.match(/```json\n([\s\S]*?)\n```/) || resultText.match(/\[[\s\S]*\]/);
+    let parsed: any = null;
+    const jsonMatch = resultText.match(/```json\n([\s\S]*?)\n```/) || resultText.match(/\{[\s\S]*\}/) || resultText.match(/\[[\s\S]*\]/);
     const cleanedJson = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : resultText;
-    const scenes = JSON.parse(cleanedJson);
+    
+    try {
+      parsed = JSON.parse(cleanedJson);
+    } catch {
+      const objMatch = resultText.match(/\{[\s\S]*\}/);
+      if (objMatch) {
+        parsed = JSON.parse(objMatch[0]);
+      } else {
+        const arrMatch = resultText.match(/\[[\s\S]*\]/);
+        if (arrMatch) parsed = JSON.parse(arrMatch[0]);
+      }
+    }
+
+    let detectedTopic = topic || "";
+    let scenes: any[] = [];
+
+    if (Array.isArray(parsed)) {
+      scenes = parsed;
+    } else if (parsed && typeof parsed === "object") {
+      if (parsed.scenes && Array.isArray(parsed.scenes)) {
+        scenes = parsed.scenes;
+      }
+      if (parsed.detectedTopic) {
+        detectedTopic = parsed.detectedTopic;
+      }
+    }
 
     // Ensure NO TEXT in all motion prompts
     const noTextRule = "(NEGATIVE EXCLUSION: Absolutely NO text, NO words, NO letters, NO subtitles, NO typography, NO captions, NO watermark, NO floating labels in the video. Ignore any text in the source image and do not morph or animate words. Pure visual motion only).";
-    if (Array.isArray(scenes)) {
-      scenes.forEach((s: any) => {
-        if (s.motionPrompt && !s.motionPrompt.toLowerCase().includes("no text")) {
-          s.motionPrompt = `${s.motionPrompt.trim()}\n\n${noTextRule}`;
-        }
-      });
-    }
+    scenes.forEach((s: any) => {
+      if (s.motionPrompt && !s.motionPrompt.toLowerCase().includes("no text")) {
+        s.motionPrompt = `${s.motionPrompt.trim()}\n\n${noTextRule}`;
+      }
+    });
 
-    return NextResponse.json({ success: true, scenes });
+    return NextResponse.json({ success: true, detectedTopic, scenes });
   } catch (error: any) {
     console.error("Error in plan-progressive-lesson:", error);
     return NextResponse.json({ error: error.message || "حدث خطأ أثناء ابتكار الرحلة المصورة" }, { status: 500 });

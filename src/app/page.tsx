@@ -48,6 +48,9 @@ export default function Home() {
   const [prompts, setPrompts] = useState<VideoPrompt[] | null>(null);
   const [isContinuing, setIsContinuing] = useState(false);
   const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
+  const [detectedLessonTopic, setDetectedLessonTopic] = useState<string>("");
+  const [detectedSubjectDomain, setDetectedSubjectDomain] = useState<string>("");
+  const [detectedVisualAnchor, setDetectedVisualAnchor] = useState<string>("");
 
   // Projects storage
   const [savedProjects, setSavedProjects] = useState<SavedProject[]>([]);
@@ -250,7 +253,7 @@ export default function Home() {
 
       const formData = new FormData();
       if (fileToSend) formData.append("pdfFile", fileToSend);
-      formData.append("topic", topic || "رحلة الكليتين وتنقية الدم");
+      if (topic) formData.append("topic", topic);
 
       const res = await fetch("/api/plan-progressive-lesson", {
         method: "POST",
@@ -269,13 +272,13 @@ export default function Home() {
           const presetImg = PRESET_PROGRESSIVE_KIDNEY_SCENES[idx % PRESET_PROGRESSIVE_KIDNEY_SCENES.length];
           return {
             ...s,
-            imageUrl: isKidneys ? presetImg.imageUrl : (presetImg.imageUrl || undefined),
+            imageUrl: isKidneys ? presetImg.imageUrl : undefined,
             imageName: isKidneys ? presetImg.imageName : `progressive_scene_${s.stepNumber}.jpg`,
             imageIndex: idx
           };
         });
         setImageLessonScenes(enriched);
-        setCurrentProjectName(topic || "رحلة مصورة متناسقة");
+        setCurrentProjectName(data.detectedTopic || topic || "رحلة مصورة متناسقة");
       }
     } catch (e: any) {
       console.error(e);
@@ -331,6 +334,9 @@ export default function Home() {
       if (!res.ok) throw new Error("فشل في التحليل");
       const data = await res.json();
       setContentMap(data.map);
+      if (data.lessonTopic) setDetectedLessonTopic(data.lessonTopic);
+      if (data.subjectDomain) setDetectedSubjectDomain(data.subjectDomain);
+      if (data.primaryVisualAnchor) setDetectedVisualAnchor(data.primaryVisualAnchor);
 
       if (data.teacherOutfit || data.cartoonCharacter) {
         setCharacterConfig((prev) => ({
@@ -381,6 +387,9 @@ export default function Home() {
         formData.append("mode", videoMode);
         formData.append("startIndex", currentVideoCounter.toString());
         formData.append("lastContext", lastContext);
+        if (detectedLessonTopic) formData.append("lessonTopic", detectedLessonTopic);
+        if (detectedSubjectDomain) formData.append("subjectDomain", detectedSubjectDomain);
+        if (detectedVisualAnchor) formData.append("primaryVisualAnchor", detectedVisualAnchor);
 
         const res = await fetch("/api/generate", {
           method: "POST",
@@ -554,6 +563,9 @@ export default function Home() {
                   onGeneratePrompts={handleGeneratePrompts}
                   isGenerating={isGeneratingPrompts}
                   nextProcessingIndex={nextProcessingIndex}
+                  detectedTopic={detectedLessonTopic}
+                  detectedSubjectDomain={detectedSubjectDomain}
+                  primaryVisualAnchor={detectedVisualAnchor}
                 />
               )}
 

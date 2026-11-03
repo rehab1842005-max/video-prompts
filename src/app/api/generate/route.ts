@@ -11,6 +11,18 @@ export async function POST(req: NextRequest) {
     const videoMode = formData.get("mode") as string || "cartoon";
     const startIndex = parseInt(formData.get("startIndex") as string || "1");
     let videoCounter = startIndex;
+
+    const lessonTopic = formData.get("lessonTopic") as string || "";
+    const subjectDomain = formData.get("subjectDomain") as string || "";
+    const primaryVisualAnchor = formData.get("primaryVisualAnchor") as string || "";
+
+    if (lessonTopic || primaryVisualAnchor) {
+      characterConfigStr += `\n- **(توجيه صارم ومقدس لموضوع ومجسم الدرس المستخرج أوتوماتيكياً):**\n` +
+        `  * الموضوع المستخرج: "${lessonTopic}"\n` +
+        (subjectDomain ? `  * مجال المحتوى العلمي: "${subjectDomain}"\n` : "") +
+        (primaryVisualAnchor ? `  * المجسم البصري الإجباري الحصري: "${primaryVisualAnchor}"\n` : "") +
+        `  * **تنبيه صارم وحاسم يمنع التخريف البصري:** يجب أن تعكس جميع المشاهد والصور هذا الموضوع حصراً! إذا كان الموضوع عن النباتات فلا ترسم إنساناً أو أعضاءً بشرية أبداً! التزم تماماً بمجسم: (${primaryVisualAnchor || lessonTopic}).\n`;
+    }
     
     characterConfigStr += "- **ممنوع تكرار الترحيب والمقدمات:** يُمنع منعاً باتاً أن تبدأ المعلمة كل فيديو بترحيب (مثل: أهلاً بكم يا أبطالي). الترحيب مسموح به في أول فيديو فقط في الدرس بأكمله. في الفيديوهات التالية، يجب أن تبدأ المعلمة في استكمال الشرح والتفاعل فوراً بدون أي مقدمات تضيّع وقت الفيديو الـ 10 ثواني.\n";
     characterConfigStr += "- **مدة الفيديو (duration) للحفاظ على الرصيد:** احسب عدد كلمات الـ (DIALOGUE) بدقة. مدة الفيديو = (عدد الكلمات مقسوماً على 2) + ثانية واحدة للصمت. فإذا كان الحوار 6 كلمات تكون المدة \"4 seconds\". وإذا كان 10 كلمات تكون المدة \"6 seconds\". وإذا كان الشرح 20 كلمة تكون \"10 seconds\". اكتب الرقم الثواني فقط متبوعاً بكلمة seconds في حقل duration.\n";

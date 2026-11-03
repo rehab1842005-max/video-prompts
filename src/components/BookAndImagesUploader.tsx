@@ -25,7 +25,7 @@ export default function BookAndImagesUploader({
 }: BookAndImagesUploaderProps) {
   // Mode selection: "auto_generate" (AI invents consistent progressive images) or "manual_upload" (User uploads own images)
   const [subMode, setSubMode] = useState<"auto_generate" | "manual_upload">("auto_generate");
-  const [topicInput, setTopicInput] = useState<string>("رحلة الكليتين وتنقية الدم في جسم الإنسان");
+  const [topicInput, setTopicInput] = useState<string>("");
 
   // PDF state
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -220,14 +220,21 @@ export default function BookAndImagesUploader({
 
           {/* Topic Input */}
           <div>
-            <label className="block text-sm font-bold text-gray-800 mb-1">
-              موضوع الدرس المطلوب ابتكار صوره وشرحه:
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-bold text-gray-800">
+                موضوع الدرس المراد شرحه وابتكار صوره:
+              </label>
+              {pdfFile && (
+                <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span>✨</span> الفهم التلقائي مفعل من الكتاب المرفق
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={topicInput}
               onChange={(e) => setTopicInput(e.target.value)}
-              placeholder="مثال: رحلة الكليتين وتنقية الدم في جسم الإنسان (أو الجهاز الهضمي، الدورة الدموية)"
+              placeholder={pdfFile ? "اتركيه فارغاً وسيفهم الذكاء الاصطناعي الدرس أوتوماتيكياً من ملف الـ PDF (أو اكتبي عنواناً مخصصاً)" : "مثال: كيف يصنع النبات غذاءه؟ البناء الضوئي، أو الجهاز الهضمي، أو المجموعة الشمسية"}
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white shadow-xs"
             />
           </div>

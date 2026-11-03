@@ -14,6 +14,9 @@ interface ContentMapViewerProps {
   isGenerating: boolean; 
   nextProcessingIndex?: number;
   onConvertToPresentation?: (part: ContentPart) => void;
+  detectedTopic?: string;
+  detectedSubjectDomain?: string;
+  primaryVisualAnchor?: string;
 }
 
 export default function ContentMapViewer({ 
@@ -21,14 +24,68 @@ export default function ContentMapViewer({
   onGeneratePrompts, 
   isGenerating, 
   nextProcessingIndex = 0,
-  onConvertToPresentation
+  onConvertToPresentation,
+  detectedTopic,
+  detectedSubjectDomain,
+  primaryVisualAnchor
 }: ContentMapViewerProps) {
   if (!map) return null;
   const isCompleted = nextProcessingIndex >= map.length;
   const remaining = map.length - nextProcessingIndex;
 
+  const domainLabels: Record<string, { label: string; icon: string }> = {
+    botany: { label: "علم النبات والبناء الضوئي", icon: "🌱" },
+    human_anatomy: { label: "أجهزة وجسم الإنسان", icon: "🫀" },
+    space: { label: "الفضاء وعلم الفلك", icon: "🪐" },
+    chemistry: { label: "الكيمياء والمادة", icon: "🧪" },
+    physics: { label: "الفيزياء والطاقة", icon: "⚡" },
+    zoology: { label: "الحيوانات والبيئة", icon: "🐾" },
+    general_science: { label: "علوم عامة", icon: "🔬" }
+  };
+
+  const domainInfo = detectedSubjectDomain ? domainLabels[detectedSubjectDomain] || { label: detectedSubjectDomain, icon: "🔬" } : null;
+
   return (
     <div className='bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-6' dir='rtl'>
+      {detectedTopic && (
+        <div className="mb-5 p-4 bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 border border-emerald-200 rounded-xl shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl p-2 bg-emerald-100 rounded-lg">✨</span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                    فهم المحتوى أوتوماتيكياً
+                  </span>
+                  {domainInfo && (
+                    <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1">
+                      <span>{domainInfo.icon}</span>
+                      <span>{domainInfo.label}</span>
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-base font-bold text-gray-900 mt-1">
+                  {detectedTopic}
+                </h3>
+                {primaryVisualAnchor && (
+                  <p className="text-xs text-emerald-800 mt-1 flex items-center gap-1">
+                    <span className="font-semibold">المجسم البصري المعتمد:</span>
+                    <span className="bg-white/80 px-2 py-0.5 rounded border border-emerald-200 text-emerald-900 font-mono text-[11px]">
+                      {primaryVisualAnchor}
+                    </span>
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="text-left sm:self-center">
+              <span className="text-[11px] font-medium text-emerald-700 bg-emerald-100/60 px-2.5 py-1 rounded-md inline-block">
+                ممنوع التخريف أو خلط المجسمات 🎯
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-4">
         <h2 className='text-xl font-bold text-gray-800'>3. خريطة المحتوى (Content Map)</h2>
         <span className="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">
