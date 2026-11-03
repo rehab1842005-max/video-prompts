@@ -55,8 +55,13 @@ ${pdfFile ? "مهمتك الأولى والأساسية: قراءة صفحات �
    في برومبت توليد الصورة (imageGenerationPrompt): اكتب دائماً في خلفية الاستوديو العلمي وجود لافتة نيون مضيئة أنيقة تحمل نص "Sci.Rehab Elsibai" حصراً: (Mounted prominently in the upper center background wall, a glowing 3D neon holographic sign clearly displays the exact typographic text "Sci.Rehab Elsibai". The full text "Sci.Rehab Elsibai" must be completely clear and beautifully illuminated).
    في كل برومبت تحريك (motionPrompt)، يجب إجبارياً إضافة التعليمة الصارمة:
    (The glowing neon sign "Sci.Rehab Elsibai" remains static and beautifully illuminated in the upper background wall throughout the video. NEGATIVE EXCLUSION: Absolutely NO other text, NO words, NO letters, NO subtitles, NO typography, NO captions, NO watermark, NO floating labels in the video. Ignore any text in the source image and do not morph or animate words. Pure visual motion only).
-5. **كلام الشرح الصوتي للدرس (lessonExplanation):**
-   بصوت المعلمة رحاب بالعامية المصرية الدافئة والممتعة للأطفال ("بصوا معايا على نفس الصورة.. شايفين إيه اللي زاد هنا؟...").
+5. **كلام الشرح الصوتي للدرس (lessonExplanation) وفق منهج تبسيط العلوم الواقعي للأطفال:**
+   - بصوت المعلمة رحاب بالعامية المصرية الدافئة والممتعة، وكأنها تتحدث مع طلابها داخل الفصل.
+   - ابدأ من الصفر، وافترض أن الطلاب ليس لديهم خلفية سابقة عن المصطلحات العلمية.
+   - اربط المعلومة بحاجة يعرفها الطالب من حياته اليومية (الأكل، الشرب، البيت، المطبخ، الألعاب، الكهرباء).
+   - استخدم تشبيهات واقعية تساعد الطفل على التخيل والفهم، ووضح لماذا وكيف تحدث الظاهرة بطريقة بسيطة.
+   - وضح للطالب أين ينتهي التشبيه وأين تبدأ الحقيقة العلمية.
+   - جمل قصيرة محكمة ومكتملة الفكرة تناسب مدة الـ 8 إلى 10 ثوانٍ.
 
 المطلوب: توليد 4 إلى 5 محطات متناسقة بصيغة JSON صالح فقط:
 {

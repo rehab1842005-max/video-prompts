@@ -9,6 +9,7 @@ import CharacterSettings, { CharacterConfig } from "@/components/CharacterSettin
 import ContentMapViewer, { ContentPart } from "@/components/ContentMapViewer";
 import PromptResultList, { VideoPrompt } from "@/components/PromptResultList";
 import { PRESET_PROGRESSIVE_KIDNEY_SCENES } from "@/data/progressiveKidneyPreset";
+import TeacherLessonGuide from "@/components/TeacherLessonGuide";
 
 interface SavedProject {
   id: string;
@@ -22,7 +23,7 @@ interface SavedProject {
 
 export default function Home() {
   // Main Studio Mode: "image_lesson" (new requested flow) or "text_prompts" (classic PDF flow)
-  const [studioMode, setStudioMode] = useState<"image_lesson" | "text_prompts">("image_lesson");
+  const [studioMode, setStudioMode] = useState<"image_lesson" | "text_prompts" | "lesson_guide">("image_lesson");
 
   // --- Image Lesson Mode State ---
   const [isAnalyzingImages, setIsAnalyzingImages] = useState(false);
@@ -502,6 +503,18 @@ export default function Home() {
                 <span>📄</span>
                 <span>توليد برومبتات من نصوص الكتاب فقط</span>
               </button>
+
+              <button
+                onClick={() => setStudioMode("lesson_guide")}
+                className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  studioMode === "lesson_guide"
+                    ? "bg-emerald-700 text-white shadow-sm"
+                    : "text-gray-700 hover:text-gray-900"
+                }`}
+              >
+                <span>📖</span>
+                <span>دليل المعلمة لشرح الدرس والسبورة (تحضير كامل)</span>
+              </button>
             </div>
           </header>
 
@@ -526,6 +539,13 @@ export default function Home() {
                   projectName={currentProjectName}
                 />
               )}
+            </div>
+          )}
+
+          {/* 3. LESSON GUIDE WORKFLOW: Classroom & Blackboard Teacher Guide */}
+          {studioMode === "lesson_guide" && (
+            <div className="space-y-6">
+              <TeacherLessonGuide />
             </div>
           )}
 
