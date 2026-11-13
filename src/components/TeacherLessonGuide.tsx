@@ -90,16 +90,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
     analogyStory: "تشبيه متكامل يربط بين: شعور الإنسان بالجوع وفتح الثلاجة للأكل، وعجز النبات عن الحركة لشراء الطعام، ومطبخ النبات السحري داخل الورقة الذي يحول الضوء والماء إلى غذاء كامل.",
     videoPrompts: [
       {
-        shotTitle: "فيديو 1: طفل جائع يفتح ثلاجة دافئة ومضيئة ويأكل ساندوتش شهي يستعيد به طاقته",
-        prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. In a warm cozy home kitchen, a cheerful hungry boy opens a modern refrigerator glowing with warm bright light, takes out a fresh healthy colorful sandwich, smiles happily and takes an appetizing bite as glowing sparkles float around him symbolizing pure energy. Mute visual action only, strictly NO talking characters, NO mouth animation, NO speaking faces, NO lip sync. The human teacher narrates over this clip."
-      },
-      {
-        shotTitle: "فيديو 2: نبتة جميلة في البلكونة تستمتع بأشعة الشمس الصباحية والنسيم العليل",
-        prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded cheerful aesthetic, warm joyful lighting. A lovely potted green plant with lush healthy leaves sitting on an apartment balcony windowsill, basking in brilliant golden morning sunbeams and a gentle breeze, fluttering softly with life and vitality. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
-      },
-      {
-        shotTitle: "فيديو 3: مطبخ كرتوني سحري داخل ورقة نبات خضراء يعد طبقاً متلألئاً من السكريات",
-        prompt: "Cute friendly 3D cartoon Pixar style miniature fairy-tale kitchen inside a translucent glowing green leaf: Golden sunbeams, crystalline water droplets, and floating air currents converge onto a delicate golden plate creating glowing sugar crystal cubes of pure energy. Wonderous, educational, sparkling render. Mute visual action only, strictly NO talking characters, NO mouth animation, NO dialogue, NO lip sync."
+        shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: الجوع والثلاجة ⬅ بلكونة النبات والشمس ⬅ مطبخ الورقة السحري)",
+        prompt: "A dynamic 10-second multi-scene sequence with rapid seamless cuts, perfectly synchronized with teacher voiceover pacing: [0-3s]: In a warm cozy kitchen, a hungry cartoon boy quickly opens a glowing refrigerator and eagerly takes a delicious bite of a sandwich as sparkles swirl. [3-6s]: Rapid whip-pan camera transition to a sunny apartment balcony where a lovely potted green plant flutters in warm golden morning sunbeams. [6-10s]: Fast dynamic zoom transition deep into a glowing leaf revealing a whimsical miniature kitchen assembling sparkling sugar energy cubes. High-energy visual progression, cute friendly 3D cartoon Pixar animation for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO mouth animation, NO speaking faces, NO lip sync."
       }
     ]
   },
@@ -115,12 +107,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "الكائنات الحية التي تستطيع صنع غذائها بنفسها من خلال تحويل مواد غير عضوية أولية بسيطة إلى مواد غذائية عضوية معقدة غنية بالطاقة (مثل النباتات الخضراء).",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: كائن مستهلك (أرنب كرتوني لطيف يتناول جزرة برتقالية مقرمشة)",
-          prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. A lovable fluffy cartoon bunny happily munching on a crisp bright orange carrot in a lush meadow, illustrating a consumer living organism obtaining ready food. Bright sunny day, delightful details. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync."
-        },
-        {
-          shotTitle: "فيديو 2: كائن منتج ذاتي التغذية (زهرة مشمسة تشع بطاقة الحياة الحيوية)",
-          prompt: "Cute friendly 3D cartoon Pixar animation for children, soft rounded shapes, glowing vibrant nature. A vibrant cheerful sunflower growing proudly in rich dark soil, glowing with soft warm internal biological energy radiating outward through its translucent petals and stem under brilliant morning sunlight, illustrating an autotroph plant making its own food. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: أرنب مستهلك يأكل جزرة ⬅ انتقال سريع إلى زهرة منتجة تصنع غذاءها بنفسها)",
+          prompt: "A dynamic 10-second multi-shot sequence with rapid seamless transitions, precisely paced for teacher voiceover: [0-5s]: A cute fluffy 3D cartoon bunny happily munches on a crisp orange carrot in a sunlit green meadow, illustrating a consumer eating ready food. [5-10s]: Rapid camera glide transition over the meadow grass to a vibrant 3D sunflower glowing with radiant internal emerald and golden energy under morning sunbeams, producing its own food. Fast visual progression, cute friendly 3D Pixar style for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         }
       ]
     },
@@ -135,8 +123,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "المواد الأولية والعوامل الطبيعية التي لا يستطيع النبات العيش أو بناء غذائه بدونها، وتشمل: الماء، الأملاح المعدنية، غاز ثاني أكسيد الكربون، وضوء الشمس المباشر.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: العناصر الثلاثة الأساسية (قطرة ماء، تيار هواء، وشعاع شمس) تجتمع حول نبتة",
-          prompt: "Cute friendly 3D cartoon Pixar style scientific visualization for children, soft rounded playful forms, vibrant glowing colors. Three essential ingredients meeting in harmony: a glowing clear blue water droplet rising from rich soil, a swirling cyan air current, and a beam of golden sunlight converging gracefully around a healthy green plant leaf. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: قطرة ماء من التربة ⬅ تيار هواء ⬅ شعاع شمس يجتمعون حول الورقة)",
+          prompt: "A fast-paced 10-second sequence with dynamic multi-scene cuts matching narration: [0-3s]: Macro view of a glowing crystal-blue water droplet rising from dark moist soil. [3-6s]: Fast swirling transition introducing floating cyan air currents streaming smoothly. [6-10s]: Golden sunbeam bursts in and all three elements gracefully merge onto a soft green leaf, lighting it up with vitality. Playful cute 3D cartoon Pixar animation for children, vibrant colors, fast transitions. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
         }
       ]
     },
@@ -151,8 +139,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "امتدادات خلوية أنبوبية دقيقة ورقيقة الجدر تخرج من بشرة جذر النبات، تعمل على زيادة مساحة سطح امتصاص الماء والأملاح المعدنية من حبيبات التربة.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: زووم مجهري للشعيرات الجذرية تمتص جزيئات الماء المتلألئة من حبيبات الطين",
-          prompt: "Cute friendly 3D cartoon Pixar style macro underground animation for children: Translucent microscopic root hairs styled like friendly tiny drinking straws wrapped around moist dark soil particles, visibly sipping shimmering glowing blue water molecules and sparkling mineral ions into the root cylinder. Crisp cheerful lighting. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: جذور الشجرة في الطين ⬅ زووم مجهري للشعيرات كالشفاطات ⬅ سحب قطرات الماء المتلألئة)",
+          prompt: "A dynamic 10-second multi-scene sequence with rapid cuts, synchronized with voiceover: [0-3s]: Underground view of strong tree roots branching through dark earthy soil. [3-7s]: Quick macro zoom transition to translucent root hairs styled like cute tiny drinking straws wrapped around soil grains. [7-10s]: Rapid suction visual as glowing blue water beads and mineral crystals smoothly sip upwards into the root tube. Cute friendly 3D cartoon Pixar animation for children, playful macro motion. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -167,8 +155,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "أنابيب وعائية مجوفة تمتد بطول النبات من الجذور عبر الساق إلى الأوراق، وظيفتها نقل الماء والأملاح المعدنية الذائبة في اتجاه واحد نحو الأعلى.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: شبكة أنابيب الخشب الشفافة تصعد فيها قطرات الماء الزرقاء كالأسانسير السريع",
-          prompt: "Cute friendly 3D cartoon Pixar style educational cutaway animation inside a green plant stem: Microscopic vertical translucent pipes (xylem vessels) glowing with cool blue light, like a playful high-speed glass elevator carrying sparkling water droplets smoothly rushing upwards against gravity toward the upper leaf petioles. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: ساق النبات كالعمارة ⬅ مقطع المواسير الزجاجية ⬅ اندفاع الماء كالمصعد السريع للأوراق)",
+          prompt: "A fast-paced 10-second sequence with rapid seamless cuts: [0-3s]: Exterior of a tall green plant stem standing upright like a tiny skyscraper. [3-6s]: Smooth cutaway transition revealing vertical transparent glowing blue xylem pipes inside. [6-10s]: Fast dynamic upward camera rush following sparkling water bubbles shooting upward like a high-speed glass elevator straight into the leaf petioles. Cute friendly 3D Pixar educational style, energetic upward motion. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
         }
       ]
     },
@@ -183,8 +171,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "عضيات خلوية متخصصة تنتشر بكثافة داخل خلايا أوراق النبات الخضراء، وتعد الموقع الرئيسي الذي تحدث بداخله جميع تفاعلات عملية البناء الضوئي.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: زووم مجهري سينمائي يغوص داخل نسيج الورقة الخضراء ويكشف البلاستيدات",
-          prompt: "Cute friendly 3D cartoon Pixar style microscopic zoom animation for children: Smoothly diving deep into the surface of a lush green leaf, revealing soft rounded plant cell walls and showing hundreds of oval emerald-green chloroplast organelles floating happily like tiny cheerful jelly beans in crystal clear cytoplasm. Pristine lighting, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: الورقة العريضة في الهواء ⬅ زووم مجهري داخل الخلايا ⬅ ظهور البلاستيدات الخضراء اللطيفة)",
+          prompt: "A dynamic 10-second multi-shot sequence with seamless transitions: [0-3s]: Broad green leaf fluttering openly in fresh outdoor air catching bright sunlight like a wide tray. [3-6s]: Rapid microscopic zoom transition diving straight through the leaf skin into cell layers. [6-10s]: Revealing hundreds of cheerful emerald-green chloroplast organelles floating and bobbing happily like cute jelly beans in crystal cytoplasm. Fast visual storytelling, cute friendly 3D Pixar style for children. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -199,8 +187,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "الصبغة الخضراء الأساسية الموجودة داخل البلاستيدات الخضراء في أوراق النبات، وظيفتها امتصاص الطاقة الضوئية من الشمس لتحويلها إلى طاقة كيميائية.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: صبغة الكلوروفيل تمتص فوتونات الشمس الذهبية وتتوهج بالطاقة الحيوية",
-          prompt: "Cute friendly 3D cartoon Pixar style molecular animation for children inside a single chloroplast: Delicate green chlorophyll pigment clusters smoothly absorbing incoming golden photons of sunlight like magical solar panels, softly igniting into a warm golden and emerald luminescence as solar energy is trapped. Mesmerizing visual, mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: سطح البلاستيدة ⬅ حبيبات الكلوروفيل كألواح الطاقة ⬅ اصطياد فوتونات الشمس والتوهج)",
+          prompt: "A fast-paced 10-second sequence with dynamic transitions: [0-3s]: Close-up inside a chloroplast showing delicate green clusters of chlorophyll pigments arranged like solar panels. [3-6s]: Golden solar photon particles raining down and instantly getting trapped by the green pigments. [6-10s]: Quick burst transition as the chlorophyll lights up in a radiant golden-emerald glow of stored energy. Cute friendly 3D Pixar animation for children, vibrant lighting, smooth fast cuts. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync."
         }
       ]
     },
@@ -215,8 +203,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "الثغور: فتحات ميكروسكوبية دقيقة تنتشر على أسطح أوراق النبات وتتحكم في فتحها وغلقها خلايا حارسة لتنظيم تبادل الغازات وخروج بخار الماء.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: الخلايا الحارسة تنتفخ وتفتح مسام الثغر لامتصاص جزيئات ثاني أكسيد الكربون",
-          prompt: "Cute friendly 3D cartoon Pixar animation for children, microscopic cellular view of leaf lower surface: Two rounded kidney-shaped guard cells swelling gently with water to smoothly open an oval pore (stoma), drawing in floating stylized purple and cyan carbon dioxide gas bubbles from the atmosphere into the spongy leaf tissue. Clean, fluid, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: السطح السفلي للورقة ⬅ انتفاخ الخلايا الحارسة وفتح الباب ⬅ تدفق جزيئات ثاني أكسيد الكربون)",
+          prompt: "A dynamic 10-second sequence with rapid seamless cuts: [0-3s]: Microscopic view gliding across the lower leaf epidermis dotted with tiny pores. [3-6s]: Quick transition focusing on two cute kidney-shaped guard cells swelling like soft cushions to open an oval doorway. [6-10s]: Playful purple and cyan carbon dioxide bubbles cheerfully floating through the open door into the leaf interior. Cute friendly 3D cartoon Pixar animation for children, fluid motion. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     },
@@ -231,8 +219,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "سكر بسيط غني بالطاقة الكيميائية تصنعه النباتات الخضراء أثناء عملية البناء الضوئي، ويمثل الغذاء الأساسي والوقود اللازم لنمو النبات وتكاثره.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: جزيئات الماء وثاني أكسيد الكربون تندمج بطاقة الشمس لتوليد جزيء الجلوكوز المتلألئ",
-          prompt: "Cute friendly 3D cartoon Pixar style magical molecular animation inside the chloroplast stroma: Playful glowing blue water molecules and purple carbon dioxide molecules harmoniously merging under radiant golden sunlight, rapidly assembling into a crystalline hexagonal glucose sugar molecule glowing with warm amber energy. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: التقاء جزيئات الماء والغاز ⬅ تفاعل الطاقة الحرارية الشمسية ⬅ تبلور جزيء سكر الجلوكوز اللامع)",
+          prompt: "A fast-paced 10-second sequence with dynamic transitions matching speech: [0-3s]: Inside the chloroplast stroma, glowing blue water molecules and purple carbon dioxide molecules rush toward each other. [3-6s]: Rapid flash of golden solar energy linking the atoms together like magical puzzle pieces. [6-10s]: Quick transformation transition into a sparkling hexagonal amber glucose sugar crystal radiating sweet energy. Cute friendly 3D cartoon Pixar style, sparkling cheerful effects. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
         }
       ]
     },
@@ -247,8 +235,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "كربوهيدرات معقدة غير ذائبة يخزن فيها النبات سكر الجلوكوز الفائض عن استهلاكه المباشر في خلايا الأوراق والجذور والدرنات لاستخدامه وقت الحاجة.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: جزيئات الجلوكوز ترتبط معاً لتشكل حبيبات نشا لؤلؤية براقة مخزنة داخل الخلية",
-          prompt: "Cute friendly 3D cartoon Pixar animation for children inside a plant storage cell: Glowing glucose sugar units linking together into dense, pearlescent white starch pearls stacked neatly like shiny treasure inside the amyloplast, storing reserve energy. Crisp warm lighting, mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: تراكم جزيئات الجلوكوز الزائدة ⬅ تشابكها في سلاسل ⬅ تخزينها كلآلئ نشا في حصالة النبات)",
+          prompt: "A dynamic 10-second sequence with rapid seamless cuts: [0-3s]: Overflow of cheerful glucose sugar crystals floating in the plant cell. [3-6s]: Quick transition showing sugar units linking hands into long graceful chains. [6-10s]: Rapid camera pan to an amyloplast storage bank where chains pack neatly into smooth glowing white pearls of starch. Fast visual pacing, cute friendly 3D Pixar animation for children. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         }
       ]
     },
@@ -263,12 +251,8 @@ export const PRESET_SAMPLE_GUIDE: LessonGuideData = {
       textbookDefinition: "غاز حيوي ينتج كناتج ثانوي عن عملية البناء الضوئي وينطلق عبر الثغور إلى الهواء الجوي، ويعد ضرورياً لاستمرار تنفس جميع الكائنات الحية الهوائية.",
       videoPrompts: [
         {
-          shotTitle: "فيديو 1: فقاعات أكسجين بلورية نقية تنطلق من ثغور الورقة في نسيم الصباح",
-          prompt: "Cute friendly 3D cartoon Pixar animation for children: Microscopic bubbles of pure glowing blue oxygen gas gracefully popping out of the leaf stomata into the fresh sunny atmosphere, drifting upwards over a thriving green forest bathed in morning light. Serene, vibrant, mute visual action only, strictly NO talking characters, NO mouth movement, NO dialogue, NO lip sync."
-        },
-        {
-          shotTitle: "فيديو 2: مشهد بانورامي لغابات الأرض العظيمة كرئة خضراء تمد الكوكب بالحياة",
-          prompt: "Cute friendly 3D cartoon Pixar style panoramic aerial view over an immense lush emerald green forest canopy at sunrise. Gentle mists rise from the canopy under golden sunbeams, symbolizing oxygen production and global vitality. Epic and uplifting visual, mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
+          shotTitle: "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة: انطلاق فقاعات الأكسجين من الثغور ⬅ تصاعدها في الهواء ⬅ مشهد الغابات كرئة للأرض)",
+          prompt: "A dynamic 10-second sequence with rapid seamless transitions: [0-4s]: Shimmering crystal bubbles of pure oxygen gas gracefully popping out of leaf stomata into the fresh morning air. [4-7s]: Fast upward camera lift following the floating oxygen bubbles rising into a sunny blue sky. [7-10s]: Wide cinematic aerial wipe transition over a vast emerald green forest breathing fresh life into the planet. Inspiring, fast-paced, cute friendly 3D Pixar animation for children. Mute visual action only, strictly NO talking characters, NO speaking faces, NO lip sync."
         }
       ]
     }
@@ -1027,9 +1011,14 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
               {/* قائمة برومبتات الفيديو لكل تشبيه ورد في كلام المعلمة */}
               <div className="space-y-3 pt-2 border-t border-amber-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-amber-950 flex items-center gap-1.5">
-                    <span>🎬</span> برومبتات فيديو Flow لجميع التشبيهات المذكورة في كلام المعلمة ({hookVideoPrompts.length} فيديو متتالي لتجميعها في المونتاج):
-                  </span>
+                  <div>
+                    <span className="text-xs font-black text-amber-950 flex items-center gap-1.5">
+                      <span>🎬</span> فيديو Flow تتابعي شامل (10 ثوانٍ بانتقالات سريعة يجمع كل تشبيهات الدخلة متزامناً مع صوتكِ):
+                    </span>
+                    <span className="text-[11px] text-amber-700 font-medium block mt-0.5">
+                      ⚡ فيديو واحد 10 ثوانٍ مقسم بلقطات سريعة متتالية لتضعي صوتكِ فوقه في CapCut ويمشي الصوت مع الصورة تماماً
+                    </span>
+                  </div>
                   <button
                     onClick={() => {
                       const allHookPrompts = hookVideoPrompts.map((vp, i) => `SHOT ${i + 1} - ${vp.shotTitle}:\n${vp.prompt}`).join("\n\n" + "=".repeat(35) + "\n\n");
@@ -1037,7 +1026,7 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                     }}
                     className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-1 px-3 rounded-lg transition-colors cursor-pointer"
                   >
-                    <span>{copiedSection === "all_hook_prompts" ? "✅ تم النسخ" : "📋 نسخ كل تشبيهات الدخلة"}</span>
+                    <span>{copiedSection === "all_hook_prompts" ? "✅ تم النسخ" : "📋 نسخ فيديو الدخلة"}</span>
                   </button>
                 </div>
 
@@ -1181,10 +1170,10 @@ export default function TeacherLessonGuide({ initialGuideData }: TeacherLessonGu
                       <div className="flex items-center justify-between">
                         <div>
                           <span className="text-xs font-bold text-purple-950 block">
-                            🎬 برومبتات فيديو Flow المرافقة لكلام المعلمة ({beatPrompts.length} فيديو متتالي لتركيبها معاً):
+                            🎬 فيديو Flow تتابعي شامل 10 ثوانٍ (انتقالات سريعة تجمع كل التشبيهات متزامنة مع كلامكِ):
                           </span>
                           <span className="text-[11px] text-purple-700 font-medium">
-                            فيديوهات 3D Pixar بدون معلمات لتضعيها في المونتاج فوق صوتكِ
+                            ⚡ فيديو واحد 10 ثوانٍ مقسم لقطات [0-3s, 3-6s, 6-10s] ليتطابق المشهد بدقة مع سرعة صوتكِ في CapCut
                           </span>
                         </div>
 

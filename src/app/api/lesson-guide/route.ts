@@ -40,22 +40,27 @@ export async function POST(req: NextRequest) {
 1. أنا مش عايزة الفيديو بيتكلم! أنا اللي هتكلم، فأهم حاجة عندي الفيديو يكون صح ويكون المطلوب يتنفذ.
 2. عايزة فيديو بأشكال كرتونية تنفع للأطفال، حاجات 3D كده للأطفال على أشكال لطيفة ومبهجة".
 
-### قواعد صياغة برومبتات الفيديو لموقع Flow (مهمة وحاسمة جداً):
+### قواعد صياغة برومبتات الفيديو لموقع Flow (مهمة وحاسمة جداً بناءً على تجربة المونتاج):
 1. **ممنوع بتاتاً أي شخصيات تتكلم أو تحرك فمها (STRICTLY NO TALKING, NO LIP-SYNC, NO SPEAKING HEADS):**
-   - المعلمة هي التي تسجل صوتها في المونتاج. الفيديو عبارة عن لقطات توضيحية بصرية حركية صامتة (Pure visual B-roll action).
+   - المعلمة هي التي تسجل صوتها في المونتاج (CapCut). الفيديو عبارة عن لقطات توضيحية بصرية حركية صامتة (Pure visual B-roll action).
    - ممنوع ظهور وجوه تتحدث للكاميرا أو فم يتحرك أو مقدمين.
    - يجب كتابة هذه الجملة الصريحة في كل برومبت:
      \`Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync. Pure visual storytelling for voiceover overlay.\`
 
 2. **الأسلوب البصري: كرتوني ثلاثي الأبعاد لطيف جداً ومناسب للأطفال (Cute Friendly 3D Cartoon Pixar Style):**
    - أشكال ناعمة ومستديرة ولطيفة جداً للأطفال (Soft rounded playful shapes, charming, cheerful vibrant colors, warm inviting lighting).
-   - تجسيد كرتوني ثلاثي الأبعاد ممتع ومبهج للعين (قطرات ماء لطيفة ومستديرة، جزيئات كرتونية ملونة جذابة، خلايا وأنسجة ثلاثية الأبعاد بأسلوب كرتوني ساحر ومحبب للطفل دون أي شكل معقد أو مخيف).
+   - تجسيد كرتوني ثلاثي الأبعاد ممتع ومبهج للعين (قطرات ماء لطيفة ومستديرة، جزيئات ملونة جذابة، خلايا وأنسجة ثلاثية الأبعاد بأسلوب كرتوني ساحر ومحبب للطفل دون أي شكل معقد أو مخيف).
 
-3. **الدقة العلمية وتنفيذ المطلوب بالضبط (Accurate Concept Execution):**
-   - البرومبت يصف بدقة الحركة الفعلية التي تتحدث عنها المعلمة (مثلاً: حركة الماء والأملاح وهي تصعد، فتح الثغور واستقبال الهواء، تكوين جزيئات السكر، أو مشهد تشبيهي لطيف).
+3. **قاعدة المونتاج الحاسمة (فيديو 10 ثوانٍ تتابعي بانتقالات سريعة يجمع كل التشبيهات):**
+   - المستخدمة أوضحت مشكلة المونتاج نصاً:
+     "في المونتاج، لما أعمل فيديو 10 ثواني وأحطه في المونتاج وأنا بتكلم، الفيديو بيكون طويل ومشهد واحد والصوت مش ماشي مع الصورة! أنا عايزة بدل ما تعمل فيديوهين أو أكتر، تعمل فيديو واحد بس شامل كل التشبيهات اللي بتقولها كلام المعلمة. لو احتجت تعمل فيديو كمان عادي، بس قصدي يبقى في فيديو 10 ثواني فيه انتقالات كتير بما يتناسب مع الكلام اللي بتقوله المعلمة".
+   - **التعليمات الصارمة للتنفيذ:**
+     - الأصل هو توليد **فيديو رئيسي واحد مدته 10 ثوانٍ** لكل جزئية/دخلة، يجمع كل التشبيهات المذكورة في كلام المعلمة في **تسلسل حركي سريع بانتقالات متتابعة (Multi-scene dynamic sequence with rapid seamless cuts)**.
+     - يتم تقسيم الـ 10 ثوانٍ في نص البرومبت عبر مؤشرات زمنية دقيقة مثل: \`[0-3s]... [3-6s] Rapid transition to... [6-10s] Fast zoom to...\` لكي تتغير المشاهد والانتقالات بالتزامن التام مع سرعة كلام المعلمة فلا يشعر المشاهد بأي ملل أو بطء، ويكون الصوت ماشياً تماماً مع الصورة!
+     - إذا كانت الجزئية طويلة جداً وتتطلب استكمالاً، يمكن إضافة فيديو ثانٍ تتابعي مكمل بنفس الأسلوب.
 
-4. **توليد برومبت فيديو Flow لكل تشبيه ومشهد بصري ورد في كلام المعلمة:**
-   - إذا تضمن كلام المعلمة أكثر من تشبيه أو مشهد، يتم توليد برومبت فيديو منفصل لكل تشبيه لتجمعه المعلمة في المونتاج فوق صوتها.
+4. **صيغة البرومبت الإلزامية:**
+   \`A dynamic 10-second multi-scene sequence with rapid seamless transitions, precisely paced for teacher voiceover: [0-3s]: First visual action... [3-6s]: Rapid seamless transition to second visual action... [6-10s]: Quick dynamic transition/zoom to third visual action... Fast-paced visual storytelling, cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync.\`
 
 ### بقية قواعد الشرح والدرس (ثابتة وممتازة):
 1. تقسيم الدرس إلى جزيئات صغيرة متتالية متصلة وشاملة (بين 6 إلى 10 جزئيات علمية دقيقة دون إغفال أي معلومة).
@@ -75,12 +80,8 @@ export async function POST(req: NextRequest) {
     "analogyStory": "شرح التشبيهات الواقعية الواردة بالتفصيل...",
     "videoPrompts": [
       {
-        "shotTitle": "فيديو 1: عنوان التشبيه الأول الوارد في كلام المعلمة",
-        "prompt": "Cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. [Accurate scene description]. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync. Clean cinematic motion."
-      },
-      {
-        "shotTitle": "فيديو 2: عنوان التشبيه الثاني الوارد في كلام المعلمة",
-        "prompt": "Cute friendly 3D cartoon Pixar animation for children, soft rounded cheerful aesthetic, warm joyful lighting. [Accurate scene description]. Mute visual action only, strictly NO talking characters, NO mouth movement, NO lip sync. Fluid smooth motion."
+        "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات الدخلة متزامنة مع الصوت)",
+        "prompt": "A dynamic 10-second multi-scene sequence with rapid seamless cuts, perfectly synchronized with teacher voiceover pacing: [0-3s]: First visual action... [3-6s]: Rapid seamless transition to second visual action... [6-10s]: Quick dynamic transition/zoom to third visual action... High-energy visual progression, cute friendly 3D cartoon Pixar animation for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync."
       }
     ]
   },
@@ -96,12 +97,8 @@ export async function POST(req: NextRequest) {
       "textbookDefinition": "التعريف المكتوب في كتاب المدرسة المطلوب من الطالب حفظه وفهمه نصاً",
       "videoPrompts": [
         {
-          "shotTitle": "فيديو 1: عنوان المشهد أو التشبيه الأول لهذه الجزئية",
-          "prompt": "Cute friendly 3D cartoon Pixar style scientific visualization for children, soft rounded playful forms, vibrant glowing colors. [Accurate scientific action]. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync. Clean macro focus."
-        },
-        {
-          "shotTitle": "فيديو 2: عنوان المشهد أو التشبيه الثاني لهذه الجزئية",
-          "prompt": "Cute friendly 3D Pixar animation for children, playful cheerful style, vibrant warm lighting. [Complementary visual action]. Mute visual action only, strictly NO talking characters, NO mouth animation, NO lip sync."
+          "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات ونقاط الجزئية متزامنة مع الصوت)",
+          "prompt": "A dynamic 10-second multi-shot sequence with rapid seamless transitions, precisely paced for teacher voiceover: [0-3s]: First visual action... [3-7s]: Fast seamless transition to second visual action... [7-10s]: Quick dynamic zoom to third visual action... Fast visual progression, cute friendly 3D Pixar style for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
         }
       ]
     }
