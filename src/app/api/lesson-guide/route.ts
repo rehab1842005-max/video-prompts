@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const pdfFile = formData.get("pdfFile") as File | null;
-    const topic = formData.get("topic") as string || "";
+    const topic = (formData.get("topic") as string) || "";
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -30,60 +30,40 @@ export async function POST(req: NextRequest) {
     }
 
     const systemPrompt = `
-أنت كبير موجهي العلوم ومؤلف السيناريوهات التعليمية للأطفال وخبير فيديوهات الـ B-Roll الكرتونية ثلاثية الأبعاد اللطيفة للأطفال (Cute 3D Cartoon Pixar Style).
+أنت كبير موجهي العلوم ومؤلف السيناريوهات التعليمية للأطفال، وخبير تصميم عروض الباوربوينت التفاعلية المتحركة بالكامل (Animated PowerPoint Choreography) وخبير فيديوهات الـ B-Roll الكرتونية ثلاثية الأبعاد اللطيفة للأطفال (Cute 3D Cartoon Pixar Style).
 
 الموضوع المطلوب: ${topic ? topic : "اقرأ ملف الـ PDF وافهم الدرس منه أوتوماتيكياً بالكامل مهما كان الموضوع دون أي اختصار أو كبس للمعلومات"}.
 
-### ⚠️ القواعد الصارمة المحدثة (الشرح بالعامية المصرية ثابت كما هو + التركيز الدقيق على الفيديوهات):
-المستخدمة أكدت نصاً:
-"الشرح الكلام العامي جميل جداً وما تغيرش منه حاجة، إحنا حالياً بنركز على الفيديوهات:
-1. أنا مش عايزة الفيديو بيتكلم! أنا اللي هتكلم، فأهم حاجة عندي الفيديو يكون صح ويكون المطلوب يتنفذ.
-2. عايزة فيديو بأشكال كرتونية تنفع للأطفال، حاجات 3D كده للأطفال على أشكال لطيفة ومبهجة".
+### ⚠️ القواعد الصارمة المحدثة (الشرح بالعامية المصرية ثابت كما هو + تفصيل أنيميشن الباوربوينت بالكامل + فيديوهات Flow):
+1. **الشرح وكلام المعلمة بالعامية المصرية ثابت كما هو (ممنوع تغييره أو اختصاره):**
+   - المستخدمة أكدت نصاً: "الشرح زي ما هو، جميل وكل حاجة، بس عايزة الجزء اللي هو الباوربوينت كله عبارة عن أنيميشن بيتحرك وكل حاجة باينة بالتفصيل: اشرح المفروض إيه اللي يحصل في الباوربوينت، وإيه اللي يتحرك ويروح فين ويجي منين. اشرح كل حاجة بالتفصيل في الباوربوينت."
+2. **خطة أنيميشن الباوربوينت التفصيلية (pptAnimationPlan) بعد كل جزئية شرح وفي الدخلة والتجربة:**
+   - يجب أن يكون عرض الباوربوينت كله عبارة عن **أنيميشن حي بيتحرك قدام عين الطفل** (ممنوع الشرائح الثابتة المملة!).
+   - في كل جزئية، اشرح بالتفصيل الممل داخل \`pptAnimationPlan\`:
+     - \`slideTitle\`: عنوان شريحة الباوربوينت.
+     - \`slideLayout\`: وصف تفصيلي لتصميم الشريحة وتوزيع العناصر المفككة عليها قبل بدء الحركة (ماذا يوجد في اليمين، اليسار، المنتصف، الأعلى، الأسفل).
+     - \`movements\`: مصفوفة من الحركات المتسلسلة (على الأقل 4 حركات تفصيلية في كل شريحة)، كل حركة توضح بدقة:
+       - \`stepNumber\`: رقم الحركة (1، 2، 3، 4...).
+       - \`trigger\`: توقيت التشغيل في الباوربوينت (مثلاً: "كليك 1 - عند بدء الشريحة" أو "تلقائي بعد الحركة السابقة After Previous").
+       - \`element\`: إيه العنصر اللي هيتحرك بالظبط (اسم الشكل أو الرسمة الكرتونية أو السهم أو الجزيء أو البطاقة).
+       - \`fromWhere\`: **يجي منين** (المكان الدقيق الذي يدخل منه العنصر أو يبدأ منه الحركة على الشريحة، مثلاً: "من أسفل الشريحة داخل التربة البنية" أو "من خارج الشريحة جهة اليمين").
+       - \`toWhere\`: **يروح فين** (المسار الدقيق والمكان النهائي الذي يتجه إليه العنصر ويستقر فيه، مثلاً: "يصعد في مسار رأسي داخل أنبوبة الساق حتى يدخل قلب الورقة الخضراء في الأعلى").
+       - \`animationType\`: نوع الأنيميشن في الباوربوينت (مثل: \`Fly In دخول طيران + Motion Path مسار حركة مخصص\`، \`Zoom تكبير تدريجي\`، \`Pulse نبض ووميض متكرر\`، \`Wipe مسح تدريجي\`، \`Spin دوران\`).
+       - \`detailedAction\`: شرح تفصيلي كامل لإيه اللي بيحصل في الحركة دي بالظبط وإزاي العناصر بتتفاعل وتتحرك مع بعض في الشريحة.
+       - \`syncWithTeacher\`: مع أي جملة من كلام المعلمة تتحرك هذه الخطوة.
 
-### قواعد صياغة برومبتات الفيديو لموقع Flow (مهمة وحاسمة جداً بناءً على تجربة المونتاج):
-1. **ممنوع بتاتاً أي شخصيات تتكلم أو تحرك فمها (STRICTLY NO TALKING, NO LIP-SYNC, NO SPEAKING HEADS):**
-   - المعلمة هي التي تسجل صوتها في المونتاج (CapCut). الفيديو عبارة عن لقطات توضيحية بصرية حركية صامتة (Pure visual B-roll action).
-   - ممنوع ظهور وجوه تتحدث للكاميرا أو فم يتحرك أو مقدمين.
-   - يجب كتابة هذه الجملة الصريحة في كل برومبت:
-     \`Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync. Pure visual storytelling for voiceover overlay.\`
+3. **قواعد صياغة برومبتات الفيديو لموقع Flow (مهمة وحاسمة جداً):**
+   - ممنوع بتاتاً أي شخصيات تتكلم أو تحرك فمها (STRICTLY NO TALKING, NO LIP-SYNC, NO SPEAKING HEADS).
+   - الأسلوب البصري: كرتوني ثلاثي الأبعاد لطيف جداً ومناسب للأطفال (Cute Friendly 3D Cartoon Pixar Style).
+   - فيديو رئيسي واحد مدته 10 ثوانٍ لكل جزئية/دخلة، يجمع كل التشبيهات المذكورة في كلام المعلمة في تسلسل حركي سريع بانتقالات متتابعة مقسمة زمنياً \`[0-3s]... [3-6s]... [6-10s]...\`.
 
-2. **الأسلوب البصري: كرتوني ثلاثي الأبعاد لطيف جداً ومناسب للأطفال (Cute Friendly 3D Cartoon Pixar Style):**
-   - أشكال ناعمة ومستديرة ولطيفة جداً للأطفال (Soft rounded playful shapes, charming, cheerful vibrant colors, warm inviting lighting).
-   - تجسيد كرتوني ثلاثي الأبعاد ممتع ومبهج للعين (قطرات ماء لطيفة ومستديرة، جزيئات ملونة جذابة، خلايا وأنسجة ثلاثية الأبعاد بأسلوب كرتوني ساحر ومحبب للطفل دون أي شكل معقد أو مخيف).
+4. **تنظيم كلام الشرح في (introHook و scientificBeats و experiments و lessonConclusion):**
+   - المقدمة الثابتة في \`introHook.teacherScript\` (3 فقرات: التحية وعنوان الدرس ⬅ أول مقدمة عن الدرس ⬅ تشبيه البداية المشوق).
+   - تقسيم الدرس في \`scientificBeats\` إلى جزئيات متتالية شاملة (بين 6 إلى 10 جزئيات علمية دقيقة دون إغفال أي معلومة).
+   - التجربة العملية المفصلة في \`experiments\` (مع \`introAndMaterialsSpeech\` و \`steps\` و \`observationAndConclusionSpeech\` و \`pptAnimationPlan\`).
+   - ⚠️ تنبيه تقني صارم: يجب أن يكون الناتج كائن JSON صالح تماماً (Strictly Valid JSON). ممنوع تماماً استخدام علامات التنصيص المزدوجة (") داخل النصوص العربية أو الإنجليزية؛ استخدم الأقواس العادية () أو العلامات المفردة (') بدلاً منها داخل النصوص.
 
-3. **قاعدة المونتاج الحاسمة (فيديو 10 ثوانٍ تتابعي بانتقالات سريعة يجمع كل التشبيهات):**
-   - المستخدمة أوضحت مشكلة المونتاج نصاً:
-     "في المونتاج، لما أعمل فيديو 10 ثواني وأحطه في المونتاج وأنا بتكلم، الفيديو بيكون طويل ومشهد واحد والصوت مش ماشي مع الصورة! أنا عايزة بدل ما تعمل فيديوهين أو أكتر، تعمل فيديو واحد بس شامل كل التشبيهات اللي بتقولها كلام المعلمة. لو احتجت تعمل فيديو كمان عادي، بس قصدي يبقى في فيديو 10 ثواني فيه انتقالات كتير بما يتناسب مع الكلام اللي بتقوله المعلمة".
-   - **التعليمات الصارمة للتنفيذ:**
-     - الأصل هو توليد **فيديو رئيسي واحد مدته 10 ثوانٍ** لكل جزئية/دخلة، يجمع كل التشبيهات المذكورة في كلام المعلمة في **تسلسل حركي سريع بانتقالات متتابعة (Multi-scene dynamic sequence with rapid seamless cuts)**.
-     - يتم تقسيم الـ 10 ثوانٍ في نص البرومبت عبر مؤشرات زمنية دقيقة مثل: \`[0-3s]... [3-6s] Rapid transition to... [6-10s] Fast zoom to...\` لكي تتغير المشاهد والانتقالات بالتزامن التام مع سرعة كلام المعلمة فلا يشعر المشاهد بأي ملل أو بطء، ويكون الصوت ماشياً تماماً مع الصورة!
-     - إذا كانت الجزئية طويلة جداً وتتطلب استكمالاً، يمكن إضافة فيديو ثانٍ تتابعي مكمل بنفس الأسلوب.
-
-4. **صيغة البرومبت الإلزامية:**
-   \`A dynamic 10-second multi-scene sequence with rapid seamless transitions, precisely paced for teacher voiceover: [0-3s]: First visual action... [3-6s]: Rapid seamless transition to second visual action... [6-10s]: Quick dynamic transition/zoom to third visual action... Fast-paced visual storytelling, cute friendly 3D cartoon Pixar animation for children, soft rounded playful style, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync.\`
-
-### بقية قواعد الشرح والدرس (تنظيم وتسلسل احترافي مع الحفاظ الكامل على كل التشبيهات الرائعة):
-1. **المقدمة الثابتة دائماً في `introHook.teacherScript` (إلزامي في كل درس):**
-   يجب تنظيم نص `introHook.teacherScript` في 3 فقرات واضحة ومنفصلة بسطرين (`\\n\\n`) بهذا التسلسل الثابت دائماً:
-   - **الفقرة الأولى (التحية الثابتة وعنوان الدرس):** تبدأ دائماً بـ: "السلام عليكم ورحمة الله وبركاته، أهلاً بيكم يا أبطال وعلماء المستقبل في درسنا الجديد النهاردة بعنوان: [عنوان الدرس]."
-   - **الفقرة الثانية (أول مقدمة عن الدرس):** تمهيد مبسط وواضح يشرح للطفل فكرة الدرس الأساسية وأهميته في حياتنا بشكل سهل قبل الدخول في التشبيه.
-   - **الفقرة الثالثة (تشبيه البداية المشوق):** نفس التشبيهات الحياتية القوية والممتعة بالعامية المصرية بدون حذف أو تقصير، مع ربطها بسلاسة بالدرس.
-2. **تنظيم كلام الشرح في `scientificBeats` بتسلسل سهل ومربوط:**
-   - تقسيم الدرس إلى جزئيات صغيرة متتالية متصلة وشاملة (بين 6 إلى 10 جزئيات علمية دقيقة دون إغفال أي معلومة).
-   - **تنظيم النص:** قسمي `teacherScript` في كل جزئية إلى فقرات قصيرة مرتبة ومنفصلة بـ `\\n\\n` (جملة ربط بالجزئية السابقة ⬅ الشرح والتشبيه الممتع كما هو ⬅ توضيح الكيف واللماذا ⬅ الربط بالمصطلح في الكتاب)، مع الحفاظ على كل التشبيهات كما هي تماماً.
-   - ذكر السؤال التفاعلي وإجابته المتوقعة، والمصطلح والتعريف في الكتاب.
-3. **التجربة العملية الواضحة والمتسلسلة وكل التفاصيل ظاهرة في الكلام (`experiments`):**
-   - التمهيد السلس والانتقال للتجربة العملية في `experimentTransition.teacherSpeech`.
-   - في كل تجربة داخل `experiments`:
-     - إضافة حقل `introAndMaterialsSpeech`: كلام المعلمة المفصل في بداية التجربة تذكر فيه بصوتها **عنوان التجربة + الهدف منها + كل الأدوات الموجودة على الطاولة أداة بأداة** بتسلسل واضح.
-     - تفكيك التجربة إلى خطوات مرقمة (1، 2، 3...) بحيث يبدأ `teacherSpeech` في كل خطوة بربط تسلسلي واضح (الخطوة الأولى... ثم الخطوة التانية... ثم الخطوة التالتة...) ويذكر بوضوح **كل التفاصيل في الكلام**: ماذا نفعل، ولماذا نفعله، وأي احتياطات أمان (مثل التسخين في حمام مائي) داخل كلام المعلمة نفسه + فيديو Flow لكل خطوة.
-     - إضافة حقل `observationAndConclusionSpeech`: كلام المعلمة في نهاية التجربة تشرح فيه بصوتها **كل تفاصيل الملاحظة بالعين** (التغير اللوني أو النتيجة بدقة) ثم **الاستنتاج العلمي النهائي** بوضوح.
-4. **خاتمة درس متسلسلة وممتازة (`lessonConclusion`):**
-   - إضافة قسم `lessonConclusion` في نهاية الدرس يلخص للطفل رحلة الدرس والتجربة بتسلسل سهل ومشجع، ويربط كل النقاط معاً، ويختم بـ: "والسلام عليكم ورحمة الله وبركاته".
-5. السبورة الذكية وأسئلة الفهم الشفوية.
-6. ⚠️ تنبيه تقني صارم: يجب أن يكون الناتج كائن JSON صالح تماماً (Strictly Valid JSON). تجنب وضع علامات تنصيص مزدوجة (") داخل نصوص الحوار إلا إذا كانت مسبوقة بـ backslash (\\") لتفادي أخطاء الـ JSON syntax.
-
-المطلوب: توليد كائن JSON دقيق ومفصل جداً وفق الهيكل التالي بالضبط:
+المطلوب: توليد كائن JSON دقيق ومفصل جداً وفق الهيكل التالي بالظبط:
 {
   "lessonTitle": "عنوان الدرس الدقيق المستخرج أوتوماتيكياً",
   "detectedTopic": "المجال والموضوع العلمي المستخرج بالتفصيل",
@@ -91,6 +71,22 @@ export async function POST(req: NextRequest) {
     "hookTitle": "عنوان الدخلة التمهيدية",
     "teacherScript": "✨ أولاً - التحية وعنوان الدرس:\\nالسلام عليكم ورحمة الله وبركاته! أهلاً بيكم يا أبطال وعلماء المستقبل في درسنا النهاردة بعنوان: [...]\\n\\n🌱 ثانياً - مقدمة الدرس:\\n[أول مقدمة مبسطة وواضحة عن الدرس وأهميته]\\n\\n💡 ثالثاً - تشبيه البداية:\\n[كلام المعلمة المشوق بالعامية المصرية والتشبيهات الممتعة بالتفصيل...]",
     "analogyStory": "شرح التشبيهات الواقعية الواردة بالتفصيل...",
+    "pptAnimationPlan": {
+      "slideTitle": "شريحة الدخلة التمهيدية والتشبيه الحياتي",
+      "slideLayout": "وصف تفصيلي لتصميم الشريحة وتوزيع العناصر عليها قبل بدء الأنيميشن...",
+      "movements": [
+        {
+          "stepNumber": 1,
+          "trigger": "كليك 1 (مع بداية صوت المعلمة)",
+          "element": "اسم العنصر المتحرك في الباوربوينت",
+          "fromWhere": "يجي منين بالتفصيل (مثلاً: يدخل من أقصى يمين الشريحة...)",
+          "toWhere": "يروح فين بالتفصيل (مثلاً: يتحرك نحو منتصف الشريحة بجوار...)",
+          "animationType": "نوع الأنيميشن في الباوربوينت (Fly In + Motion Path / Zoom / Pulse)",
+          "detailedAction": "شرح كل حاجة بتحصل في الحركة دي بالتفصيل الممل...",
+          "syncWithTeacher": "مع جملة المعلمة لما بتقول: (...)"
+        }
+      ]
+    },
     "videoPrompts": [
       {
         "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات الدخلة متزامنة مع الصوت)",
@@ -108,6 +104,22 @@ export async function POST(req: NextRequest) {
       "expectedAnswer": "الإجابة النموذجية المتوقعة من الطلاب",
       "textbookTerm": "المصطلح العلمي كما ورد في كتاب المدرسة نصاً",
       "textbookDefinition": "التعريف المكتوب في كتاب المدرسة المطلوب من الطالب حفظه وفهمه نصاً",
+      "pptAnimationPlan": {
+        "slideTitle": "عنوان شريحة الباوربوينت المتحركة لهذه الجزئية",
+        "slideLayout": "وصف كامل لتصميم الشريحة وأماكن العناصر المفككة عليها قبل التحريك...",
+        "movements": [
+          {
+            "stepNumber": 1,
+            "trigger": "كليك 1 / تلقائي مع الصوت",
+            "element": "اسم العنصر أو الشكل الذي يتحرك",
+            "fromWhere": "يجي منين بالظبط على الشريحة",
+            "toWhere": "يروح فين بالظبط على الشريحة",
+            "animationType": "نوع الأنيميشن في الباوربوينت (Fly In / Motion Path / Zoom / Pulse / Wipe)",
+            "detailedAction": "شرح تفصيلي كامل لإيه اللي بيتحرك وإزاي بيتحرك ويتفاعل في الباوربوينت",
+            "syncWithTeacher": "يتزامن مع قول المعلمة: (...)"
+          }
+        ]
+      },
       "videoPrompts": [
         {
           "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات ونقاط الجزئية متزامنة مع الصوت)",
@@ -139,7 +151,23 @@ export async function POST(req: NextRequest) {
       "observationVideoPrompt": "Delightful 3D macro animation for children showing the visible color change and chemical reaction clearly in vibrant colors. Mute visual action, strictly NO talking characters.",
       "finalConclusion": "الاستنتاج العلمي النهائي الموسع والدقيق",
       "observationAndConclusionSpeech": "ودلوقتي تعالوا نشوف بعيوننا إيه اللي حصل بعد التجربة: [ذكر كل تفاصيل الملاحظة المرئية والنتيجة بالعامية الواضحة]\\n\\nوبكده نستنتج الاستنتاج المهم جداً ده: [ذكر الاستنتاج النهائي ببساطة وتسلسل]",
-      "safetyPrecautions": "احتياطات الأمان في المعمل"
+      "safetyPrecautions": "احتياطات الأمان في المعمل",
+      "pptAnimationPlan": {
+        "slideTitle": "شريحة الباوربوينت التفاعلية لخطوات التجربة المعملية",
+        "slideLayout": "وصف تصميم شريحة المعمل وتوزيع الأدوات عليها...",
+        "movements": [
+          {
+            "stepNumber": 1,
+            "trigger": "كليك 1",
+            "element": "أداة التجربة المتحركة",
+            "fromWhere": "تبدأ من رف الأدوات في يمين الشريحة",
+            "toWhere": "تتجه إلى منتصف طاولة المعمل",
+            "animationType": "Motion Path مسار حركة + Zoom",
+            "detailedAction": "وصف تفصيلي لحركة الأداة والتفاعل اللوني على الشريحة",
+            "syncWithTeacher": "مع شرح الخطوة في صوت المعلمة"
+          }
+        ]
+      }
     }
   ],
   "lessonConclusion": {
@@ -168,7 +196,8 @@ export async function POST(req: NextRequest) {
 
     const fallbackModels = [
       "gemini-3.5-flash",
-      "gemini-3.5-flash-lite"
+      "gemini-3.5-flash-lite",
+      "gemini-2.5-flash"
     ];
 
     let resultText = "";
@@ -180,8 +209,8 @@ export async function POST(req: NextRequest) {
         const res = await model.generateContent({
           contents: [{ role: "user", parts }],
           generationConfig: {
-            temperature: 0.35,
-            maxOutputTokens: 8192,
+            temperature: 0.3,
+            maxOutputTokens: 65536,
             responseMimeType: "application/json"
           }
         });
@@ -206,7 +235,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, guide: guideData });
   } catch (error: any) {
-    console.error("Error in lesson-guide route:", error);
+    console.warn("Handled error in lesson-guide route:", error?.message || error);
     return NextResponse.json({ error: error.message || "حدث خطأ أثناء إعداد دليل المعلمة" }, { status: 500 });
   }
 }
@@ -215,7 +244,51 @@ export async function POST(req: NextRequest) {
 // Robust Multi-Stage JSON Repair & Recovery
 // ==========================================
 
-function sanitizeUnescapedQuotes(jsonStr: string): string {
+function isLikelyStructuralCloseQuote(jsonStr: string, quoteIdx: number): boolean {
+  let i = quoteIdx + 1;
+  while (i < jsonStr.length && /\s/.test(jsonStr[i])) {
+    i++;
+  }
+  if (i >= jsonStr.length) return true;
+
+  const nextChar = jsonStr[i];
+  if (nextChar === "}" || nextChar === "]") {
+    return true;
+  }
+
+  if (nextChar === ":") {
+    // After ':', valid JSON must have '"', '{', '[', 'true', 'false', 'null', or a digit/minus
+    let j = i + 1;
+    while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
+    if (j >= jsonStr.length) return true;
+    const afterColon = jsonStr[j];
+    return (
+      afterColon === '"' ||
+      afterColon === "{" ||
+      afterColon === "[" ||
+      /[0-9\-tfn]/.test(afterColon)
+    );
+  }
+
+  if (nextChar === ",") {
+    // After ',', in valid JSON we must see '"', '{', '[', ']', '}', or a primitive literal
+    let j = i + 1;
+    while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
+    if (j >= jsonStr.length) return true;
+    const afterComma = jsonStr[j];
+    if (afterComma === "{" || afterComma === "[" || afterComma === "}" || afterComma === "]") {
+      return true;
+    }
+    if (afterComma === '"') {
+      return true;
+    }
+    return false;
+  }
+
+  return false;
+}
+
+function sanitizeControlCharsAndQuotes(jsonStr: string): string {
   let result = "";
   let inString = false;
   let isEscaped = false;
@@ -223,7 +296,23 @@ function sanitizeUnescapedQuotes(jsonStr: string): string {
   for (let i = 0; i < jsonStr.length; i++) {
     const ch = jsonStr[i];
 
-    if (ch === '\\' && inString) {
+    if (inString) {
+      if (ch === "\r") {
+        continue;
+      }
+      if (ch === "\n") {
+        result += "\\n";
+        isEscaped = false;
+        continue;
+      }
+      if (ch === "\t") {
+        result += "\\t";
+        isEscaped = false;
+        continue;
+      }
+    }
+
+    if (ch === "\\" && inString) {
       isEscaped = !isEscaped;
       result += ch;
       continue;
@@ -234,21 +323,10 @@ function sanitizeUnescapedQuotes(jsonStr: string): string {
         inString = true;
         result += ch;
       } else {
-        // Look ahead to check if this quote is a structural closing quote
-        let nextChar: string | null = null;
-        for (let j = i + 1; j < jsonStr.length; j++) {
-          const next = jsonStr[j];
-          if (!/\s/.test(next)) {
-            nextChar = next;
-            break;
-          }
-        }
-
-        if (nextChar === ':' || nextChar === ',' || nextChar === '}' || nextChar === ']' || nextChar === null) {
+        if (isLikelyStructuralCloseQuote(jsonStr, i)) {
           inString = false;
           result += ch;
         } else {
-          // Interior quote inside string value -> escape it
           result += '\\"';
         }
       }
@@ -270,16 +348,16 @@ function closeIncompleteJson(str: string): string {
 
   for (let i = 0; i < s.length; i++) {
     const ch = s[i];
-    if (ch === '\\' && inString) {
+    if (ch === "\\" && inString) {
       isEscaped = !isEscaped;
       continue;
     }
     if (ch === '"' && !isEscaped) {
       inString = !inString;
     } else if (!inString) {
-      if (ch === '{') stack.push('}');
-      else if (ch === '[') stack.push(']');
-      else if (ch === '}' || ch === ']') {
+      if (ch === "{") stack.push("}");
+      else if (ch === "[") stack.push("]");
+      else if (ch === "}" || ch === "]") {
         if (stack.length && stack[stack.length - 1] === ch) {
           stack.pop();
         }
@@ -292,7 +370,9 @@ function closeIncompleteJson(str: string): string {
     s += '"';
   }
 
+  // Strip any dangling key or trailing comma at the end before closing brackets
   s = s.replace(/,\s*$/, "");
+  s = s.replace(/,\s*"[^"]*"\s*:\s*$/, "");
   s = s.replace(/:\s*$/, ': ""');
 
   while (stack.length > 0) {
@@ -302,11 +382,81 @@ function closeIncompleteJson(str: string): string {
   return s;
 }
 
-function truncateToLastValidObject(str: string): string {
-  const lastClose = str.lastIndexOf("}");
-  if (lastClose === -1) return str;
-  const sub = str.substring(0, lastClose + 1);
-  return closeIncompleteJson(sub);
+function surgicalPositionalRepair(input: string): any {
+  let current = input;
+
+  for (let step = 0; step < 35; step++) {
+    try {
+      return JSON.parse(current);
+    } catch (err: any) {
+      const msg = String(err?.message || "");
+      const posMatch = msg.match(/position\s+(\d+)/i);
+      if (!posMatch) break;
+
+      const pos = parseInt(posMatch[1], 10);
+      if (isNaN(pos) || pos <= 0 || pos >= current.length) break;
+
+      if (msg.includes("Expected ',' or ']'") || msg.includes("Expected ',' or '}'")) {
+        // Check if there is an unescaped quote right before pos that prematurely ended a string
+        const prevQuoteIdx = current.lastIndexOf('"', pos - 1);
+        if (
+          prevQuoteIdx > 0 &&
+          current[prevQuoteIdx - 1] !== "\\" &&
+          pos - prevQuoteIdx <= 6
+        ) {
+          const charAtPos = current[pos];
+          if (charAtPos !== '"' && charAtPos !== "{" && charAtPos !== "[") {
+            current =
+              current.slice(0, prevQuoteIdx) +
+              '\\"' +
+              current.slice(prevQuoteIdx + 1);
+            continue;
+          }
+        }
+        // Otherwise insert a comma at pos
+        current = current.slice(0, pos) + "," + current.slice(pos);
+        continue;
+      }
+
+      if (msg.includes("Expected ':' after property name")) {
+        const prevQuoteIdx = current.lastIndexOf('"', pos - 1);
+        if (prevQuoteIdx > 0 && current[prevQuoteIdx - 1] !== "\\") {
+          current =
+            current.slice(0, prevQuoteIdx) +
+            '\\"' +
+            current.slice(prevQuoteIdx + 1);
+          continue;
+        }
+      }
+
+      if (msg.includes("Unexpected token") || msg.includes("Expected double-quoted property name")) {
+        // Remove trailing comma before } or ] around pos
+        const sliceAround = current.slice(Math.max(0, pos - 10), pos + 2);
+        if (/,\s*[}\]]/.test(sliceAround)) {
+          const commaIdx = current.lastIndexOf(",", pos);
+          if (commaIdx !== -1) {
+            current = current.slice(0, commaIdx) + current.slice(commaIdx + 1);
+            continue;
+          }
+        }
+      }
+
+      // If we can't fix in-place at pos, truncate cleanly to the last complete '}' BEFORE pos
+      const safeBraceBeforeError = current.lastIndexOf("}", pos - 1);
+      if (safeBraceBeforeError > 50) {
+        const candidate = closeIncompleteJson(current.slice(0, safeBraceBeforeError + 1));
+        try {
+          return JSON.parse(candidate);
+        } catch (_) {
+          current = candidate;
+        }
+      } else {
+        break;
+      }
+    }
+  }
+
+  return null;
 }
 
 function repairAndParseJson(rawText: string): any {
@@ -333,46 +483,46 @@ function repairAndParseJson(rawText: string): any {
     return JSON.parse(cleaned);
   } catch (_) {}
 
-  // Attempt 2: Sanitize interior unescaped quotes
-  try {
-    const quoteSanitized = sanitizeUnescapedQuotes(cleaned);
-    return JSON.parse(quoteSanitized);
-  } catch (_) {}
-
-  // Attempt 3: Fix missing commas and trailing commas
-  const fixed = cleaned
+  // Attempt 2: Fix missing commas between adjacent objects/arrays/strings and trailing commas
+  const commaFixed = cleaned
     .replace(/}\s*\{/g, "},{")
     .replace(/\]\s*\[/g, "],[")
+    .replace(/"\s*\n\s*"/g, '",\n"')
     .replace(/,\s*([}\]])/g, "$1");
 
   try {
-    return JSON.parse(fixed);
+    return JSON.parse(commaFixed);
   } catch (_) {}
 
-  // Attempt 4: Sanitize quotes on fixed comma string
+  // Attempt 3: Sanitize control chars and interior unescaped quotes
+  const sanitized = sanitizeControlCharsAndQuotes(commaFixed);
   try {
-    const quoteSanitizedFixed = sanitizeUnescapedQuotes(fixed);
-    return JSON.parse(quoteSanitizedFixed);
+    return JSON.parse(sanitized);
   } catch (_) {}
 
-  // Attempt 5: Handle cut-off / incomplete JSON structure
+  // Attempt 4: Close incomplete JSON on sanitized
   try {
-    const closed = closeIncompleteJson(fixed);
-    return JSON.parse(closed);
+    return JSON.parse(closeIncompleteJson(sanitized));
   } catch (_) {}
 
-  // Attempt 6: Truncate back to last complete JSON object
-  try {
-    const truncated = truncateToLastValidObject(fixed);
-    return JSON.parse(truncated);
-  } catch (_) {}
+  // Attempt 5: Surgical positional repair on sanitized & commaFixed
+  const surgical1 = surgicalPositionalRepair(sanitized);
+  if (surgical1) return surgical1;
 
-  // Attempt 7: Truncate + sanitize quotes
-  try {
-    const truncatedWithQuotes = sanitizeUnescapedQuotes(truncateToLastValidObject(cleaned));
-    return JSON.parse(truncatedWithQuotes);
-  } catch (finalErr: any) {
-    console.error("All JSON repair attempts failed. Raw snippet:", rawText.slice(0, 300));
-    throw new Error("تعذر فك شفرة استجابة الذكاء الاصطناعي، يرجى المحاولة مرة أخرى.");
+  const surgical2 = surgicalPositionalRepair(commaFixed);
+  if (surgical2) return surgical2;
+
+  // Attempt 6: Progressive backward truncation to find the largest valid prefix
+  let searchPos = sanitized.length;
+  for (let i = 0; i < 20; i++) {
+    const braceIdx = sanitized.lastIndexOf("}", searchPos - 1);
+    if (braceIdx <= 50) break;
+    searchPos = braceIdx;
+    try {
+      const candidate = closeIncompleteJson(sanitized.slice(0, braceIdx + 1));
+      return JSON.parse(candidate);
+    } catch (_) {}
   }
+
+  throw new Error("تعذر فك شفرة استجابة الذكاء الاصطناعي، يرجى المحاولة مرة أخرى.");
 }
