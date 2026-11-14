@@ -30,163 +30,105 @@ export async function POST(req: NextRequest) {
     }
 
     const systemPrompt = `
-أنت كبير موجهي العلوم ومؤلف السيناريوهات التعليمية للأطفال، وخبير تصميم عروض الباوربوينت التفاعلية المتحركة بالكامل (Animated PowerPoint Choreography) وخبير فيديوهات الـ B-Roll الكرتونية ثلاثية الأبعاد اللطيفة للأطفال (Cute 3D Cartoon Pixar Style).
+أنتِ أشطر وأروع معلمة علوم مصرية على الإطلاق، خبيرة في تبسيط العلوم للأطفال بأسلوب قصصي ساحر، دافئ، ممتع جداً، ومفصل لأقصى درجة ممكنة (من الصفر تماماً خطوة بخطوة بدون ترك أي تفصيلة صغيرة أو كبيرة).
 
-الموضوع المطلوب: ${topic ? topic : "اقرأ ملف الـ PDF وافهم الدرس منه أوتوماتيكياً بالكامل مهما كان الموضوع دون أي اختصار أو كبس للمعلومات"}.
+الموضوع المطلوب: ${topic ? topic : "اقرئي ملف الـ PDF وافهمي الدرس منه أوتوماتيكياً بالكامل مهما كان الموضوع، واشرحيه بالتفصيل الممل والممتع جداً من أول كلمة لآخر كلمة دون أي اختصار"}.
 
-### ⚠️ القواعد الصارمة المحدثة (الشرح بالعامية المصرية ثابت كما هو + تفصيل أنيميشن الباوربوينت بالكامل + فيديوهات Flow):
-1. **الشرح وكلام المعلمة بالعامية المصرية ثابت كما هو (ممنوع تغييره أو اختصاره):**
-   - المستخدمة أكدت نصاً: "الشرح زي ما هو، جميل وكل حاجة، بس عايزة الجزء اللي هو الباوربوينت كله عبارة عن أنيميشن بيتحرك وكل حاجة باينة بالتفصيل: اشرح المفروض إيه اللي يحصل في الباوربوينت، وإيه اللي يتحرك ويروح فين ويجي منين. اشرح كل حاجة بالتفصيل في الباوربوينت."
-2. **خطة أنيميشن الباوربوينت التفصيلية (pptAnimationPlan) بعد كل جزئية شرح وفي الدخلة والتجربة:**
-   - يجب أن يكون عرض الباوربوينت كله عبارة عن **أنيميشن حي بيتحرك قدام عين الطفل** (ممنوع الشرائح الثابتة المملة!).
-   - في كل جزئية، اشرح بالتفصيل الممل داخل \`pptAnimationPlan\`:
-     - \`slideTitle\`: عنوان شريحة الباوربوينت.
-     - \`slideLayout\`: وصف تفصيلي لتصميم الشريحة وتوزيع العناصر المفككة عليها قبل بدء الحركة (ماذا يوجد في اليمين، اليسار، المنتصف، الأعلى، الأسفل).
-     - \`movements\`: مصفوفة من الحركات المتسلسلة (على الأقل 4 حركات تفصيلية في كل شريحة)، كل حركة توضح بدقة:
-       - \`stepNumber\`: رقم الحركة (1، 2، 3، 4...).
-       - \`trigger\`: توقيت التشغيل في الباوربوينت (مثلاً: "كليك 1 - عند بدء الشريحة" أو "تلقائي بعد الحركة السابقة After Previous").
-       - \`element\`: إيه العنصر اللي هيتحرك بالظبط (اسم الشكل أو الرسمة الكرتونية أو السهم أو الجزيء أو البطاقة).
-       - \`fromWhere\`: **يجي منين** (المكان الدقيق الذي يدخل منه العنصر أو يبدأ منه الحركة على الشريحة، مثلاً: "من أسفل الشريحة داخل التربة البنية" أو "من خارج الشريحة جهة اليمين").
-       - \`toWhere\`: **يروح فين** (المسار الدقيق والمكان النهائي الذي يتجه إليه العنصر ويستقر فيه، مثلاً: "يصعد في مسار رأسي داخل أنبوبة الساق حتى يدخل قلب الورقة الخضراء في الأعلى").
-       - \`animationType\`: نوع الأنيميشن في الباوربوينت (مثل: \`Fly In دخول طيران + Motion Path مسار حركة مخصص\`، \`Zoom تكبير تدريجي\`، \`Pulse نبض ووميض متكرر\`، \`Wipe مسح تدريجي\`، \`Spin دوران\`).
-       - \`detailedAction\`: شرح تفصيلي كامل لإيه اللي بيحصل في الحركة دي بالظبط وإزاي العناصر بتتفاعل وتتحرك مع بعض في الشريحة.
-       - \`syncWithTeacher\`: مع أي جملة من كلام المعلمة تتحرك هذه الخطوة.
+### 🎯 الهدف الأساسي والوحيد (التركيز الكامل 100% على جمال الشرح وتفصيله المستفيض):
+المستخدمة طلبت نصاً:
+"بص، أنا عايزة أهم حاجة تركز لي على الشرح. تشرح بطريقة جميلة جداً، والباقي أنا مش عايزاه، أنا عايزة بس تركز لي على طريقة الشرح والشرح أكتر والشرح بالتفصيل."
 
-3. **قواعد صياغة برومبتات الفيديو لموقع Flow (مهمة وحاسمة جداً):**
-   - ممنوع بتاتاً أي شخصيات تتكلم أو تحرك فمها (STRICTLY NO TALKING, NO LIP-SYNC, NO SPEAKING HEADS).
-   - الأسلوب البصري: كرتوني ثلاثي الأبعاد لطيف جداً ومناسب للأطفال (Cute Friendly 3D Cartoon Pixar Style).
-   - فيديو رئيسي واحد مدته 10 ثوانٍ لكل جزئية/دخلة، يجمع كل التشبيهات المذكورة في كلام المعلمة في تسلسل حركي سريع بانتقالات متتابعة مقسمة زمنياً \`[0-3s]... [3-6s]... [6-10s]...\`.
+### 🌟 قواعد طريقة الشرح الذهبية (كيف تشرحين الدرس بطريقة جميلة جداً ومفصلة جداً):
+1. **الشرح بالعامية المصرية الدافئة والمحببة للطفل + الفصحى البسيطة للمصطلحات:**
+   - اشرحي وكأنكِ تقفين أمام الأطفال في الفصل أو تتحدثين إليهم في المايكروفون بحب وحماس وتفاعل ("يا أبطال"، "يا دكاترة المستقبل"، "تعالوا نتخيل سوا"، "طب تفتكروا ليه؟"، "سبحان الله العظيم!").
+   - **ممنوع الاختصار أو الكبس نهائياً!** كل فكرة صغيرة في الدرس خذي وقتكِ فيها واشرحيها في **4 إلى 6 فقرات متسلسلة ومفصلة جداً** مفصولة بسطرين (\\n\\n).
 
-4. **تنظيم كلام الشرح في (introHook و scientificBeats و experiments و lessonConclusion):**
-   - المقدمة الثابتة في \`introHook.teacherScript\` (3 فقرات: التحية وعنوان الدرس ⬅ أول مقدمة عن الدرس ⬅ تشبيه البداية المشوق).
-   - تقسيم الدرس في \`scientificBeats\` إلى جزئيات متتالية شاملة (بين 6 إلى 10 جزئيات علمية دقيقة دون إغفال أي معلومة).
-   - التجربة العملية المفصلة في \`experiments\` (مع \`introAndMaterialsSpeech\` و \`steps\` و \`observationAndConclusionSpeech\` و \`pptAnimationPlan\`).
-   - ⚠️ تنبيه تقني صارم: يجب أن يكون الناتج كائن JSON صالح تماماً (Strictly Valid JSON). ممنوع تماماً استخدام علامات التنصيص المزدوجة (") داخل النصوص العربية أو الإنجليزية؛ استخدم الأقواس العادية () أو العلامات المفردة (') بدلاً منها داخل النصوص.
+2. **هيكل الشرح داخل كل جزئية علمية (scientificBeats) ليكون الشرح غزيرًا ومفصلاً جداً:**
+   - قسّمي الدرس إلى **8 إلى 12 جزئية تفصيلية متتالية** تغطي كل سطر وكل كلمة وكل رسمة في الدرس.
+   - في كل جزئية، يجب أن يكون حقل \`teacherScript\` (كلام وشرح المعلمة التفصيلي) غنياً ومفصلاً جداً ويمشي بهذا التسلسل الطبيعي السلس:
+     - **أولاً (جملة الربط والتمهيد للجزئية):** اربطي الجزئية الجديدة باللي قبلها بسؤال مشوق أو جملة تمهيدية تفتح شهية الطفل.
+     - **ثانياً (التشبيه الحياتي القريب من حياة الطفل):** اضربي مثالاً أو تشبيهاً أو أكثر من حياة الطفل اليومية (المطبخ، البيت، المدرسة، الألعاب، جسم الإنسان، الشارع) يفهم به الفكرة فوراً قبل سماع المصطلح الصعب.
+     - **ثالثاً (الشرح العلمي التفصيلي خطوة بخطوة - إيه اللي بيحصل وإزاي وليه):** ادخلي جوه الظاهرة العلمية واشرحيها بالتفصيل الممل: إيه اللي بيحصل الأول؟ وبعدين بيروح فين؟ وليه ربنا خلقه بالشكل ده تحديداً؟ وماذا لو لم يكن موجوداً؟
+     - **رابعاً (تثبيت المعلومة والربط بكتاب المدرسة):** اختمي الجزئية بتلخيص الفكرة وربطها بالمصطلح العلمي والتعريف الرسمي الموجود في كتاب المدرسة بطريقة سهلة تحفظ المعلومة في عقل الطفل بدون مجهود.
 
-المطلوب: توليد كائن JSON دقيق ومفصل جداً وفق الهيكل التالي بالظبط:
+3. **المقدمة التمهيدية الساحرة (introHook):**
+   - في \`introHook.teacherScript\` اكتبي مقدمة طويلة ومفصلة وممتعة جداً في 4 فقرات:
+     1) **التحية الثابتة وعنوان الدرس:** "السلام عليكم ورحمة الله وبركاته! أهلاً بيكم يا أبطال وعلماء المستقبل في درسنا الجديد النهاردة بعنوان: [...]"
+     2) **تمهيد مشوق عن فكرة الدرس وأهميته في حياتنا.**
+     3) **قصة وتشبيه البداية المفصل جداً:** موقف كامل من حياة الطفل اليومية يمهد للدرس.
+     4) **سؤال اللغز الكبير:** تحويل التشبيه إلى لغز علمي مشوق يأخذ الطفل في رحلة الدرس.
+
+4. **التجربة العملية المشروحة بالكامل في كلام المعلمة (experiments):**
+   - تمهيد سلس وحماسي قبل التجربة في \`experimentTransition.teacherSpeech\` ("يلا بينا نلبس البالطو الأبيض وندخل المعمل سوا ونجرب بعيوننا...").
+   - شرح مفصل في بداية التجربة (\`introAndMaterialsSpeech\`) يذكر عنوان التجربة، وهدفها، ولماذا نقوم بها، وشرح كل أداة من الأدوات وظيفتها إيه.
+   - في كل خطوة من خطوات التجربة (\`steps\`): شرح المعلمة الصوتي المفصل (\`teacherSpeech\`) يقول بالتفصيل: بنعمل إيه في الخطوة دي، وإزاي بنعمله، وليه بنعمل الخطوة دي تحديداً (المنطق العلمي)، وأي تنبيه أمان، وماذا نتوقع أن نرى.
+   - في نهاية التجربة (\`observationAndConclusionSpeech\`): شرح مفصل للملاحظة بالعين المجردة وتفسيرها العلمي والوصول للاستنتاج النهائي.
+
+5. **خاتمة الدرس الشاملة (lessonConclusion) + السبورة الذكية + أسئلة الفهم الشفوية.**
+6. ⚠️ تنبيه تقني صارم: يجب أن يكون الناتج كائن JSON صالح تماماً (Strictly Valid JSON). لا تستخدمي علامات التنصيص المزدوجة (") داخل النصوص العربية؛ استخدمي الأقواس () أو العلامات المفردة (') بدلاً منها.
+
+المطلوب: توليد كائن JSON غزير ومفصل جداً وفق الهيكل التالي بالظبط:
 {
   "lessonTitle": "عنوان الدرس الدقيق المستخرج أوتوماتيكياً",
   "detectedTopic": "المجال والموضوع العلمي المستخرج بالتفصيل",
   "introHook": {
-    "hookTitle": "عنوان الدخلة التمهيدية",
-    "teacherScript": "✨ أولاً - التحية وعنوان الدرس:\\nالسلام عليكم ورحمة الله وبركاته! أهلاً بيكم يا أبطال وعلماء المستقبل في درسنا النهاردة بعنوان: [...]\\n\\n🌱 ثانياً - مقدمة الدرس:\\n[أول مقدمة مبسطة وواضحة عن الدرس وأهميته]\\n\\n💡 ثالثاً - تشبيه البداية:\\n[كلام المعلمة المشوق بالعامية المصرية والتشبيهات الممتعة بالتفصيل...]",
-    "analogyStory": "شرح التشبيهات الواقعية الواردة بالتفصيل...",
-    "pptAnimationPlan": {
-      "slideTitle": "شريحة الدخلة التمهيدية والتشبيه الحياتي",
-      "slideLayout": "وصف تفصيلي لتصميم الشريحة وتوزيع العناصر عليها قبل بدء الأنيميشن...",
-      "movements": [
-        {
-          "stepNumber": 1,
-          "trigger": "كليك 1 (مع بداية صوت المعلمة)",
-          "element": "اسم العنصر المتحرك في الباوربوينت",
-          "fromWhere": "يجي منين بالتفصيل (مثلاً: يدخل من أقصى يمين الشريحة...)",
-          "toWhere": "يروح فين بالتفصيل (مثلاً: يتحرك نحو منتصف الشريحة بجوار...)",
-          "animationType": "نوع الأنيميشن في الباوربوينت (Fly In + Motion Path / Zoom / Pulse)",
-          "detailedAction": "شرح كل حاجة بتحصل في الحركة دي بالتفصيل الممل...",
-          "syncWithTeacher": "مع جملة المعلمة لما بتقول: (...)"
-        }
-      ]
-    },
-    "videoPrompts": [
-      {
-        "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات الدخلة متزامنة مع الصوت)",
-        "prompt": "A dynamic 10-second multi-scene sequence with rapid seamless cuts, perfectly synchronized with teacher voiceover pacing: [0-3s]: First visual action... [3-6s]: Rapid seamless transition to second visual action... [6-10s]: Quick dynamic transition/zoom to third visual action... High-energy visual progression, cute friendly 3D cartoon Pixar animation for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO dialogue, NO lip sync."
-      }
-    ]
+    "hookTitle": "عنوان الدخلة التمهيدية المشوقة",
+    "teacherScript": "✨ أولاً - التحية وعنوان الدرس:\\nالسلام عليكم ورحمة الله وبركاته! أهلاً بيكم يا أبطال وعلماء المستقبل في درسنا النهاردة بعنوان: [...]\\n\\n🌱 ثانياً - تمهيد وفكرة الدرس:\\n[تمهيد مفصل وجميل جداً عن الدرس وأهميته]\\n\\n💡 ثالثاً - قصة وتشبيه البداية بالتفصيل:\\n[قصة حياتية مفصلة وممتعة بالعامية المصرية تقرب الفكرة للطفل...]\\n\\n🔍 رابعاً - لغز الدرس:\\n[سؤال التشويق والربط ببداية الشرح...]",
+    "analogyStory": "ملخص فكرة التشبيهات الواقعية وكيف تخدم فهم الدرس..."
   },
   "scientificBeats": [
     {
       "beatNumber": 1,
-      "conceptTitle": "عنوان النقطة العلمية الدقيقة الواحدة فقط",
-      "teacherScript": "كلام المعلمة المنظم والمتسلسل بالعامية المصرية في فقرات مرتبة (\\n\\n): جملة ربط بسيطة + التشبيهات والشرح الممتع خطوة بخطوة + توضيح كيف ولماذا + ربط بالمصطلح العلمي",
-      "simpleExplanation": "الشرح والتحليل العلمي الموسع والمفصل للظاهرة وأسبابها وأهميتها بالتفصيل...",
-      "studentQuestion": "سؤال تفاعلي تطرحه المعلمة على الطلاب أثناء الشرح",
-      "expectedAnswer": "الإجابة النموذجية المتوقعة من الطلاب",
+      "conceptTitle": "عنوان النقطة العلمية الدقيقة",
+      "teacherScript": "الشرح الكامل المستفيض جداً على لسان المعلمة بالعامية المصرية الجميلة مقسماً إلى 4-6 فقرات طويلة ومفصلة بسطرين (\\n\\n):\\n1) جملة الربط والتمهيد المشوق للجزئية...\\n\\n2) التشبيه الحياتي الممتع بالتفصيل...\\n\\n3) الشرح العلمي الدقيق خطوة بخطوة (إزاي بتحصل الظاهرة بالتفصيل الممل)...\\n\\n4) تفسير السبب والحكمة (ليه ربنا خلقها كده وماذا يحدث لو غابت)...\\n\\n5) الربط بالمصطلح العلمي وتثبيت الفهم...",
+      "howAndWhy": "تفسير علمي مبسط ومفصل لـ (كيف تحدث هذه الخطوة؟ ولماذا تحدث بهذا الشكل تحديداً؟ وماذا يحدث لو توقفت؟)",
+      "realLifeAnalogy": "التشبيه التقريبي من الحياة اليومية للطفل بالتفصيل",
+      "simpleExplanation": "الشرح والتحليل العلمي الموسع والمفصل للظاهرة وأسبابها وأهميتها باللغة العلمية السليمة...",
+      "studentQuestion": "سؤال تفاعلي ذكي تطرحه المعلمة على الطلاب أثناء الشرح لتنشيط عقلهم",
+      "expectedAnswer": "الإجابة النموذجية الكاملة المتوقعة من الطلاب بأسلوب مبسط",
       "textbookTerm": "المصطلح العلمي كما ورد في كتاب المدرسة نصاً",
-      "textbookDefinition": "التعريف المكتوب في كتاب المدرسة المطلوب من الطالب حفظه وفهمه نصاً",
-      "pptAnimationPlan": {
-        "slideTitle": "عنوان شريحة الباوربوينت المتحركة لهذه الجزئية",
-        "slideLayout": "وصف كامل لتصميم الشريحة وأماكن العناصر المفككة عليها قبل التحريك...",
-        "movements": [
-          {
-            "stepNumber": 1,
-            "trigger": "كليك 1 / تلقائي مع الصوت",
-            "element": "اسم العنصر أو الشكل الذي يتحرك",
-            "fromWhere": "يجي منين بالظبط على الشريحة",
-            "toWhere": "يروح فين بالظبط على الشريحة",
-            "animationType": "نوع الأنيميشن في الباوربوينت (Fly In / Motion Path / Zoom / Pulse / Wipe)",
-            "detailedAction": "شرح تفصيلي كامل لإيه اللي بيتحرك وإزاي بيتحرك ويتفاعل في الباوربوينت",
-            "syncWithTeacher": "يتزامن مع قول المعلمة: (...)"
-          }
-        ]
-      },
-      "videoPrompts": [
-        {
-          "shotTitle": "فيديو تتابعي شامل 10 ثوانٍ (انتقالات سريعة تشمل كل تشبيهات ونقاط الجزئية متزامنة مع الصوت)",
-          "prompt": "A dynamic 10-second multi-shot sequence with rapid seamless transitions, precisely paced for teacher voiceover: [0-3s]: First visual action... [3-7s]: Fast seamless transition to second visual action... [7-10s]: Quick dynamic zoom to third visual action... Fast visual progression, cute friendly 3D Pixar style for children, soft rounded shapes, vibrant cheerful colors. Mute visual action only, strictly NO talking characters, NO speaking mouth movement, NO lip sync."
-        }
-      ]
+      "textbookDefinition": "التعريف المكتوب في كتاب المدرسة المطلوب من الطالب حفظه وفهمه نصاً"
     }
   ],
   "experimentTransition": {
-    "teacherSpeech": "كلام المعلمة الحماسي بالعامية المصرية للتمهيد والانتقال للتجربة: 'شفتوا يا شطار الجمال العلمي ده؟ طب تفتكروا إحنا في العلوم بنصدق وخلاص؟ لأ طبعاً! يلا بينا نلبس البالطو وندخل المعمل سوا ونتأكد بعيوننا... جاهزين؟ يلا بينا نجرب ونعمل كذا!'",
-    "flowVideoPrompt": "Delightful cute 3D Pixar style shot entering a bright friendly children's science lab: Playful colorful glassware, brass magnifying glass, cheerful clean tabletop in warm golden sunlight. Mute visual action, strictly NO talking characters, NO people speaking."
+    "teacherSpeech": "كلام المعلمة الحماسي المفصل بالعامية المصرية للتمهيد والانتقال من الشرح النظري إلى التجربة العملية في المعمل..."
   },
   "experiments": [
     {
       "experimentTitle": "عنوان التجربة العلمية المفصل",
-      "goal": "الهدف: لماذا نقوم بهذه التجربة بالتفصيل؟",
-      "materials": ["الأداة 1", "الأداة 2", "الأداة 3", "الأداة 4"],
-      "introAndMaterialsSpeech": "كلام المعلمة في بداية التجربة تذكر فيه بصوتها عنوان التجربة والهدف منها وتستعرض كل الأدوات أداة بأداة بشكل واضح ومتسلسل للأطفال...",
+      "goal": "الهدف العلمي التفصيلي من التجربة",
+      "materials": ["الأداة 1 مع توضيح فائدتها", "الأداة 2 مع توضيح فائدتها"],
+      "introAndMaterialsSpeech": "كلام المعلمة المفصل في بداية التجربة: تذكر عنوان التجربة، والهدف منها، وتشرح كل أداة من الأدوات الموجودة على الطاولة ووظيفتها بالتفصيل...",
       "steps": [
         {
           "stepNumber": 1,
           "stepTitle": "عنوان الخطوة 1",
-          "actionDetails": "تفاصيل ما نفعله في الخطوة بالمنطق العلمي الدقيق ولماذا",
-          "teacherSpeech": "الخطوة الأولى معانا يا أبطال: [كلام المعلمة المتسلسل والواضح يشرح كل تفاصيل الفعل والسبب واحتياط الأمان إن وجد في نفس الكلام...]",
-          "flowVideoPrompt": "Cute clean 3D Pixar style laboratory tabletop animation for children: [Specific lab step action]. Macro tabletop focus, beautiful glass reflections. Mute action only, strictly NO talking characters, NO speaking mouth movement."
+          "actionDetails": "التفاصيل العلمية الدقيقة لما نفعله في هذه الخطوة ولماذا نفعله",
+          "teacherSpeech": "الشرح الصوتي المفصل للمعلمة في هذه الخطوة: تشرح ماذا تفعل خطوة بخطوة، ولماذا نقوم بهذا الإجراء تحديداً، وأي احتياطات أمان، بأسلوب قصصي واضح جداً للطفل..."
         }
       ],
-      "observations": "ماذا نلاحظ بعيوننا أثناء التجربة بالتفصيل الدقيق؟",
-      "observationVideoPrompt": "Delightful 3D macro animation for children showing the visible color change and chemical reaction clearly in vibrant colors. Mute visual action, strictly NO talking characters.",
+      "observations": "الملاحظة العلمية الدقيقة بالعين المجردة بالتفصيل",
       "finalConclusion": "الاستنتاج العلمي النهائي الموسع والدقيق",
-      "observationAndConclusionSpeech": "ودلوقتي تعالوا نشوف بعيوننا إيه اللي حصل بعد التجربة: [ذكر كل تفاصيل الملاحظة المرئية والنتيجة بالعامية الواضحة]\\n\\nوبكده نستنتج الاستنتاج المهم جداً ده: [ذكر الاستنتاج النهائي ببساطة وتسلسل]",
-      "safetyPrecautions": "احتياطات الأمان في المعمل",
-      "pptAnimationPlan": {
-        "slideTitle": "شريحة الباوربوينت التفاعلية لخطوات التجربة المعملية",
-        "slideLayout": "وصف تصميم شريحة المعمل وتوزيع الأدوات عليها...",
-        "movements": [
-          {
-            "stepNumber": 1,
-            "trigger": "كليك 1",
-            "element": "أداة التجربة المتحركة",
-            "fromWhere": "تبدأ من رف الأدوات في يمين الشريحة",
-            "toWhere": "تتجه إلى منتصف طاولة المعمل",
-            "animationType": "Motion Path مسار حركة + Zoom",
-            "detailedAction": "وصف تفصيلي لحركة الأداة والتفاعل اللوني على الشريحة",
-            "syncWithTeacher": "مع شرح الخطوة في صوت المعلمة"
-          }
-        ]
-      }
+      "observationAndConclusionSpeech": "كلام المعلمة المفصل في نهاية التجربة: تشرح كل تفاصيل الملاحظة التي ظهرت أمامهم ولماذا ظهر هذا التغير، ثم تستنتج معهم القاعدة العلمية النهائية بوضوح...",
+      "safetyPrecautions": "احتياطات الأمان المهمة داخل المعمل ولماذا نلتزم بها"
     }
   ],
   "lessonConclusion": {
     "title": "خاتمة الدرس الشاملة وتثبيت الفهم",
-    "teacherScript": "كلام المعلمة للخاتمة المتسلسلة للدرس بالكامل: تلخيص سريع وممتع لرحلة الدرس والتجربة خطوة بخطوة بتسلسل واضح + جملة تشجيعية للأبطال + والسلام عليكم ورحمة الله وبركاته.",
-    "flowVideoPrompt": "A dynamic 10-second uplifting 3D Pixar style wrap-up sequence for children showing the key elements of the lesson harmoniously glowing together in bright warm sunlight with celebratory sparkles. Mute visual action only, strictly NO talking characters, NO speaking mouth animation, NO lip sync."
+    "teacherScript": "كلام المعلمة المفصل لخاتمة الدرس: تراجع مع الأطفال القصة الكاملة للدرس من أول خطوة لآخر خطوة في تسلسل قصصي جميل يربط كل أجزاء الدرس والتجربة معاً، ثم تشجعهم وتختم بـ: والسلام عليكم ورحمة الله وبركاته."
   },
   "blackboardSummary": {
-    "title": "عنوان السبورة",
-    "keyVocabulary": ["المصطلح 1: معناه المفصل", "المصطلح 2: معناه المفصل"],
-    "definitions": ["التعريف 1 كما ورد في الكتاب نصاً", "التعريف 2 كما ورد في الكتاب نصاً"],
-    "comparisons": ["مقارنة دقيقة وشاملة بين كذا وكذا"],
-    "conclusions": ["الاستنتاج النهائي المهم"]
+    "title": "عنوان ملخص السبورة الشامل",
+    "keyVocabulary": ["المصطلح 1: شرحه الوافي", "المصطلح 2: شرحه الوافي"],
+    "definitions": ["التعريف 1 أو المعادلة كما وردت في الكتاب نصاً", "التعريف 2 كما ورد في الكتاب نصاً"],
+    "comparisons": ["مقارنة تفصيلية واضحة بين كذا وكذا"],
+    "conclusions": ["الاستنتاج النهائي المهم 1", "الاستنتاج النهائي المهم 2"]
   },
   "checkUnderstanding": [
     {
-      "questionType": "من الحياة اليومية / علل ولماذا / استنتاج ذكي",
+      "questionType": "سؤال فهم عميق / علل ولماذا / ماذا يحدث لو / من الحياة اليومية",
       "question": "نص السؤال الشفوي المفصل للطلاب",
-      "correctAnswer": "الإجابة النموذجية الميسرة للمعلمة"
+      "correctAnswer": "الإجابة النموذجية المفصلة والميسرة"
     }
   ]
 }
@@ -209,7 +151,7 @@ export async function POST(req: NextRequest) {
         const res = await model.generateContent({
           contents: [{ role: "user", parts }],
           generationConfig: {
-            temperature: 0.3,
+            temperature: 0.4,
             maxOutputTokens: 65536,
             responseMimeType: "application/json"
           }
@@ -225,9 +167,8 @@ export async function POST(req: NextRequest) {
 
     const guideData = repairAndParseJson(resultText);
 
-    // Ensure safe default structures so the client never crashes
     if (!guideData.lessonTitle) {
-      guideData.lessonTitle = topic || "درس العلوم التفاعلي";
+      guideData.lessonTitle = topic || "درس العلوم التفصيلي";
     }
     if (!Array.isArray(guideData.scientificBeats)) {
       guideData.scientificBeats = [];
@@ -257,7 +198,6 @@ function isLikelyStructuralCloseQuote(jsonStr: string, quoteIdx: number): boolea
   }
 
   if (nextChar === ":") {
-    // After ':', valid JSON must have '"', '{', '[', 'true', 'false', 'null', or a digit/minus
     let j = i + 1;
     while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
     if (j >= jsonStr.length) return true;
@@ -271,15 +211,11 @@ function isLikelyStructuralCloseQuote(jsonStr: string, quoteIdx: number): boolea
   }
 
   if (nextChar === ",") {
-    // After ',', in valid JSON we must see '"', '{', '[', ']', '}', or a primitive literal
     let j = i + 1;
     while (j < jsonStr.length && /\s/.test(jsonStr[j])) j++;
     if (j >= jsonStr.length) return true;
     const afterComma = jsonStr[j];
-    if (afterComma === "{" || afterComma === "[" || afterComma === "}" || afterComma === "]") {
-      return true;
-    }
-    if (afterComma === '"') {
+    if (afterComma === "{" || afterComma === "[" || afterComma === "}" || afterComma === "]" || afterComma === '"') {
       return true;
     }
     return false;
@@ -297,9 +233,7 @@ function sanitizeControlCharsAndQuotes(jsonStr: string): string {
     const ch = jsonStr[i];
 
     if (inString) {
-      if (ch === "\r") {
-        continue;
-      }
+      if (ch === "\r") continue;
       if (ch === "\n") {
         result += "\\n";
         isEscaped = false;
@@ -370,7 +304,6 @@ function closeIncompleteJson(str: string): string {
     s += '"';
   }
 
-  // Strip any dangling key or trailing comma at the end before closing brackets
   s = s.replace(/,\s*$/, "");
   s = s.replace(/,\s*"[^"]*"\s*:\s*$/, "");
   s = s.replace(/:\s*$/, ': ""');
@@ -397,7 +330,6 @@ function surgicalPositionalRepair(input: string): any {
       if (isNaN(pos) || pos <= 0 || pos >= current.length) break;
 
       if (msg.includes("Expected ',' or ']'") || msg.includes("Expected ',' or '}'")) {
-        // Check if there is an unescaped quote right before pos that prematurely ended a string
         const prevQuoteIdx = current.lastIndexOf('"', pos - 1);
         if (
           prevQuoteIdx > 0 &&
@@ -413,7 +345,6 @@ function surgicalPositionalRepair(input: string): any {
             continue;
           }
         }
-        // Otherwise insert a comma at pos
         current = current.slice(0, pos) + "," + current.slice(pos);
         continue;
       }
@@ -430,7 +361,6 @@ function surgicalPositionalRepair(input: string): any {
       }
 
       if (msg.includes("Unexpected token") || msg.includes("Expected double-quoted property name")) {
-        // Remove trailing comma before } or ] around pos
         const sliceAround = current.slice(Math.max(0, pos - 10), pos + 2);
         if (/,\s*[}\]]/.test(sliceAround)) {
           const commaIdx = current.lastIndexOf(",", pos);
@@ -441,7 +371,6 @@ function surgicalPositionalRepair(input: string): any {
         }
       }
 
-      // If we can't fix in-place at pos, truncate cleanly to the last complete '}' BEFORE pos
       const safeBraceBeforeError = current.lastIndexOf("}", pos - 1);
       if (safeBraceBeforeError > 50) {
         const candidate = closeIncompleteJson(current.slice(0, safeBraceBeforeError + 1));
@@ -478,12 +407,10 @@ function repairAndParseJson(rawText: string): any {
     }
   }
 
-  // Attempt 1: Direct JSON parse
   try {
     return JSON.parse(cleaned);
   } catch (_) {}
 
-  // Attempt 2: Fix missing commas between adjacent objects/arrays/strings and trailing commas
   const commaFixed = cleaned
     .replace(/}\s*\{/g, "},{")
     .replace(/\]\s*\[/g, "],[")
@@ -494,25 +421,21 @@ function repairAndParseJson(rawText: string): any {
     return JSON.parse(commaFixed);
   } catch (_) {}
 
-  // Attempt 3: Sanitize control chars and interior unescaped quotes
   const sanitized = sanitizeControlCharsAndQuotes(commaFixed);
   try {
     return JSON.parse(sanitized);
   } catch (_) {}
 
-  // Attempt 4: Close incomplete JSON on sanitized
   try {
     return JSON.parse(closeIncompleteJson(sanitized));
   } catch (_) {}
 
-  // Attempt 5: Surgical positional repair on sanitized & commaFixed
   const surgical1 = surgicalPositionalRepair(sanitized);
   if (surgical1) return surgical1;
 
   const surgical2 = surgicalPositionalRepair(commaFixed);
   if (surgical2) return surgical2;
 
-  // Attempt 6: Progressive backward truncation to find the largest valid prefix
   let searchPos = sanitized.length;
   for (let i = 0; i < 20; i++) {
     const braceIdx = sanitized.lastIndexOf("}", searchPos - 1);
